@@ -1,0 +1,25 @@
+// Footer
+footer {
+  padding: 1em 0 2em;
+  background: $light-grey;
+
+  section {
+    margin-bottom: 0;
+  }
+
+  .logo {
+    height: 40px;
+    width: inherit;
+    display: inline-block;
+  }
+
+  .br-data {
+    margin-left: 3px;
+    width: 97px;
+  }
+
+  .ard {
+    margin-left:  15px;
+    width: 138px;
+  }
+}

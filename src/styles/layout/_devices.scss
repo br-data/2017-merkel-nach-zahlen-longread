@@ -1,0 +1,28 @@
+// Mediaqueries and margins for different devices
+$mobile-width: 560px;
+$tablet-width: 840px;
+
+$margin-desktop: 0 20% 0 10%;
+$margin-tablet: 10%;
+$margin-mobile: 20px;
+
+@mixin desktop {
+
+  @media (min-width: #{$tablet-width + 1}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+
+  @media (max-width: #{$tablet-width}) {
+    @content;
+  }
+}
+
+@mixin mobile {
+
+  @media (max-width: #{$mobile-width}) {
+    @content;
+  }
+}

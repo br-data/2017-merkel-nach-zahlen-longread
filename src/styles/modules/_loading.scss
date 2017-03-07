@@ -1,0 +1,33 @@
+.loading {
+  color: $dark-grey;
+  background: $light-grey;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 90;
+
+  .center {
+    margin: 25% auto;
+    text-align: center;
+  }
+
+  .pulse {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+    background-color: $dark-grey;
+    border-radius: 100%;
+    animation: pulse 1s infinite ease-in-out;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(0);
+    } 100% {
+      transform: scale(1);
+      opacity: 0;
+    }
+  }
+}

@@ -1,0 +1,57 @@
+// Faux grid layout
+section {
+  max-width: 940px;
+  margin: 0 auto 4em;
+}
+
+// Text level indent blocks
+.block {
+
+  margin: $margin-desktop;
+
+  @include tablet {
+    margin: 0 $margin-tablet;
+  }
+
+  @include mobile {
+    margin: 0 $margin-mobile;
+  }
+
+  img {
+
+    @include mobile {
+      width: calc(100% + 4em);
+      margin-left: -2em;
+    }
+  }
+}
+
+// Floats for quotes and marginals
+.right {
+  float: right;
+
+  @include tablet {
+    float: none;
+  }
+
+  @include mobile {
+    float: none;
+  }
+}
+
+.left {
+  float: left;
+  text-align: right;
+
+  @include tablet {
+    float: none;
+  }
+
+  @include mobile {
+    float: none;
+  }
+}
+
+.center {
+  text-align: center;
+}

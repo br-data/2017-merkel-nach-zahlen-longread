@@ -1,0 +1,67 @@
+// Sticky navigation
+.navigation {
+  padding: 10px 20px;
+  background: $white;
+  box-shadow: 0 1px 4px rgba(0,0,0,.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  transform: translateZ(0);
+  transition: background .4s ease, opacity .4s ease, box-shadow .2s ease;
+
+  section {
+    margin-bottom: 0;
+    pointer-events: none;
+  }
+
+  .logo {
+
+    transition: -webkit-filter .2s ease;
+
+    img {
+      width: 40px;
+      height: 40px;
+      margin-right: .5em;
+      cursor: pointer;
+      vertical-align: text-top;
+      float: left;
+    }
+  }
+
+  .logo:hover {
+    -webkit-filter: brightness(90%);
+    filter: brightness(90%);
+  }
+
+  .title {
+    line-height: 40px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    @include mobile {
+      display: none;
+    }
+  }
+
+  .sharing {
+    float: right;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent;
+
+    a {
+      box-shadow: none;
+    }
+  }
+
+  &.hidden {
+    background: rgba(255,255,255,0);
+    box-shadow: none;
+
+    .title {
+      opacity: 0;
+    }
+  }
+}

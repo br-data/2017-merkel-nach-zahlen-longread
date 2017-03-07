@@ -1,0 +1,38 @@
+button,
+.button {
+  display: inline-block;
+  background: $light-grey;
+  font-size: 1em;
+  font-weight: 300;
+  border: 0;
+  height: 2.2em;
+  min-width: 2.2em;
+  line-height: 2.2;
+  cursor: pointer;
+  border-radius: 5px;
+  color: #889;
+  outline: 0;
+  margin: 0 .2em .2em 0;
+  padding: 0 .7em 0 .5em;
+  transition: background .3s ease,color .3s ease;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: none;
+  vertical-align: top;
+
+  &:hover {
+    color: $black;
+    box-shadow: none;
+  }
+
+  &.active,
+  &.br-blue {
+    display: inline-block;
+    background: $br-blue;
+    color: $white;
+  }
+}
+
+.download {
+  margin-bottom: 2.5em;
+}

@@ -1,0 +1,61 @@
+// Related articles
+.related {
+
+  img {
+    display: block;
+  }
+
+  p {
+    margin: 0;
+    padding: 5% 5% 10%;
+    line-height: 1.4;
+  }
+
+  a {
+    box-shadow: none;
+  }
+
+  .table {
+    display: table;
+    border-collapse: separate;
+    border-spacing: 1em;
+    margin: -1em -1em 0;
+  }
+
+  .cell {
+    cursor: pointer;
+    display: table-cell;
+    width: 33%;
+    vertical-align: top;
+    background: $light-grey;
+
+    &:hover {
+
+      box-shadow: inset 0 -3px 0 $br-blue;
+
+      img {
+        -webkit-filter: brightness(80%);
+        filter: brightness(80%);
+      }
+    }
+  }
+
+  @include tablet {
+
+    img {
+      width: 100%;
+      margin: 0;
+    }
+
+    p {
+      padding: 5% 5% 6%;
+    }
+
+    .cell {
+      display: table-row;
+      width: 100%;
+      padding: 0;
+      margin-bottom: 2em;
+    }
+  }
+}

@@ -1,0 +1,72 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 2em;
+}
+
+td, th {
+  border: 1px solid $light-grey;
+  text-align: left;
+  padding: 0 .5em;
+  vertical-align: top;
+}
+
+th {
+  background: $light-grey;
+  border: 1px solid #ddd;
+  font-weight: 600;
+}
+
+@include tablet {
+
+  table {
+    margin-left: $margin-tablet;
+    margin-right: $margin-tablet;
+    width: inherit;
+  }
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead tr {
+    display: none;
+  }
+
+  tr {
+    border: 1px solid $light-grey;
+    margin-bottom: 1em;
+  }
+
+  td {
+    border: none;
+    border-bottom: 1px solid $light-grey;;
+    position: relative;
+    padding-left: 50%;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:first-child {
+      background: $light-grey;
+      font-weight: 600;
+    }
+
+    &:before {
+      position: absolute;
+      top: 0;
+      left: 7px;
+      width: 50%;
+      white-space: nowrap;
+      content: attr(data-label);
+    }
+  }
+
+  .block > table {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+

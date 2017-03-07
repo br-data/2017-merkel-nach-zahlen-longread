@@ -1,0 +1,23 @@
+// Sharing
+.sharing {
+  line-height: 40px;
+  font-size: 1.3em;
+  cursor: pointer;
+  color: $dark-grey;
+
+  .icon-facebook:hover {
+    color: $facebook-blue;
+  }
+
+  .icon-twitter:hover {
+    color: $twitter-blue;
+  }
+
+  .icon-whatsapp:hover {
+    color: $whatsapp-green;
+  }
+
+  .icon-mail:hover {
+    color: $mail-red;
+  }
+}

@@ -1,0 +1,33 @@
+// Quotes
+.quote {
+  width: 45%;
+  font-weight: 600;
+  position: relative;
+  padding: 0 2em;
+  display: inline-block;
+
+  p {
+
+    &:first-child {
+      text-indent: 2em;
+    }
+  }
+
+  &:before {
+    display: block;
+    content: '\201C';
+    font-size: 5em;
+    position: absolute;
+    left: 25px;
+    top: 0;
+    line-height: 1em;
+  }
+
+  @include tablet {
+    margin-left: $margin-tablet;
+    margin-right: $margin-tablet;
+
+    width: initial;
+    text-align: center;
+  }
+}

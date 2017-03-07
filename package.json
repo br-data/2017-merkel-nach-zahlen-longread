@@ -1,0 +1,34 @@
+{
+  "name": "longread-template",
+  "description": "Longread template for BR Data",
+  "author": "Steffen Kühne",
+  "version": "0.0.1",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:digitalegarage/longread-template.git"
+  },
+  "scripts": {
+    "start": "node node_modules/http-server/bin/http-server ./src -s -o --cors",
+    "watch": "grunt watch",
+    "dist": "grunt dist"
+  },
+  "dependencies": {
+    "video.js": "^5.12.6",
+    "videojs-contrib-hls": "^3.6.11"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.5.3",
+    "cssnano": "^3.8.0",
+    "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-postcss": "^0.8.0",
+    "grunt-sass": "^1.2.1",
+    "grunt-usemin": "^3.1.1",
+    "http-server": "^0.9.0"
+  }
+}
