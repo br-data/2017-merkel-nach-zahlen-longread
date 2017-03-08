@@ -1,0 +1,27 @@
+.drawing {
+  fill: $dark-grey;
+  font-size: 12px;
+  font-weight: 400;
+  // overflow: visible;
+}
+
+.axis {
+  path, line {
+    stroke: $black;
+  }
+}
+
+.line {
+  stroke: $dark-grey;
+  stroke-width: 1;
+}
+
+.area {
+  fill: $light-grey;
+}
+
+.your-line {
+  stroke: $br-blue;
+  stroke-width: 1;
+  stroke-dasharray: 5 5;
+}

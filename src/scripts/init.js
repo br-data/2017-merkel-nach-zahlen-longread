@@ -3,35 +3,32 @@ document.addEventListener('DOMContentLoaded', init);
 
 function init() {
 
-  var $modal = document.getElementById('modal');
-  var $modalButton = document.getElementById('modal-button');
-
-  navigation.init();
-  marginals.init();
-  modal.init();
-
-  // Bind modal button to open event
-  $modalButton.addEventListener('click', function () {
-
-    modal.open($modal);
-  });
-
-  arrow();
-  resize();
-}
-
-function resize() {
-
   var timeout;
+
+  var draw1 = new draw({nodeId: 'draw1', dataLink: 'data/data.csv'});
+
+  draw1.init();
+  navigation.init();
 
   window.onresize = function () {
 
     clearTimeout(timeout);
     timeout = setTimeout(function () {
 
-      marginals.reorder();
+      draw1.scale();
     }, 200);
   };
+
+  window.onorientationchange = function () {
+
+    clearTimeout(timeout);
+    timeout = setTimeout(function () {
+
+      draw1.scale();
+    }, 200);
+  };
+
+  arrow();
 }
 
 function arrow() {

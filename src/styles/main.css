@@ -531,14 +531,14 @@ header {
 .navigation {
   padding: 10px 20px;
   background: #fff;
-  border-bottom: 1px solid #f0f0f4;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
   transform: translateZ(0);
-  transition: background .4s ease, opacity .4s ease, border .2s ease; }
+  transition: background .4s ease, opacity .4s ease, box-shadow .2s ease; }
   .navigation section {
     margin-bottom: 0;
     pointer-events: none; }
@@ -570,7 +570,7 @@ header {
       box-shadow: none; }
   .navigation.hidden {
     background: rgba(255, 255, 255, 0);
-    border-color: rgba(255, 255, 255, 0); }
+    box-shadow: none; }
     .navigation.hidden .title {
       opacity: 0; }
 
@@ -776,5 +776,25 @@ footer {
   footer .ard {
     margin-left: 15px;
     width: 138px; }
+
+.drawing {
+  fill: #889;
+  font-size: 12px;
+  font-weight: 400; }
+
+.axis path, .axis line {
+  stroke: #000; }
+
+.line {
+  stroke: #889;
+  stroke-width: 1; }
+
+.area {
+  fill: #f0f0f4; }
+
+.your-line {
+  stroke: #007bc2;
+  stroke-width: 1;
+  stroke-dasharray: 5 5; }
 
 /*# sourceMappingURL=main.css.map */
