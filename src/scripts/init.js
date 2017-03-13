@@ -5,17 +5,29 @@ function init() {
 
   var timeout;
 
-  var draw1 = new draw({nodeId: 'draw1', dataLink: 'data/data.csv'});
+  // Find all draw areas
+  var $draw = document.getElementsByClassName('draw');
+  var $d = [];
 
-  draw1.init();
-  navigation.init();
+  if ($draw) {
+
+    for (var i = 0; i < $draw.length; i++) {
+
+      var d = new draw({nodeId: $draw[i].id});
+      d.init();
+      $d.push(d);
+    }
+  }
 
   window.onresize = function () {
 
     clearTimeout(timeout);
     timeout = setTimeout(function () {
 
-      draw1.scale();
+    for (var i = 0; i < $d.length; i++) {
+
+      $d[i].scale();
+    }
     }, 200);
   };
 
@@ -24,10 +36,15 @@ function init() {
     clearTimeout(timeout);
     timeout = setTimeout(function () {
 
-      draw1.scale();
+    for (var i = 0; i < $d.length; i++) {
+
+      $d[i].scale();
+    }
     }, 200);
   };
 
+
+  navigation.init();
   arrow();
 }
 
