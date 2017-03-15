@@ -1,21 +1,17 @@
 {
-  "name": "longread-template",
-  "description": "Longread template for BR Data",
+  "name": "merkel-jahre-longread",
+  "description": "How did ",
   "author": "Steffen Kühne",
   "version": "0.0.1",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git@github.com:digitalegarage/longread-template.git"
+    "url": "git@github.com:digitalegarage/merkel-jahre-longread.git"
   },
   "scripts": {
     "start": "node node_modules/http-server/bin/http-server ./src -s -o --cors",
     "watch": "grunt watch",
     "dist": "grunt dist"
-  },
-  "dependencies": {
-    "video.js": "^5.12.6",
-    "videojs-contrib-hls": "^3.6.11"
   },
   "devDependencies": {
     "autoprefixer": "^6.5.3",

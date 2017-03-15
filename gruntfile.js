@@ -42,8 +42,6 @@ module.exports = function (grunt) {
         },
 
         src: [
-          'node_modules/video.js/dist/video.min.js',
-          'node_modules/videojs-contrib-hls/dist/videojs-contrib-hls.min.js',
           'dist/scripts/main.min.js'
         ],
 

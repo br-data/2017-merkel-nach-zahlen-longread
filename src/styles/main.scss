@@ -1,5 +1,5 @@
-@import url(http://web.br.de/interaktiv/assets/fonts/open-sans/open-sans-v13-light.css);
-@import url(http://web.br.de/interaktiv/assets/libraries/videojs/v5/video-js.min.css);
+// @import url(http://web.br.de/interaktiv/assets/fonts/open-sans/open-sans-v13-light.css);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,600);
 
 @import 'layout/reset';         // CSS reset
 
@@ -23,6 +23,5 @@
 @import 'modules/header';       // Header
 @import 'modules/navigation';   // Navigation header
 @import 'modules/embed';        // Embeds
-@import 'modules/videoplayer';  // Videoplayer
 @import 'modules/footer';       // Footer
 @import 'modules/draw';         // draw app
