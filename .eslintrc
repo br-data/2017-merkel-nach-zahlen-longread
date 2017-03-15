@@ -1,6 +1,7 @@
 {
   "globals": {
-    "videojs": true,
+    "d3": true,
+    "draw": true,
     "marginals": true,
     "modal": true,
     "navigation": true,

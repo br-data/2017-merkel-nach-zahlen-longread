@@ -43,21 +43,5 @@ function init() {
     }, 200);
   };
 
-
   navigation.init();
-  arrow();
-}
-
-function arrow() {
-
-  var $arrow = document.getElementById('arrow');
-  var $header = document.getElementById('header');
-
-  $arrow.addEventListener('click', scrollTo);
-
-  function scrollTo() {
-
-    var offsetTop = $header.offsetHeight - 60;
-    scroll.to(offsetTop, 750);
-  }
 }
