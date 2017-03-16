@@ -616,19 +616,21 @@ footer {
   font-size: 12px;
   font-weight: 400; }
 
-.axis path, .axis line {
-  stroke: #000; }
+.axis line {
+  stroke: #ccd;
+  stroke-width: 1; }
 
 .line {
   stroke: #889;
-  stroke-width: 1; }
+  stroke-width: 3; }
 
 .area {
-  fill: #f0f0f4; }
+  fill: none; }
 
 .your-line {
   stroke: #007bc2;
-  stroke-width: 1;
-  stroke-dasharray: 5 5; }
+  stroke-width: 3;
+  stroke-dasharray: 1 7;
+  stroke-linecap: round; }
 
 /*# sourceMappingURL=main.css.map */

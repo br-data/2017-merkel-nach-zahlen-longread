@@ -1,11 +1,12 @@
 var draw = function (options) {
 
-  var container, svg, g, clipRect, correctSel, yourDataSel, yourData, completed, xAxis, yAxis, yMax, area, line, x, y, data;
+  var container, svg, group, clipRect, correctSel, yourDataSel, yourData, completed, xAxisEl, yAxisEl, xAxis, yAxis, yMax, area, line, x, y, data;
 
-  var width, height, margin = { bottom: 50, left: 50, right: 15, top: 20 };
+  var width, height, margin = { bottom: 50, left: 5, right: 100, top: 20 };
   var isMobile, breakpoint = 561;
-  var years = [2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016];
-  var lastYear = years[years.length - 1];
+
+  var years = [];
+  var lastYear;
 
   var drag = d3.behavior.drag()
     .on('drag', function () {
@@ -35,7 +36,14 @@ var draw = function (options) {
       var datName = options.nodeId;
 
       data = res.filter(function (d) { return d.name == datName; })[0];
+
       yMax = d3.max(data.values, function (d) { return +d.value; }) * 1.333;
+
+      years = data.values.map(function (d) {
+        return d.year;
+      }).sort();
+
+      lastYear = years[years.length - 1];
 
       yourData = data.values
         .map(function (d) {
@@ -69,7 +77,7 @@ var draw = function (options) {
 
     svg.call(drag);
 
-    g = svg.append('g');
+    group = svg.append('g');
 
     x = d3.scale.linear()
       .domain([years[0], lastYear]);
@@ -80,10 +88,16 @@ var draw = function (options) {
     area = d3.svg.area();
     line = d3.svg.area();
 
-    clipRect = g.append('clipPath')
+    xAxisEl = group.append('g')
+      .attr('class', 'x axis');
+
+    yAxisEl = group.append('g')
+      .attr('class', 'y axis');
+
+    clipRect = group.append('clipPath')
       .attr('id', 'clip').append('rect');
 
-    correctSel = g.append('g')
+    correctSel = group.append('g')
       .attr('clip-path', 'url(#clip)');
 
     correctSel.append('path')
@@ -92,13 +106,9 @@ var draw = function (options) {
     correctSel.append('path')
       .attr('class', 'line');
 
-    yourDataSel = g.append('path')
+    yourDataSel = group.append('path')
       .attr('class', 'your-line');
 
-    xAxis = g.append('g')
-      .attr('class', 'x axis');
-    yAxis = g
-      .append('g').attr('class', 'y axis');
 
     scale();
   }
@@ -116,23 +126,39 @@ var draw = function (options) {
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.bottom + margin.top);
 
-    g
+    group
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     x.range([0, width]);
     y.range([height, 0]);
 
-    xAxis
+    xAxis = d3.svg.axis()
+      .scale(x)
+      .orient('bottom')
+      .tickSize(0)
+      .tickFormat(function (d, i) { return i % 2 ? '' : d; });
+
+    yAxis = d3.svg.axis()
+      .scale(y)
+      .orient('right')
+      .ticks(6)
+      .innerTickSize(-width)
+      .outerTickSize(0)
+      .tickPadding(10)
+      .tickFormat(function (d) { return pretty(d) + ' ' + data.format; });
+
+    xAxisEl
       .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.svg.axis().scale(x).orient('bottom').tickSize(0).tickFormat(function (d, i) { return i % 2 ? '' : d; }))
+      .call(xAxis)
       .selectAll('text')
         .attr('dx', isMobile ? '-10px' : 0)
         .attr('dy', isMobile ? '0' : '12px')
         .attr('transform', isMobile ? 'rotate(-90)' : 'rotate(0)')
-        .style('text-anchor', isMobile ? 'end' : 'middle');
+        .style('text-anchor', 'start');
 
-    yAxis
-      .call(d3.svg.axis().scale(y).orient('left').tickSize(0).tickFormat(function (d, i) { return i % 2 ? '' : d; }));
+    yAxisEl
+      .attr('transform', 'translate(' + width + ',0)')
+      .call(yAxis);
 
     area
       .x(function (d) { return x(+d.year); })
@@ -174,6 +200,12 @@ var draw = function (options) {
       completed = true;
       clipRect.transition().duration(1000).attr('width', x(lastYear));
     }
+  }
+
+  function pretty(number) {
+
+    var fragments = number.toString().split('.');
+    return fragments[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (fragments[1] ? ',' + fragments[1] : '');
   }
 
   return {

@@ -6,22 +6,24 @@
 }
 
 .axis {
-  path, line {
-    stroke: $black;
+  line {
+    stroke: $medium-grey;
+    stroke-width: 1;
   }
 }
 
 .line {
   stroke: $dark-grey;
-  stroke-width: 1;
+  stroke-width: 3;
 }
 
 .area {
-  fill: $light-grey;
+  fill: none;
 }
 
 .your-line {
   stroke: $br-blue;
-  stroke-width: 1;
-  stroke-dasharray: 5 5;
+  stroke-width: 3;
+  stroke-dasharray: 1 7;
+  stroke-linecap: round;
 }
