@@ -1,28 +1,82 @@
 [
   {
-    "name": "avg_income",
-    "format": "€",
+    "name": "test",
+    "format": "%",
+    "type": "percentage",
+    "values": [
+      { "year": 2004, "value": 10.4 },
+      { "year": 2005, "value": 11.2 },
+      { "year": 2006, "value": 10.1 },
+      { "year": 2007, "value": 8.5 },
+      { "year": 2008, "value": 7.4 },
+      { "year": 2009, "value": 7.6 },
+      { "year": 2010, "value": 7.0 },
+      { "year": 2011, "value": 5.8 },
+      { "year": 2012, "value": 5.4 },
+      { "year": 2015, "value": 4.6 },
+      { "year": 2016, "value": 4.1}
+    ]
+  }, {
+    "name": "arbeitslosenquote",
+    "format": "%",
+    "type": "percentage",
+    "values": [
+      { "year": 2002, "value": 8.6 },
+      { "year": 2003, "value": 9.7 },
+      { "year": 2004, "value": 10.4 },
+      { "year": 2005, "value": 11.2 },
+      { "year": 2006, "value": 10.1 },
+      { "year": 2007, "value": 8.5 },
+      { "year": 2008, "value": 7.4 },
+      { "year": 2009, "value": 7.6 },
+      { "year": 2010, "value": 7.0 },
+      { "year": 2011, "value": 5.8 },
+      { "year": 2012, "value": 5.4 },
+      { "year": 2013, "value": 5.2 },
+      { "year": 2014, "value": 5.0 },
+      { "year": 2015, "value": 4.6 },
+      { "year": 2016, "value": 4.1}
+    ]
+  }, {
+    "name": "hartz4-kinder",
+    "format": "",
     "type": "absolute",
     "values": [
-      { "year": 2002, "value": 2701 },
-      { "year": 2003, "value": 2783 },
-      { "year": 2004, "value": 2846 },
-      { "year": 2005, "value": 2901 },
-      { "year": 2006, "value": 2950 },
-      { "year": 2007, "value": 3023 },
-      { "year": 2008, "value": 3103 },
-      { "year": 2009, "value": 3141 },
-      { "year": 2010, "value": 3227 },
-      { "year": 2011, "value": 3311 },
-      { "year": 2012, "value": 3391 },
-      { "year": 2013, "value": 3449 },
-      { "year": 2014, "value": 3527 },
-      { "year": 2015, "value": 3612 },
-      { "year": 2016, "value": 3500 }
+      { "year": 2005, "value": 2150469 },
+      { "year": 2006, "value": 2244899 },
+      { "year": 2007, "value": 2189021 },
+      { "year": 2008, "value": 2048649 },
+      { "year": 2009, "value": 2060822 },
+      { "year": 2010, "value": 1973214 },
+      { "year": 2011, "value": 1879300 },
+      { "year": 2012, "value": 1866783 },
+      { "year": 2013, "value": 1886472 },
+      { "year": 2014, "value": 1906330 },
+      { "year": 2015, "value": 1931474}
     ]
-  },
-  {
-    "name": "debt",
+  }, {
+    "name": "superreiche",
+    "format": "$",
+    "type": "absolute",
+    "values": [
+      { "year": 2002, "value": 80.8 },
+      { "year": 2003, "value": 67.3 },
+      { "year": 2004, "value": 75.2 },
+      { "year": 2005, "value": 75.7 },
+      { "year": 2006, "value": 98.15 },
+      { "year": 2007, "value": 113.6 },
+      { "year": 2008, "value": 130.1 },
+      { "year": 2009, "value": 90.9 },
+      { "year": 2010, "value": 106.8 },
+      { "year": 2011, "value": 126.7 },
+      { "year": 2012, "value": 126.4 },
+      { "year": 2013, "value": 141.5 },
+      { "year": 2014, "value": 162.4 },
+      { "year": 2015, "value": 172.6 },
+      { "year": 2016, "value": 161.4}
+    ]
+  }, {
+    "name": "staatsverschuldung",
     "format": "€",
     "type": "absolute",
     "values": [
@@ -40,20 +94,129 @@
       { "year": 2013, "value": 2043344 },
       { "year": 2014, "value": 2043918 },
       { "year": 2015, "value": 2022562 },
-      { "year": 2016, "value": 2000000 }
+      { "year": 2016, "value": 2015000 }
     ]
-  },
-  {
-    "name": "test",
+  }, {
+    "name": "soldaten",
+    "format": "",
+    "type": "absolute",
+    "values": [
+      { "year": 2002, "value": 23756 },
+      { "year": 2003, "value": 22148 },
+      { "year": 2004, "value": 19378 },
+      { "year": 2005, "value": 22715 },
+      { "year": 2006, "value": 25302 },
+      { "year": 2007, "value": 24274 },
+      { "year": 2008, "value": 23070 },
+      { "year": 2009, "value": 25646 },
+      { "year": 2010, "value": 21380 },
+      { "year": 2011, "value": 21726 },
+      { "year": 2012, "value": 21341 },
+      { "year": 2013, "value": 22153 },
+      { "year": 2014, "value": 15509 },
+      { "year": 2015, "value": 12353 },
+      { "year": 2016, "value": 14560}
+    ]
+  }, {
+    "name": "abschiebungen",
+    "format": "",
+    "type": "absolute",
+    "values": [
+      { "year": 2002, "value": 29036 },
+      { "year": 2003, "value": 26487 },
+      { "year": 2004, "value": 23334 },
+      { "year": 2005, "value": 17773 },
+      { "year": 2006, "value": 13894 },
+      { "year": 2007, "value": 9617 },
+      { "year": 2008, "value": 8394 },
+      { "year": 2009, "value": 7830 },
+      { "year": 2010, "value": 7558 },
+      { "year": 2011, "value": 7917 },
+      { "year": 2012, "value": 7651 },
+      { "year": 2013, "value": 10198 },
+      { "year": 2014, "value": 10884 },
+      { "year": 2015, "value": 20888 },
+      { "year": 2016, "value": 25375}
+    ]
+  }, {
+    "name": "kernkraftwerke",
+    "format": "",
+    "type": "absolute",
+    "values": [
+      { "year": 2002, "value": 19 },
+      { "year": 2003, "value": 19 },
+      { "year": 2004, "value": 18 },
+      { "year": 2005, "value": 18 },
+      { "year": 2006, "value": 17 },
+      { "year": 2007, "value": 17 },
+      { "year": 2008, "value": 17 },
+      { "year": 2009, "value": 17 },
+      { "year": 2010, "value": 17 },
+      { "year": 2011, "value": 17 },
+      { "year": 2012, "value": 9 },
+      { "year": 2013, "value": 9 },
+      { "year": 2014, "value": 9 },
+      { "year": 2015, "value": 9 },
+      { "year": 2016, "value": 8}
+    ]
+  }, {
+    "name": "betreuungsquote",
     "format": "%",
     "type": "percentage",
     "values": [
-      { "year": 2004, "value": 2120 },
-      { "year": 2005, "value": 2901 },
-      { "year": 2009, "value": 3141 },
-      { "year": 2012, "value": 3391 },
-      { "year": 2013, "value": 3449 },
-      { "year": 2016, "value": 3500 }
+      { "year": 2002, "value": 10.2 },
+      { "year": 2003, "value": 10.4 },
+      { "year": 2006, "value": 13.6 },
+      { "year": 2007, "value": 15.5 },
+      { "year": 2008, "value": 17.6 },
+      { "year": 2009, "value": 20.2 },
+      { "year": 2010, "value": 23 },
+      { "year": 2011, "value": 25.2 },
+      { "year": 2012, "value": 27.6 },
+      { "year": 2013, "value": 29.3 },
+      { "year": 2014, "value": 32.3 },
+      { "year": 2015, "value": 32.9 },
+      { "year": 2016, "value": 32.7 }
+    ]
+  }, {
+    "name": "einbrueche",
+    "format": "",
+    "type": "absolute",
+    "values": [
+      { "year": 2002, "value": 130055 },
+      { "year": 2003, "value": 123280 },
+      { "year": 2004, "value": 124155 },
+      { "year": 2005, "value": 109736 },
+      { "year": 2006, "value": 106107 },
+      { "year": 2007, "value": 109128 },
+      { "year": 2008, "value": 108284 },
+      { "year": 2009, "value": 113800 },
+      { "year": 2010, "value": 121347 },
+      { "year": 2011, "value": 132595 },
+      { "year": 2012, "value": 144117 },
+      { "year": 2013, "value": 149500 },
+      { "year": 2014, "value": 152123 },
+      { "year": 2015, "value": 167136 }
+    ]
+  }, {
+    "name": "uebernachtungen",
+    "format": "",
+    "type": "absolute",
+    "values": [
+      { "year": 2002, "value": 317509965 },
+      { "year": 2003, "value": 315127500 },
+      { "year": 2004, "value": 338768840 },
+      { "year": 2005, "value": 343981015 },
+      { "year": 2006, "value": 351223970 },
+      { "year": 2007, "value": 361839734 },
+      { "year": 2008, "value": 369579835 },
+      { "year": 2009, "value": 368737280 },
+      { "year": 2010, "value": 380334025 },
+      { "year": 2011, "value": 393175575 },
+      { "year": 2012, "value": 407259922 },
+      { "year": 2013, "value": 411778932 },
+      { "year": 2014, "value": 424061525 },
+      { "year": 2015, "value": 436232801 }
     ]
   }
 ]

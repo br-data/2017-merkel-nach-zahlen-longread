@@ -136,7 +136,7 @@ var draw = function (options) {
       .scale(x)
       .orient('bottom')
       .tickSize(0)
-      .tickFormat(function (d, i) { return i % 2 ? '' : d; });
+      .tickFormat(function (d, i) { return  d; });
 
     yAxis = d3.svg.axis()
       .scale(y)
@@ -154,7 +154,7 @@ var draw = function (options) {
         .attr('dx', isMobile ? '-10px' : 0)
         .attr('dy', isMobile ? '0' : '12px')
         .attr('transform', isMobile ? 'rotate(-90)' : 'rotate(0)')
-        .style('text-anchor', 'start');
+        .style('text-anchor', isMobile ? 'end' : 'start');
 
     yAxisEl
       .attr('transform', 'translate(' + width + ',0)')
