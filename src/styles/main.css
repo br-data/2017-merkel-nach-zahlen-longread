@@ -621,6 +621,7 @@ footer {
   stroke-width: 1; }
 
 .line {
+  fill: none;
   stroke: #889;
   stroke-width: 3; }
 
@@ -628,6 +629,7 @@ footer {
   fill: none; }
 
 .your-line {
+  fill: none;
   stroke: #007bc2;
   stroke-width: 3;
   stroke-dasharray: 1 7;

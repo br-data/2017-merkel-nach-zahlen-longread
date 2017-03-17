@@ -13,6 +13,7 @@
 }
 
 .line {
+  fill: none;
   stroke: $dark-grey;
   stroke-width: 3;
 }
@@ -22,6 +23,7 @@
 }
 
 .your-line {
+  fill: none;
   stroke: $br-blue;
   stroke-width: 3;
   stroke-dasharray: 1 7;

@@ -14,6 +14,7 @@ function init() {
     for (var i = 0; i < $draw.length; i++) {
 
       var d = new draw({nodeId: $draw[i].id});
+
       d.init();
       $d.push(d);
     }

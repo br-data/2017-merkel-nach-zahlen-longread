@@ -33,11 +33,11 @@ var draw = function (options) {
 
       if (error) { throw error; }
 
-      var datName = options.nodeId;
+      var indicator = options.nodeId;
 
-      data = res.filter(function (d) { return d.name == datName; })[0];
+      data = res.filter(function (d) { return d.name == indicator; })[0];
 
-      yMax = d3.max(data.values, function (d) { return +d.value; }) * 1.333;
+      yMax = d3.max(data.values, function (d) { return +d.value; }) * 1.5;
 
       years = data.values.map(function (d) {
         return d.year;
@@ -48,7 +48,7 @@ var draw = function (options) {
       yourData = data.values
         .map(function (d) {
 
-          return { year: d.year, value: d.value, defined: 0 };
+          return { year: d.year, value: d.value, defined: false };
         })
         .filter(function (d) {
 
@@ -67,8 +67,10 @@ var draw = function (options) {
   function render() {
 
     container = document.getElementById(options.nodeId);
-    // dectivate scrolling for mobile devices
-    container.addEventListener('touchmove', function(e) {
+
+    // Dectivate scrolling for mobile devices
+    container.addEventListener('touchmove', function (e) {
+
       e.preventDefault();
     }, false);
 
@@ -86,7 +88,7 @@ var draw = function (options) {
       .domain([0, yMax]);
 
     area = d3.svg.area();
-    line = d3.svg.area();
+    line = d3.svg.line();
 
     xAxisEl = group.append('g')
       .attr('class', 'x axis');
@@ -94,11 +96,8 @@ var draw = function (options) {
     yAxisEl = group.append('g')
       .attr('class', 'y axis');
 
-    clipRect = group.append('clipPath')
-      .attr('id', 'clip').append('rect');
-
     correctSel = group.append('g')
-      .attr('clip-path', 'url(#clip)');
+      .attr('class', 'correct');
 
     correctSel.append('path')
       .attr('class', 'area');
@@ -108,7 +107,6 @@ var draw = function (options) {
 
     yourDataSel = group.append('path')
       .attr('class', 'your-line');
-
 
     scale();
   }
@@ -136,7 +134,7 @@ var draw = function (options) {
       .scale(x)
       .orient('bottom')
       .tickSize(0)
-      .tickFormat(function (d, i) { return  d; });
+      .tickFormat(function (d) { return  d; });
 
     yAxis = d3.svg.axis()
       .scale(y)
@@ -166,15 +164,11 @@ var draw = function (options) {
       .y1(height);
 
     line
+      .interpolate('linear')
       .x(function (d) { return x(+d.year); })
       .y(function (d) { return y(+d.value); });
 
-    clipRect
-      .attr('width', function () {
-
-        return !completed ? x(2005) : x(d3.max(data.values, function (d) { return d.year; }));
-      })
-      .attr('height', height);
+    // Draw lines
 
     correctSel.selectAll('path.area')
       .attr('d', area(data.values));
@@ -191,14 +185,16 @@ var draw = function (options) {
       .attr('d', function () {
 
         return line(yourData.filter(function (d) {
-          return d.defined == 1;
+
+          return d.defined;
         }));
       });
 
-    if (!completed && yourData[yourData.length - 1].defined == 1) {
+    if (!completed && yourData[yourData.length - 1].defined) {
 
+      // Show lines
+      console.log('Finished');
       completed = true;
-      clipRect.transition().duration(1000).attr('width', x(lastYear));
     }
   }
 
