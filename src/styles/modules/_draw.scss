@@ -1,31 +1,26 @@
-.drawing {
+.draw {
   fill: $dark-grey;
   font-size: 12px;
   font-weight: 400;
-  // overflow: visible;
-}
 
-.axis {
-  line {
-    stroke: $medium-grey;
-    stroke-width: 1;
+  .axis {
+
+    line {
+      stroke: $medium-grey;
+      stroke-width: 1;
+    }
   }
-}
 
-.line {
-  fill: none;
-  stroke: $dark-grey;
-  stroke-width: 3;
-}
+  .lines path {
+    fill: none;
+    stroke: $dark-grey;
+    stroke-width: 3;
 
-.area {
-  fill: none;
-}
-
-.your-line {
-  fill: none;
-  stroke: $br-blue;
-  stroke-width: 3;
-  stroke-dasharray: 1 7;
-  stroke-linecap: round;
+    &.user {
+      stroke: $br-blue;
+      stroke-width: 3;
+      stroke-dasharray: 1 7;
+      stroke-linecap: round;
+    }
+  }
 }

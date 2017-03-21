@@ -611,28 +611,21 @@ footer {
     margin-left: 15px;
     width: 138px; }
 
-.drawing {
+.draw {
   fill: #889;
   font-size: 12px;
   font-weight: 400; }
-
-.axis line {
-  stroke: #ccd;
-  stroke-width: 1; }
-
-.line {
-  fill: none;
-  stroke: #889;
-  stroke-width: 3; }
-
-.area {
-  fill: none; }
-
-.your-line {
-  fill: none;
-  stroke: #007bc2;
-  stroke-width: 3;
-  stroke-dasharray: 1 7;
-  stroke-linecap: round; }
+  .draw .axis line {
+    stroke: #ccd;
+    stroke-width: 1; }
+  .draw .lines path {
+    fill: none;
+    stroke: #889;
+    stroke-width: 3; }
+    .draw .lines path.user {
+      stroke: #007bc2;
+      stroke-width: 3;
+      stroke-dasharray: 1 7;
+      stroke-linecap: round; }
 
 /*# sourceMappingURL=main.css.map */

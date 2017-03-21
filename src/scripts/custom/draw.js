@@ -1,9 +1,11 @@
 var draw = function (options) {
 
-  var container, svg, group, clipRect, correctSel, yourDataSel, yourData, completed, xAxisEl, yAxisEl, xAxis, yAxis, yMax, area, line, x, y, data;
+  var container, svg, group, lines, previousLine, currentLine, userLine, completed, xAxisEl, yAxisEl, xAxis, yAxis, yMax, area, line, x, y, isMobile;
+
+  var data, userData, previousData, currentData;
 
   var width, height, margin = { bottom: 50, left: 5, right: 100, top: 20 };
-  var isMobile, breakpoint = 561;
+  var breakpoint = 561;
 
   var years = [];
   var lastYear;
@@ -15,7 +17,7 @@ var draw = function (options) {
       var year = Math.max(2006, Math.min(2017, x.invert(pos[0])));
       var value = Math.max(0, Math.min(y.domain()[1], y.invert(pos[1])));
 
-      yourData.forEach(function (d) {
+      userData.forEach(function (d) {
 
         if (Math.abs(d.year - year) < .5) {
 
@@ -24,7 +26,7 @@ var draw = function (options) {
         }
       });
 
-      drawLine();
+      update();
     });
 
   function init() {
@@ -37,15 +39,25 @@ var draw = function (options) {
 
       data = res.filter(function (d) { return d.name == indicator; })[0];
 
-      yMax = d3.max(data.values, function (d) { return +d.value; }) * 1.5;
+      yMax = d3.max(data.values, function (d) { return d.value; }) * 1.5;
 
-      years = data.values.map(function (d) {
-        return d.year;
-      }).sort();
+      years = data.values.map(function (d) { return d.year; }).sort();
 
       lastYear = years[years.length - 1];
 
-      yourData = data.values
+      previousData = data.values
+        .filter(function (d) {
+
+          return d.year <= 2005;
+        });
+
+      currentData = data.values
+        .filter(function (d) {
+
+          return d.year > 2005;
+        });
+
+      userData = data.values
         .map(function (d) {
 
           return { year: d.year, value: d.value, defined: false };
@@ -75,7 +87,7 @@ var draw = function (options) {
     }, false);
 
     svg = d3.select(container).append('svg')
-      .attr('class', 'drawing');
+      .attr('class', 'draw');
 
     svg.call(drag);
 
@@ -87,7 +99,6 @@ var draw = function (options) {
     y = d3.scale.linear()
       .domain([0, yMax]);
 
-    area = d3.svg.area();
     line = d3.svg.line();
 
     xAxisEl = group.append('g')
@@ -96,17 +107,17 @@ var draw = function (options) {
     yAxisEl = group.append('g')
       .attr('class', 'y axis');
 
-    correctSel = group.append('g')
-      .attr('class', 'correct');
+    lines = group.append('g')
+      .attr('class', 'lines');
 
-    correctSel.append('path')
-      .attr('class', 'area');
+    previousLine = lines.append('path')
+      .attr('class', 'previous');
 
-    correctSel.append('path')
-      .attr('class', 'line');
+    currentLine = lines.append('path')
+      .attr('class', 'current');
 
-    yourDataSel = group.append('path')
-      .attr('class', 'your-line');
+    userLine = lines.append('path')
+      .attr('class', 'user');
 
     scale();
   }
@@ -158,42 +169,33 @@ var draw = function (options) {
       .attr('transform', 'translate(' + width + ',0)')
       .call(yAxis);
 
-    area
-      .x(function (d) { return x(+d.year); })
-      .y0(function (d) { return y(+d.value); })
-      .y1(height);
-
     line
       .interpolate('linear')
-      .x(function (d) { return x(+d.year); })
-      .y(function (d) { return y(+d.value); });
+      .x(function (d) { return x(d.year); })
+      .y(function (d) { return y(d.value); });
 
-    // Draw lines
+    previousLine
+      .attr('d', line(previousData));
 
-    correctSel.selectAll('path.area')
-      .attr('d', area(data.values));
-
-    correctSel.selectAll('path.line')
-      .attr('d', line(data.values));
-
-    drawLine();
+    update();
   }
 
-  function drawLine() {
+  function update() {
 
-    yourDataSel
+    userLine
       .attr('d', function () {
 
-        return line(yourData.filter(function (d) {
+        return line(userData.filter(function (d) {
 
           return d.defined;
         }));
       });
 
-    if (!completed && yourData[yourData.length - 1].defined) {
+    if (!completed && userData[userData.length - 1].defined) {
 
       // Show lines
       console.log('Finished');
+
       completed = true;
     }
   }
