@@ -20,34 +20,43 @@
     fill: $dark-grey;
     stroke: none;
     stroke-width: 0;
-
-    &.previous {
-      fill: $red;
-    }
-
-    &.current {
-      fill: $black;
-    }
-
-    &.user {
-      fill: $dark-grey;
-    }
   }
 
   path {
     fill: none;
     stroke: $dark-grey;
     stroke-width: 3;
+  }
 
-    &.previous {
+  .previous {
+
+    circle {
+      fill: $red;
+    }
+
+    path {
       stroke: $red;
     }
+  }
 
-    &.current {
-      stroke: $black;
+  .current {
+
+    circle {
+      fill: $black;
     }
 
-    &.user {
+    path {
+      stroke: $black;
+    }
+  }
+
+  .user {
+
+    circle {
+      fill: $dark-grey;
+    }
+
+    path {
       stroke: $dark-grey;
       stroke-width: 3;
       stroke-dasharray: 1 7;

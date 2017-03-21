@@ -1,14 +1,21 @@
 var draw = function (options) {
 
-  var container, svg, group, lines, previousLine, currentLine, userLine, completed, drag, xAxisEl, yAxisEl, xAxis, yAxis, yMax, line, x, y, isMobile;
-
-  var data, userData, previousData, currentData;
-
   var width, height, margin = { bottom: 50, left: 5, right: 100, top: 20 };
   var breakpoint = 561;
 
-  var years = [];
-  var lastYear;
+  var container, svg, defs, group, line, drag, clipRect;
+
+  var x, xMin, xMax, xAxis, xAxisEl; // Years
+  var y, yMin, yMax, yAxis, yAxisEl; // Values
+
+  var previousData, previousGroup, previousLine, previousDots; // Schröder years
+  var currentData, currentGroup, currentLine, currentDots; // Merkel years
+  var userData, userGroup, userLine; // User guess
+
+  var completed = false;
+  var isMobile = false;
+
+  var data;
 
   function init() {
 
@@ -18,11 +25,11 @@ var draw = function (options) {
 
       data = res.filter(function (d) { return d.name == options.nodeId; })[0];
 
+      yMin = 0;
       yMax = d3.max(data.values, function (d) { return d.value; }) * 1.5;
 
-      years = data.values.map(function (d) { return d.year; }).sort();
-
-      lastYear = years[years.length - 1];
+      xMin = d3.min(data.values, function (d) { return d.year; });
+      xMax = d3.max(data.values, function (d) { return d.year; });
 
       previousData = data.values.filter(function (d) {
 
@@ -61,15 +68,20 @@ var draw = function (options) {
     svg = d3.select(container).append('svg')
       .attr('class', 'draw');
 
-    group = svg.append('g');
+    defs = svg.append('defs');
+
+    clipRect = defs.append('clipPath')
+      .attr('id', 'clip').append('rect');
 
     x = d3.scale.linear()
-      .domain([years[0], lastYear]);
+      .domain([xMin, xMax]);
 
     y = d3.scale.linear()
-      .domain([0, yMax]);
+      .domain([yMin, yMax]);
 
     line = d3.svg.line();
+
+    group = svg.append('g');
 
     xAxisEl = group.append('g')
       .attr('class', 'x axis');
@@ -77,17 +89,31 @@ var draw = function (options) {
     yAxisEl = group.append('g')
       .attr('class', 'y axis');
 
-    lines = group.append('g')
-      .attr('class', 'lines');
+    currentGroup = group.append('g')
+      .attr('class', 'current')
+      .attr('clip-path', 'url(#clip)');
 
-    previousLine = lines.append('path')
+    currentLine = currentGroup.append('path');
+
+    currentDots = currentGroup.selectAll('dot')
+        .data(currentData)
+        .enter()
+      .append('circle');
+
+    previousGroup = group.append('g')
       .attr('class', 'previous');
 
-    currentLine = lines.append('path')
-      .attr('class', 'current');
+    previousLine = previousGroup.append('path');
 
-    userLine = lines.append('path')
+    previousDots = previousGroup.selectAll('dot')
+        .data(previousData)
+        .enter()
+      .append('circle');
+
+    userGroup = group.append('g')
       .attr('class', 'user');
+
+    userLine = userGroup.append('path');
 
     drag = d3.behavior.drag()
       .on('drag', handleDrag);
@@ -144,22 +170,38 @@ var draw = function (options) {
       .attr('transform', 'translate(' + width + ',0)')
       .call(yAxis);
 
+    clipRect
+      .attr('width', function () {
+
+        if (completed) {
+
+          return x(d3.max(data.values, function (d) { return d.year; }));
+        }  else {
+
+          return x(previousData[previousData.length - 1].year);
+        }
+      })
+      .attr('height', height);
+
     line
       .interpolate('linear')
       .x(function (d) { return x(d.year); })
       .y(function (d) { return y(d.value); });
 
+    currentLine.attr('d', line(currentData));
+
+    currentDots
+      .attr('r', 4)
+      .attr('cx', function (d) { return x(d.year); })
+      .attr('cy', function (d) { return y(d.value); });
+
     previousLine
       .attr('d', line(previousData));
 
-    group.selectAll('dot')
-        .data(previousData)
-        .enter()
-      .append('circle')
-        .attr('class', 'previous')
-        .attr('r', 4)
-        .attr('cx', function (d) { return x(d.year); })
-        .attr('cy', function (d) { return y(d.value); });
+    previousDots
+      .attr('r', 4)
+      .attr('cx', function (d) { return x(d.year); })
+      .attr('cy', function (d) { return y(d.value); });
 
     update();
   }
@@ -177,16 +219,8 @@ var draw = function (options) {
 
     if (!completed && userData[userData.length - 1].value) {
 
-      currentLine.attr('d', line(currentData));
-
-      group.selectAll('dot')
-        .data(currentData)
-        .enter()
-      .append('circle')
-        .attr('class', 'current')
-        .attr('r', 4)
-        .attr('cx', function (d) { return x(d.year); })
-        .attr('cy', function (d) { return y(d.value); });
+      clipRect
+        .transition().duration(1000).attr('width', x(xMax));
 
       completed = true;
     }

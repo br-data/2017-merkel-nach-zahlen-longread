@@ -625,24 +625,24 @@ footer {
     fill: #889;
     stroke: none;
     stroke-width: 0; }
-    .draw circle.previous {
-      fill: #e2001a; }
-    .draw circle.current {
-      fill: #000; }
-    .draw circle.user {
-      fill: #889; }
   .draw path {
     fill: none;
     stroke: #889;
     stroke-width: 3; }
-    .draw path.previous {
-      stroke: #e2001a; }
-    .draw path.current {
-      stroke: #000; }
-    .draw path.user {
-      stroke: #889;
-      stroke-width: 3;
-      stroke-dasharray: 1 7;
-      stroke-linecap: round; }
+  .draw .previous circle {
+    fill: #e2001a; }
+  .draw .previous path {
+    stroke: #e2001a; }
+  .draw .current circle {
+    fill: #000; }
+  .draw .current path {
+    stroke: #000; }
+  .draw .user circle {
+    fill: #889; }
+  .draw .user path {
+    stroke: #889;
+    stroke-width: 3;
+    stroke-dasharray: 1 7;
+    stroke-linecap: round; }
 
 /*# sourceMappingURL=main.css.map */
