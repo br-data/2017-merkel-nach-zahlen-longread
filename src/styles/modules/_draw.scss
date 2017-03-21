@@ -9,9 +9,32 @@
       stroke: $medium-grey;
       stroke-width: 1;
     }
+
+    path {
+      stroke: none;
+      stroke-width: 0;
+    }
   }
 
-  .lines path {
+  circle {
+    fill: $dark-grey;
+    stroke: none;
+    stroke-width: 0;
+
+    &.previous {
+      fill: $red;
+    }
+
+    &.current {
+      fill: $black;
+    }
+
+    &.user {
+      fill: $dark-grey;
+    }
+  }
+
+  path {
     fill: none;
     stroke: $dark-grey;
     stroke-width: 3;

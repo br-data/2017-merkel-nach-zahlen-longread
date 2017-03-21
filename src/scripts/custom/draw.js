@@ -1,6 +1,6 @@
 var draw = function (options) {
 
-  var container, svg, group, lines, previousLine, currentLine, userLine, completed, xAxisEl, yAxisEl, xAxis, yAxis, yMax, area, line, x, y, isMobile;
+  var container, svg, group, lines, previousLine, currentLine, userLine, completed, xAxisEl, yAxisEl, xAxis, yAxis, yMax, line, x, y, isMobile;
 
   var data, userData, previousData, currentData;
 
@@ -177,6 +177,15 @@ var draw = function (options) {
     previousLine
       .attr('d', line(previousData));
 
+    group.selectAll('dot')
+        .data(previousData)
+        .enter()
+      .append('circle')
+        .attr('class', 'previous')
+        .attr('r', 4)
+        .attr('cx', function (d) { return x(d.year); })
+        .attr('cy', function (d) { return y(d.value); });
+
     //update();
   }
 
@@ -195,18 +204,17 @@ var draw = function (options) {
 
       // Show lines
       console.log('Finished');
-      var currentLength;
 
       currentLine.attr('d', line(currentData));
 
-      currentLength = currentLine.node().getTotalLength();
-
-      currentLine.attr('stroke-dasharray', currentLength + ' ' + currentLength)
-        .attr('stroke-dashoffset', currentLength)
-        .transition()
-          .duration(1000)
-          .ease('linear')
-          .attr('stroke-dashoffset', 0);
+      group.selectAll('dot')
+        .data(currentData)
+        .enter()
+      .append('circle')
+        .attr('class', 'current')
+        .attr('r', 4)
+        .attr('cx', function (d) { return x(d.year); })
+        .attr('cy', function (d) { return y(d.value); });
 
       completed = true;
     }
