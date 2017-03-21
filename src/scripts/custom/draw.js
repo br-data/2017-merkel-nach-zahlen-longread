@@ -1,6 +1,6 @@
 var draw = function (options) {
 
-  var container, svg, group, lines, previousLine, currentLine, userLine, completed, xAxisEl, yAxisEl, xAxis, yAxis, yMax, line, x, y, isMobile;
+  var container, svg, group, lines, previousLine, currentLine, userLine, completed, drag, xAxisEl, yAxisEl, xAxis, yAxis, yMax, line, x, y, isMobile;
 
   var data, userData, previousData, currentData;
 
@@ -10,34 +10,13 @@ var draw = function (options) {
   var years = [];
   var lastYear;
 
-  var drag = d3.behavior.drag()
-    .on('drag', function () {
-
-      var pos = d3.mouse(this);
-      var year = Math.max(2006, Math.min(2017, x.invert(pos[0])));
-      var value = Math.max(0, Math.min(y.domain()[1], y.invert(pos[1])));
-
-      userData.forEach(function (d) {
-
-        if (Math.abs(d.year - year) < .5) {
-
-          d.value = value;
-          d.defined = true;
-        }
-      });
-
-      update();
-    });
-
   function init() {
 
     d3.json('data/data.json', function (error, res) {
 
       if (error) { throw error; }
 
-      var indicator = options.nodeId;
-
-      data = res.filter(function (d) { return d.name == indicator; })[0];
+      data = res.filter(function (d) { return d.name == options.nodeId; })[0];
 
       yMax = d3.max(data.values, function (d) { return d.value; }) * 1.5;
 
@@ -45,29 +24,22 @@ var draw = function (options) {
 
       lastYear = years[years.length - 1];
 
-      previousData = data.values
-        .filter(function (d) {
+      previousData = data.values.filter(function (d) {
 
-          return d.year <= 2005;
-        });
+        return d.year <= 2005;
+      });
 
-      currentData = data.values
-        .filter(function (d) {
+      currentData = data.values.filter(function (d) {
 
-          return d.year >= 2005;
-        });
+        return d.year >= 2005;
+      });
 
-      userData = data.values
-        .map(function (d) {
+      userData = clone(currentData).map(function (d, i) {
 
-          return { year: d.year, value: d.value, defined: false };
-        })
-        .filter(function (d) {
+        d.value = i ? undefined : d.value;
 
-          if (d.year == 2005) { d.defined = true; }
-
-          return d.year >= 2005;
-        });
+        return d;
+      });
 
       completed = false;
 
@@ -88,8 +60,6 @@ var draw = function (options) {
 
     svg = d3.select(container).append('svg')
       .attr('class', 'draw');
-
-    svg.call(drag);
 
     group = svg.append('g');
 
@@ -118,6 +88,11 @@ var draw = function (options) {
 
     userLine = lines.append('path')
       .attr('class', 'user');
+
+    drag = d3.behavior.drag()
+      .on('drag', handleDrag);
+
+    svg.call(drag);
 
     scale();
   }
@@ -186,7 +161,7 @@ var draw = function (options) {
         .attr('cx', function (d) { return x(d.year); })
         .attr('cy', function (d) { return y(d.value); });
 
-    //update();
+    update();
   }
 
   function update() {
@@ -196,14 +171,11 @@ var draw = function (options) {
 
         return line(userData.filter(function (d) {
 
-          return d.defined;
+          return d.value;
         }));
       });
 
-    if (!completed && userData[userData.length - 1].defined) {
-
-      // Show lines
-      console.log('Finished');
+    if (!completed && userData[userData.length - 1].value) {
 
       currentLine.attr('d', line(currentData));
 
@@ -220,10 +192,33 @@ var draw = function (options) {
     }
   }
 
+  function handleDrag() {
+
+    var pos = d3.mouse(this);
+    var year = Math.max(2006, Math.min(2017, x.invert(pos[0])));
+    var value = Math.max(0, Math.min(y.domain()[1], y.invert(pos[1])));
+
+    userData.forEach(function (d) {
+
+      if (Math.abs(d.year - year) < 0.5) {
+
+        d.value = value;
+      }
+    });
+
+    update();
+  }
+
   function pretty(number) {
 
     var fragments = number.toString().split('.');
     return fragments[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (fragments[1] ? ',' + fragments[1] : '');
+  }
+
+  // Clone a JavaScript object. Doesn't work for functions.
+  function clone(object) {
+
+    return JSON.parse(JSON.stringify(object));
   }
 
   return {
