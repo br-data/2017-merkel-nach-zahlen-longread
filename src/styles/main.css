@@ -622,8 +622,12 @@ footer {
     fill: none;
     stroke: #889;
     stroke-width: 3; }
+    .draw .lines path.previous {
+      stroke: #e2001a; }
+    .draw .lines path.current {
+      stroke: #000; }
     .draw .lines path.user {
-      stroke: #007bc2;
+      stroke: #889;
       stroke-width: 3;
       stroke-dasharray: 1 7;
       stroke-linecap: round; }

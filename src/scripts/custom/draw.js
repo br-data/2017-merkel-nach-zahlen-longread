@@ -54,7 +54,7 @@ var draw = function (options) {
       currentData = data.values
         .filter(function (d) {
 
-          return d.year > 2005;
+          return d.year >= 2005;
         });
 
       userData = data.values
@@ -177,7 +177,7 @@ var draw = function (options) {
     previousLine
       .attr('d', line(previousData));
 
-    update();
+    //update();
   }
 
   function update() {
@@ -195,6 +195,18 @@ var draw = function (options) {
 
       // Show lines
       console.log('Finished');
+      var currentLength;
+
+      currentLine.attr('d', line(currentData));
+
+      currentLength = currentLine.node().getTotalLength();
+
+      currentLine.attr('stroke-dasharray', currentLength + ' ' + currentLength)
+        .attr('stroke-dashoffset', currentLength)
+        .transition()
+          .duration(1000)
+          .ease('linear')
+          .attr('stroke-dashoffset', 0);
 
       completed = true;
     }
