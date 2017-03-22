@@ -1,48 +1,47 @@
-document.addEventListener('DOMContentLoaded', init);
-//window.addEventListener('load', init);
+document.addEventListener('DOMContentLoaded', init, false);
 
 function init() {
 
-  var timeout;
+  var timeout, drawElements, drawInstances = [];
+
+  // Initialize navigation handler
+  navigation.init();
 
   // Find all draw areas
-  var $draw = document.getElementsByClassName('draw');
-  var $d = [];
+  drawElements = document.getElementsByClassName('draw');
 
-  if ($draw) {
+  // Get data
+  d3.json('data/data.json', handleData);
 
-    for (var i = 0; i < $draw.length; i++) {
+  function handleData(error, data) {
 
-      var d = new draw({nodeId: $draw[i].id});
+    if (error) { throw error; }
 
-      d.init();
-      $d.push(d);
+    if (drawElements) {
+
+      for (var i = 0; i < drawElements.length; i++) {
+
+        var newDraw = new draw({nodeId: drawElements[i].id});
+
+        // Initialize DrawIt
+        newDraw.init(data);
+        drawInstances.push(draw);
+      }
     }
+
+    document.addEventListener('resize', handleResize, false);
   }
 
-  window.onresize = function () {
+  function handleResize() {
 
     clearTimeout(timeout);
+
     timeout = setTimeout(function () {
 
-    for (var i = 0; i < $d.length; i++) {
+      for (var i = 0; i < drawInstances.length; i++) {
 
-      $d[i].scale();
-    }
+        drawInstances[i].scale();
+      }
     }, 200);
-  };
-
-  window.onorientationchange = function () {
-
-    clearTimeout(timeout);
-    timeout = setTimeout(function () {
-
-    for (var i = 0; i < $d.length; i++) {
-
-      $d[i].scale();
-    }
-    }, 200);
-  };
-
-  navigation.init();
+  }
 }

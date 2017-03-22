@@ -17,42 +17,36 @@ var draw = function (options) {
 
   var data;
 
-  function init() {
+  function init(json) {
 
-    d3.json('data/data.json', function (error, res) {
+    data = json.filter(function (d) { return d.name == options.nodeId; })[0];
 
-      if (error) { throw error; }
+    yMin = 0;
+    yMax = d3.max(data.values, function (d) { return d.value; }) * 1.5;
 
-      data = res.filter(function (d) { return d.name == options.nodeId; })[0];
+    xMin = d3.min(data.values, function (d) { return d.year; });
+    xMax = d3.max(data.values, function (d) { return d.year; });
 
-      yMin = 0;
-      yMax = d3.max(data.values, function (d) { return d.value; }) * 1.5;
+    previousData = data.values.filter(function (d) {
 
-      xMin = d3.min(data.values, function (d) { return d.year; });
-      xMax = d3.max(data.values, function (d) { return d.year; });
-
-      previousData = data.values.filter(function (d) {
-
-        return d.year <= 2005;
-      });
-
-      currentData = data.values.filter(function (d) {
-
-        return d.year >= 2005;
-      });
-
-      userData = clone(currentData).map(function (d, i) {
-
-        d.value = i ? undefined : d.value;
-
-        return d;
-      });
-
-      completed = false;
-
-      render();
+      return d.year <= 2005;
     });
 
+    currentData = data.values.filter(function (d) {
+
+      return d.year >= 2005;
+    });
+
+    userData = clone(currentData).map(function (d, i) {
+
+      d.value = i ? undefined : d.value;
+
+      return d;
+    });
+
+    completed = false;
+
+    render();
   }
 
   function render() {
@@ -66,7 +60,6 @@ var draw = function (options) {
     }, false);
 
     svg = d3.select(container).append('svg')
-      .attr('class', 'draw')
       .attr('version', '1.1')
       .attr('baseProfile', 'full')
       .attr('xmlns', 'http://www.w3.org/2000/svg')
@@ -76,7 +69,8 @@ var draw = function (options) {
     defs = svg.append('defs');
 
     clipRect = defs.append('clipPath')
-      .attr('id', 'clip').append('rect');
+        .attr('id', 'clip')
+      .append('rect');
 
     x = d3.scale.linear()
       .domain([xMin, xMax]);
@@ -93,6 +87,11 @@ var draw = function (options) {
 
     yAxisEl = group.append('g')
       .attr('class', 'y axis');
+
+    userGroup = group.append('g')
+      .attr('class', 'user');
+
+    userLine = userGroup.append('path');
 
     currentGroup = group.append('g')
       .attr('class', 'current')
@@ -114,11 +113,6 @@ var draw = function (options) {
         .data(previousData)
         .enter()
       .append('circle');
-
-    userGroup = group.append('g')
-      .attr('class', 'user');
-
-    userLine = userGroup.append('path');
 
     drag = d3.behavior.drag()
       .on('drag', handleDrag);
@@ -169,7 +163,7 @@ var draw = function (options) {
         .attr('dx', isMobile ? '-10px' : 0)
         .attr('dy', isMobile ? '0' : '12px')
         .attr('transform', isMobile ? 'rotate(-90)' : 'rotate(0)')
-        .style('text-anchor', isMobile ? 'end' : 'start');
+        .attr('text-anchor', isMobile ? 'end' : 'start');
 
     yAxisEl
       .attr('transform', 'translate(' + width + ',0)')
@@ -180,7 +174,7 @@ var draw = function (options) {
 
         if (completed) {
 
-          return x(d3.max(data.values, function (d) { return d.year; }));
+          return x(xMax) + margin.right;
         }  else {
 
           return x(previousData[previousData.length - 1].year);
@@ -225,7 +219,9 @@ var draw = function (options) {
     if (!completed && userData[userData.length - 1].value) {
 
       clipRect
-        .transition().duration(1000).attr('width', x(xMax));
+      .transition()
+        .duration(1000)
+        .attr('width', x(xMax) + margin.right);
 
       completed = true;
     }
