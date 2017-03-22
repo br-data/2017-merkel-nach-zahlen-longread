@@ -15,17 +15,19 @@ function init() {
 
   function handleData(error, data) {
 
+    console.log('handleData');
+
     if (error) { throw error; }
 
     if (drawElements) {
 
       for (var i = 0; i < drawElements.length; i++) {
 
-        var newDraw = new draw({nodeId: drawElements[i].id});
+        var newDraw = new draw({ id: drawElements[i].id });
 
         // Initialize DrawIt
         newDraw.init(data);
-        drawInstances.push(draw);
+        drawInstances.push(newDraw);
       }
     }
 
@@ -33,6 +35,8 @@ function init() {
   }
 
   function handleResize() {
+
+    console.log('handleResize');
 
     clearTimeout(timeout);
 

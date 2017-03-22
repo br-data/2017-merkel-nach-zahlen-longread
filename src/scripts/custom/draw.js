@@ -19,7 +19,7 @@ var draw = function (options) {
 
   function init(json) {
 
-    data = json.filter(function (d) { return d.name == options.nodeId; })[0];
+    data = json.filter(function (d) { return d.name == options.id; })[0];
 
     yMin = 0;
     yMax = d3.max(data.values, function (d) { return d.value; }) * 1.5;
@@ -51,7 +51,7 @@ var draw = function (options) {
 
   function render() {
 
-    container = document.getElementById(options.nodeId);
+    container = document.getElementById(options.id);
 
     // Dectivate scrolling for mobile devices
     container.addEventListener('touchmove', function (e) {
@@ -69,8 +69,10 @@ var draw = function (options) {
     defs = svg.append('defs');
 
     clipRect = defs.append('clipPath')
-        .attr('id', 'clip')
-      .append('rect');
+        .attr('id', 'clip-' + options.id)
+      .append('rect')
+        .attr('x', 0)
+        .attr('y', 0);
 
     x = d3.scale.linear()
       .domain([xMin, xMax]);
@@ -95,7 +97,7 @@ var draw = function (options) {
 
     currentGroup = group.append('g')
       .attr('class', 'current')
-      .attr('clip-path', 'url(#clip)');
+      .attr('clip-path', 'url(#clip-' + options.id + ')');
 
     currentLine = currentGroup.append('path');
 
@@ -218,8 +220,10 @@ var draw = function (options) {
 
     if (!completed && userData[userData.length - 1].value) {
 
+      console.log('handleComplete', clipRect);
+
       clipRect
-      .transition()
+        .transition()
         .duration(1000)
         .attr('width', x(xMax) + margin.right);
 
