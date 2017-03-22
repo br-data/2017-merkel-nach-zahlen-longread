@@ -1,31 +1,29 @@
 var draw = function (options) {
 
-  var width, height, margin = { bottom: 50, left: 5, right: 100, top: 20 };
-  var breakpoint = 561;
-
-  var container, svg, defs, group, line, drag, clipRect;
+  var container, svg, defs, group, line, drag, clipRect, background;
 
   var x, xMin, xMax, xAxis, xAxisEl; // Years
   var y, yMin, yMax, yAxis, yAxisEl; // Values
 
+  var data;
   var previousData, previousGroup, previousLine, previousDots; // Schröder years
   var currentData, currentGroup, currentLine, currentDots; // Merkel years
-  var userData, userGroup, userLine; // User guess
+  var userData, userGroup, userLine, userDot; // User guess
 
-  var completed = false;
-  var isMobile = false;
+  var state = {
 
-  var data;
+    started: false,
+    completed: false,
+    evaluated: false,
+    mobile: false
+  };
+
+  var width, height, margin = { bottom: 50, left: 5, right: 100, top: 20 };
+  var breakpoint = 561;
 
   function init(json) {
 
     data = json.filter(function (d) { return d.name == options.id; })[0];
-
-    yMin = 0;
-    yMax = d3.max(data.values, function (d) { return d.value; }) * 1.5;
-
-    xMin = d3.min(data.values, function (d) { return d.year; });
-    xMax = d3.max(data.values, function (d) { return d.year; });
 
     previousData = data.values.filter(function (d) {
 
@@ -44,20 +42,12 @@ var draw = function (options) {
       return d;
     });
 
-    completed = false;
-
     render();
   }
 
   function render() {
 
     container = document.getElementById(options.id);
-
-    // Dectivate scrolling for mobile devices
-    container.addEventListener('touchmove', function (e) {
-
-      e.preventDefault();
-    }, false);
 
     svg = d3.select(container).append('svg')
       .attr('version', '1.1')
@@ -70,9 +60,13 @@ var draw = function (options) {
 
     clipRect = defs.append('clipPath')
         .attr('id', 'clip-' + options.id)
-      .append('rect')
-        .attr('x', 0)
-        .attr('y', 0);
+      .append('rect');
+
+    yMin = 0;
+    yMax = d3.max(data.values, function (d) { return d.value; }) * 1.5;
+
+    xMin = d3.min(data.values, function (d) { return d.year; });
+    xMax = d3.max(data.values, function (d) { return d.year; });
 
     x = d3.scale.linear()
       .domain([xMin, xMax]);
@@ -82,7 +76,11 @@ var draw = function (options) {
 
     line = d3.svg.line();
 
-    group = svg.append('g');
+    group = svg.append('g')
+      .attr('cursor', 'pointer');
+
+    background = group.append('rect')
+      .attr('class', 'background');
 
     xAxisEl = group.append('g')
       .attr('class', 'x axis');
@@ -94,6 +92,9 @@ var draw = function (options) {
       .attr('class', 'user');
 
     userLine = userGroup.append('path');
+
+    userDot = userGroup.append('circle')
+      .style('opacity', 0);
 
     currentGroup = group.append('g')
       .attr('class', 'current')
@@ -126,11 +127,11 @@ var draw = function (options) {
 
   function scale() {
 
-    isMobile = window.innerWidth < breakpoint;
+    state.mobile = window.innerWidth < breakpoint;
 
-    margin.bottom = isMobile ? 80 : 50;
+    margin.bottom = state.mobile ? 80 : 50;
     width = container.getBoundingClientRect().width - margin.left - margin.right;
-    height = isMobile ? 260 : 300;
+    height = state.mobile ? 260 : 300;
     height = height - margin.top - margin.bottom;
 
     svg
@@ -139,6 +140,13 @@ var draw = function (options) {
 
     group
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    background
+      .attr('width', width)
+      .attr('height', height)
+      .attr('cursor', 'pointer')
+      .attr('stroke', 'none')
+      .attr('fill', 'white');
 
     x.range([0, width]);
     y.range([height, 0]);
@@ -162,10 +170,10 @@ var draw = function (options) {
       .attr('transform', 'translate(0,' + height + ')')
       .call(xAxis)
       .selectAll('text')
-        .attr('dx', isMobile ? '-10px' : 0)
-        .attr('dy', isMobile ? '0' : '12px')
-        .attr('transform', isMobile ? 'rotate(-90)' : 'rotate(0)')
-        .attr('text-anchor', isMobile ? 'end' : 'start');
+        .attr('dx', state.mobile ? '-10px' : 0)
+        .attr('dy', state.mobile ? '0' : '12px')
+        .attr('transform', state.mobile ? 'rotate(-90)' : 'rotate(0)')
+        .style('text-anchor', state.mobile ? 'end' : 'start');
 
     yAxisEl
       .attr('transform', 'translate(' + width + ',0)')
@@ -174,12 +182,12 @@ var draw = function (options) {
     clipRect
       .attr('width', function () {
 
-        if (completed) {
+        if (state.completed) {
 
           return x(xMax) + margin.right;
         }  else {
 
-          return x(previousData[previousData.length - 1].year);
+          return x(lastYear(previousData));
         }
       })
       .attr('height', height);
@@ -209,6 +217,11 @@ var draw = function (options) {
 
   function update() {
 
+    var definedData = userData.filter(function (d) {
+
+      return d.value;
+    });
+
     userLine
       .attr('d', function () {
 
@@ -218,16 +231,20 @@ var draw = function (options) {
         }));
       });
 
-    if (!completed && userData[userData.length - 1].value) {
+    userDot
+      .attr('r', 4)
+      .attr('cx', x(lastYear(currentData)))
+      .attr('cy', y(lastValue(definedData)))
+      .style('opacity', 1);
 
-      console.log('handleComplete', clipRect);
+    if (!state.completed && lastValue(userData)) {
 
       clipRect
         .transition()
         .duration(1000)
         .attr('width', x(xMax) + margin.right);
 
-      completed = true;
+      state.completed = true;
     }
   }
 
@@ -252,6 +269,18 @@ var draw = function (options) {
 
     var fragments = number.toString().split('.');
     return fragments[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (fragments[1] ? ',' + fragments[1] : '');
+  }
+
+  // Get value property from last object in an array
+  function lastValue(objArr) {
+
+    return objArr[objArr.length - 1].value;
+  }
+
+  // Get year property from last object in an array
+  function lastYear(objArr) {
+
+    return objArr[objArr.length - 1].year;
   }
 
   // Clone a JavaScript object. Doesn't work for functions.
