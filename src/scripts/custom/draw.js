@@ -21,6 +21,8 @@ var draw = function (options) {
   var width, height, margin = { bottom: 50, left: 5, right: 100, top: 20 };
   var breakpoint = 561;
 
+  var electionYears = [1998, 2002, 2005, 2009, 2013];
+
   function init(json) {
 
     data = json.filter(function (d) { return d.name == options.id; })[0];
@@ -42,10 +44,10 @@ var draw = function (options) {
       return d;
     });
 
-    render();
+    prepare();
   }
 
-  function render() {
+  function prepare() {
 
     container = document.getElementById(options.id);
 
@@ -122,10 +124,10 @@ var draw = function (options) {
 
     svg.call(drag);
 
-    scale();
+    render();
   }
 
-  function scale() {
+  function render() {
 
     state.mobile = window.innerWidth < breakpoint;
 
@@ -137,47 +139,6 @@ var draw = function (options) {
     svg
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.bottom + margin.top);
-
-    group
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-    background
-      .attr('width', width)
-      .attr('height', height)
-      .attr('cursor', 'pointer')
-      .attr('stroke', 'none')
-      .attr('fill', 'white');
-
-    x.range([0, width]);
-    y.range([height, 0]);
-
-    xAxis = d3.svg.axis()
-      .scale(x)
-      .orient('bottom')
-      .tickSize(0)
-      .tickFormat(function (d) { return  d; });
-
-    yAxis = d3.svg.axis()
-      .scale(y)
-      .orient('right')
-      .ticks(6)
-      .innerTickSize(-width)
-      .outerTickSize(0)
-      .tickPadding(10)
-      .tickFormat(function (d) { return pretty(d) + ' ' + data.format; });
-
-    xAxisEl
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(xAxis)
-      .selectAll('text')
-        .attr('dx', state.mobile ? '-10px' : 0)
-        .attr('dy', state.mobile ? '0' : '12px')
-        .attr('transform', state.mobile ? 'rotate(-90)' : 'rotate(0)')
-        .style('text-anchor', state.mobile ? 'end' : 'start');
-
-    yAxisEl
-      .attr('transform', 'translate(' + width + ',0)')
-      .call(yAxis);
 
     clipRect
       .attr('width', function () {
@@ -191,6 +152,50 @@ var draw = function (options) {
         }
       })
       .attr('height', height);
+
+    group
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    background
+      .attr('width', width)
+      .attr('height', height)
+      .attr('cursor', 'pointer')
+      .attr('fill', 'white');
+
+    x.range([0, width]);
+    y.range([height, 0]);
+
+    xAxis = d3.svg.axis()
+      .scale(x)
+      .orient('bottom')
+      .tickSize(0)
+      .tickValues(electionYears)
+      .tickFormat(function (d) { return d; });
+
+    yAxis = d3.svg.axis()
+      .scale(y)
+      .orient('right')
+      .ticks(6)
+      .innerTickSize(-width)
+      .outerTickSize(0)
+      .tickPadding(10)
+      .tickFormat(function (d, i) {
+
+        return (i % 2) ? '' : pretty(d) + ' ' + data.format;
+      });
+
+    xAxisEl
+      .attr('transform', 'translate(0,' + height + ')')
+      .call(xAxis)
+      .selectAll('text')
+        .attr('dx', state.mobile ? '-10px' : 0)
+        .attr('dy', state.mobile ? '0' : '12px')
+        .attr('transform', state.mobile ? 'rotate(-90)' : 'rotate(0)')
+        .style('text-anchor', state.mobile ? 'end' : 'start');
+
+    yAxisEl
+      .attr('transform', 'translate(' + width + ',0)')
+      .call(yAxis);
 
     line
       .interpolate('linear')
@@ -211,8 +216,6 @@ var draw = function (options) {
       .attr('r', 4)
       .attr('cx', function (d) { return x(d.year); })
       .attr('cy', function (d) { return y(d.value); });
-
-    update();
   }
 
   function update() {
@@ -292,7 +295,8 @@ var draw = function (options) {
   return {
 
     init: init,
+    prepare: prepare,
     render: render,
-    scale: scale
+    update: update
   };
 };

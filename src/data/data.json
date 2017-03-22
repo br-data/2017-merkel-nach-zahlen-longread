@@ -1,22 +1,5 @@
 [
   {
-    "name": "test",
-    "format": "%",
-    "type": "percentage",
-    "values": [
-      { "year": 2004, "value": 10.4 },
-      { "year": 2005, "value": 11.2 },
-      { "year": 2006, "value": 10.1 },
-      { "year": 2007, "value": 8.5 },
-      { "year": 2008, "value": 7.4 },
-      { "year": 2009, "value": 7.6 },
-      { "year": 2010, "value": 7.0 },
-      { "year": 2011, "value": 5.8 },
-      { "year": 2012, "value": 5.4 },
-      { "year": 2015, "value": 4.6 },
-      { "year": 2016, "value": 4.1 }
-    ]
-  }, {
     "name": "arbeitslosenquote",
     "format": "%",
     "type": "percentage",

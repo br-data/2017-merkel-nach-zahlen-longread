@@ -15,8 +15,6 @@ function init() {
 
   function handleData(error, data) {
 
-    console.log('handleData');
-
     if (error) { throw error; }
 
     if (drawElements) {
@@ -31,12 +29,10 @@ function init() {
       }
     }
 
-    document.addEventListener('resize', handleResize, false);
+    window.addEventListener('resize', handleResize, false);
   }
 
   function handleResize() {
-
-    console.log('handleResize');
 
     clearTimeout(timeout);
 
@@ -44,7 +40,8 @@ function init() {
 
       for (var i = 0; i < drawInstances.length; i++) {
 
-        drawInstances[i].scale();
+        drawInstances[i].render();
+        drawInstances[i].update();
       }
     }, 200);
   }
