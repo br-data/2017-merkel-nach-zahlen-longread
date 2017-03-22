@@ -6,7 +6,7 @@ var draw = function (options) {
   var y, yMin, yMax, yAxis, yAxisEl; // Values
 
   var data;
-  var previousData, previousGroup, previousLine, previousDots; // Schröder years
+  var previousData, previousGroup, previousLine, previousDots, previousHighlight; // Schröder years
   var currentData, currentGroup, currentLine, currentDots; // Merkel years
   var userData, userGroup, userLine, userDot; // User guess
 
@@ -119,6 +119,12 @@ var draw = function (options) {
         .enter()
       .append('circle');
 
+    previousHighlight = previousGroup.append('g');
+
+    previousHighlight.append('circle');
+
+    previousHighlight.append('text');
+
     drag = d3.behavior.drag()
       .on('drag', handleDrag);
 
@@ -169,6 +175,7 @@ var draw = function (options) {
       .scale(x)
       .orient('bottom')
       .tickSize(0)
+      .tickPadding(10)
       .tickValues(electionYears)
       .tickFormat(function (d) { return d; });
 
@@ -216,6 +223,21 @@ var draw = function (options) {
       .attr('r', 4)
       .attr('cx', function (d) { return x(d.year); })
       .attr('cy', function (d) { return y(d.value); });
+
+    previousHighlight
+      .attr('transform', 'translate(' + x(lastYear(previousData)) + ',' +  y(lastValue(previousData)) +')')
+      .attr('y', y(lastValue(previousData)));
+
+    previousHighlight.select('circle')
+      .attr('r', 4)
+      .call(pulse);
+
+    previousHighlight.select('text')
+      .text(pretty(lastValue(previousData)))
+      .attr('dy', '-15')
+      .attr('fill', 'black')
+      .attr('font-weight', 'bold')
+      .attr('text-anchor', 'middle');
   }
 
   function update() {
@@ -266,6 +288,23 @@ var draw = function (options) {
     });
 
     update();
+  }
+
+  function pulse(element) {
+
+    (function repeat() {
+
+      element
+        .transition()
+          .ease('quad')
+          .duration(1000)
+          .attr('r', 4)
+        .transition()
+          .ease('quad')
+          .duration(1000)
+          .attr('r', 8)
+        .each('end', repeat);
+    })();
   }
 
   function pretty(number) {
