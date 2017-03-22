@@ -66,7 +66,12 @@ var draw = function (options) {
     }, false);
 
     svg = d3.select(container).append('svg')
-      .attr('class', 'draw');
+      .attr('class', 'draw')
+      .attr('version', '1.1')
+      .attr('baseProfile', 'full')
+      .attr('xmlns', 'http://www.w3.org/2000/svg')
+      .attr('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+      .attr('xmlns:ev', 'http://www.w3.org/2001/xml-events');
 
     defs = svg.append('defs');
 
