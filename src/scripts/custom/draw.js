@@ -5,7 +5,7 @@ var draw = function (options) {
   var x, xMin, xMax, xAxis, xAxisEl; // Years
   var y, yMin, yMax, yAxis, yAxisEl; // Values
 
-  var data;
+  var data, definedData;
   var previousData, previousGroup, previousLine, previousDots, previousHighlight; // Schröder years
   var currentData, currentGroup, currentLine, currentDots, currentHighlight; // Merkel years
   var userData, userGroup, userLine, userDot, userHighlight; // User guess
@@ -103,6 +103,17 @@ var draw = function (options) {
     yAxisEl = group.append('g')
       .attr('class', 'y axis');
 
+    userGroup = group.append('g')
+      .attr('class', 'user');
+
+    userLine = userGroup.append('path');
+
+    userDot = userGroup.append('circle');
+
+    userHighlight = userGroup.append('g');
+    userHighlight.append('circle');
+    userHighlight.append('text');
+
     currentGroup = group.append('g')
       .attr('class', 'current')
       .attr('clip-path', 'url(#clip-' + options.id + ')');
@@ -128,18 +139,6 @@ var draw = function (options) {
     previousHighlight.append('circle');
     previousHighlight.append('text');
 
-    userGroup = group.append('g')
-      .attr('class', 'user');
-
-    userLine = userGroup.append('path');
-
-    userDot = userGroup.append('circle')
-      .style('opacity', 0);
-
-    userHighlight = userGroup.append('g');
-    userHighlight.append('circle');
-    userHighlight.append('text');
-
     drag = d3.behavior.drag()
       .on('drag', handleDrag);
 
@@ -157,21 +156,15 @@ var draw = function (options) {
     height = state.mobile ? 260 : 300;
     height = height - margin.top - margin.bottom;
 
+    x.range([0, width]);
+    y.range([height, 0]);
+
     svg
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.bottom + margin.top);
 
     clipRect
-      .attr('width', function () {
-
-        if (state.completed) {
-
-          return x(xMax) + margin.right;
-        }  else {
-
-          return x(lastYear(previousData));
-        }
-      })
+      .attr('width', state.completed ? x(xMax) + margin.right : x(lastYear(previousData)))
       .attr('height', height);
 
     group
@@ -182,9 +175,6 @@ var draw = function (options) {
       .attr('height', height)
       .attr('cursor', 'pointer')
       .attr('fill', 'white');
-
-    x.range([0, width]);
-    y.range([height, 0]);
 
     xAxis = d3.svg.axis()
       .scale(x)
@@ -224,6 +214,29 @@ var draw = function (options) {
       .x(function (d) { return x(d.year); })
       .y(function (d) { return y(d.value); });
 
+    userGroup
+      .attr('opacity', state.completed ? 1 : 0);
+
+    userLine
+      .attr('d', state.completed ? line(definedData) : '');
+
+    userDot
+      .attr('r', 4)
+      .attr('cx', x(lastYear(currentData)))
+      .attr('cy', state.completed ? y(lastValue(definedData)) : y(lastValue(previousData)));
+
+    userHighlight
+      .attr('transform', state.completed ? translate(currentData, definedData) : translate(currentData, previousData));
+
+    userHighlight.select('circle')
+      .attr('r', 4);
+
+    userHighlight.select('text')
+      .attr('dy', '5')
+      .attr('dx', '10')
+      .attr('text-anchor', 'start')
+      .attr('filter', 'url(#solid-' + options.id + ')');
+
     currentLine.attr('d', line(currentData));
 
     currentDots
@@ -240,8 +253,7 @@ var draw = function (options) {
       .attr('cy', function (d) { return y(d.value); });
 
     previousHighlight
-      .attr('transform', 'translate(' + x(lastYear(previousData)) + ',' +  y(lastValue(previousData)) +')')
-      .attr('y', y(lastValue(previousData)));
+      .attr('transform', translate(previousData, previousData));
 
     previousHighlight.select('circle')
       .attr('r', 4)
@@ -253,53 +265,53 @@ var draw = function (options) {
       .attr('fill', 'black')
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'middle');
-
-    userHighlight.select('text')
-      .attr('filter', 'url(#solid-' + options.id + ')');
   }
 
   function update() {
 
-    var definedData = userData.filter(function (d) {
+    definedData = userData.filter(function (d) {
 
       return d.value;
     });
 
-    userLine
-      .attr('d', function () {
+    if (!state.started) {
 
-        return line(userData.filter(function (d) {
+      previousHighlight.select('circle')
+        .call(noPulse);
 
-          return d.value;
-        }));
-      });
+      userGroup
+        .attr('opacity', 1);
 
-    userDot
-      .attr('r', 4)
-      .attr('cx', x(lastYear(currentData)))
-      .attr('cy', y(lastValue(definedData)))
-      .style('opacity', 1);
+      userHighlight.select('circle')
+        .call(pulse);
 
-    userHighlight
-      .attr('transform', 'translate(' + x(lastYear(currentData)) + ',' +  y(lastValue(definedData)) +')')
-      .attr('y', y(lastValue(definedData)));
+      state.started = true;
+    }
 
-    userHighlight.select('circle')
-      .attr('r', 4)
-      .call(pulse);
+    if (!state.completed) {
 
-    userHighlight.select('text')
-      .text(pretty(Math.round(lastValue(definedData))) + ' ' +  data.format)
-      .attr('dy', '5')
-      .attr('dx', '10')
-      .attr('text-anchor', 'start');
+      userLine
+        .attr('d', line(definedData));
 
-    if (!state.completed && lastValue(userData)) {
+      userDot
+        .attr('cy', y(lastValue(definedData)));
+
+      userHighlight
+        .attr('transform', translate(currentData, definedData));
+
+      userHighlight.select('text')
+        .text(pretty(Math.round(lastValue(definedData))) + ' ' +  data.format);
+    }
+
+    if (lastValue(userData)) {
 
       clipRect
         .transition()
         .duration(1000)
         .attr('width', x(xMax) + margin.right);
+
+      userHighlight.select('circle')
+        .call(noPulse);
 
       state.completed = true;
     }
@@ -339,6 +351,25 @@ var draw = function (options) {
     })();
   }
 
+  function noPulse(element) {
+
+    (function repeat() {
+
+      element
+        .transition()
+          .ease('quad')
+          .duration(800)
+          .attr('r', 4);
+    })();
+  }
+
+  // Returns translate property for SVG transforms
+  function translate(xArr, yArr) {
+
+    return 'translate(' + x(lastYear(xArr)) + ',' +  y(lastValue(yArr)) +')';
+  }
+
+  // Add German decimal seperators to number
   function pretty(number) {
 
     var fragments = number.toString().split('.');

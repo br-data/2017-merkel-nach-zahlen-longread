@@ -41,7 +41,6 @@ function init() {
       for (var i = 0; i < drawInstances.length; i++) {
 
         drawInstances[i].render();
-        drawInstances[i].update();
       }
     }, 200);
   }
