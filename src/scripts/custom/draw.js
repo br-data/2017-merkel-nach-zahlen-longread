@@ -1,14 +1,14 @@
 var draw = function (options) {
 
-  var container, svg, defs, group, line, drag, clipRect, background;
+  var container, svg, defs, filter, group, line, drag, clipRect, background;
 
   var x, xMin, xMax, xAxis, xAxisEl; // Years
   var y, yMin, yMax, yAxis, yAxisEl; // Values
 
   var data;
   var previousData, previousGroup, previousLine, previousDots, previousHighlight; // Schröder years
-  var currentData, currentGroup, currentLine, currentDots; // Merkel years
-  var userData, userGroup, userLine, userDot; // User guess
+  var currentData, currentGroup, currentLine, currentDots, currentHighlight; // Merkel years
+  var userData, userGroup, userLine, userDot, userHighlight; // User guess
 
   var state = {
 
@@ -60,6 +60,19 @@ var draw = function (options) {
 
     defs = svg.append('defs');
 
+    filter = defs.append('filter')
+      .attr('id', 'solid-' + options.id)
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 1)
+      .attr('height', 1);
+
+    filter.append('feFlood')
+      .attr('flood-color', 'white');
+
+    filter.append('feComposite')
+      .attr('in', 'SourceGraphic');
+
     clipRect = defs.append('clipPath')
         .attr('id', 'clip-' + options.id)
       .append('rect');
@@ -90,14 +103,6 @@ var draw = function (options) {
     yAxisEl = group.append('g')
       .attr('class', 'y axis');
 
-    userGroup = group.append('g')
-      .attr('class', 'user');
-
-    userLine = userGroup.append('path');
-
-    userDot = userGroup.append('circle')
-      .style('opacity', 0);
-
     currentGroup = group.append('g')
       .attr('class', 'current')
       .attr('clip-path', 'url(#clip-' + options.id + ')');
@@ -120,10 +125,20 @@ var draw = function (options) {
       .append('circle');
 
     previousHighlight = previousGroup.append('g');
-
     previousHighlight.append('circle');
-
     previousHighlight.append('text');
+
+    userGroup = group.append('g')
+      .attr('class', 'user');
+
+    userLine = userGroup.append('path');
+
+    userDot = userGroup.append('circle')
+      .style('opacity', 0);
+
+    userHighlight = userGroup.append('g');
+    userHighlight.append('circle');
+    userHighlight.append('text');
 
     drag = d3.behavior.drag()
       .on('drag', handleDrag);
@@ -233,11 +248,14 @@ var draw = function (options) {
       .call(pulse);
 
     previousHighlight.select('text')
-      .text(pretty(lastValue(previousData)))
+      .text(pretty(lastValue(previousData)) + ' ' + data.format)
       .attr('dy', '-15')
       .attr('fill', 'black')
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'middle');
+
+    userHighlight.select('text')
+      .attr('filter', 'url(#solid-' + options.id + ')');
   }
 
   function update() {
@@ -261,6 +279,20 @@ var draw = function (options) {
       .attr('cx', x(lastYear(currentData)))
       .attr('cy', y(lastValue(definedData)))
       .style('opacity', 1);
+
+    userHighlight
+      .attr('transform', 'translate(' + x(lastYear(currentData)) + ',' +  y(lastValue(definedData)) +')')
+      .attr('y', y(lastValue(definedData)));
+
+    userHighlight.select('circle')
+      .attr('r', 4)
+      .call(pulse);
+
+    userHighlight.select('text')
+      .text(pretty(Math.round(lastValue(definedData))) + ' ' +  data.format)
+      .attr('dy', '5')
+      .attr('dx', '10')
+      .attr('text-anchor', 'start');
 
     if (!state.completed && lastValue(userData)) {
 
@@ -298,11 +330,11 @@ var draw = function (options) {
         .transition()
           .ease('quad')
           .duration(1000)
-          .attr('r', 4)
+          .attr('r', 7)
         .transition()
           .ease('quad')
-          .duration(1000)
-          .attr('r', 8)
+          .duration(800)
+          .attr('r', 4)
         .each('end', repeat);
     })();
   }
