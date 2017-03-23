@@ -78,7 +78,7 @@
       { "year": 2012, "value": 2068289 },
       { "year": 2013, "value": 2043344 },
       { "year": 2014, "value": 2043918 },
-      { "year": 2015, "value": 2022562 },
+      { "year": 2015, "value": 2022562 }
     ]
   }, {
     "name": "soldaten",
@@ -99,7 +99,7 @@
       { "year": 2013, "value": 22153 },
       { "year": 2014, "value": 15509 },
       { "year": 2015, "value": 12353 },
-      { "year": 2016, "value": 14560}
+      { "year": 2016, "value": 14560 }
     ]
   }, {
     "name": "abschiebungen",
@@ -120,7 +120,7 @@
       { "year": 2013, "value": 10198 },
       { "year": 2014, "value": 10884 },
       { "year": 2015, "value": 20888 },
-      { "year": 2016, "value": 25375}
+      { "year": 2016, "value": 25375 }
     ]
   }, {
     "name": "kernkraftwerke",
@@ -141,7 +141,7 @@
       { "year": 2013, "value": 9 },
       { "year": 2014, "value": 9 },
       { "year": 2015, "value": 9 },
-      { "year": 2016, "value": 8}
+      { "year": 2016, "value": 8 }
     ]
   }, {
     "name": "betreuungsquote",
