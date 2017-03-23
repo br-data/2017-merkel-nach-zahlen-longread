@@ -211,8 +211,8 @@ var draw = function (options) {
 
     line
       .interpolate('linear')
-      .x(function (d) { return x(d.year); })
-      .y(function (d) { return y(d.value); });
+      .x(year)
+      .y(value);
 
     userGroup
       .attr('opacity', state.completed ? 1 : 0);
@@ -241,16 +241,16 @@ var draw = function (options) {
 
     currentDots
       .attr('r', 4)
-      .attr('cx', function (d) { return x(d.year); })
-      .attr('cy', function (d) { return y(d.value); });
+      .attr('cx', year)
+      .attr('cy', value);
 
     previousLine
       .attr('d', line(previousData));
 
     previousDots
       .attr('r', 4)
-      .attr('cx', function (d) { return x(d.year); })
-      .attr('cy', function (d) { return y(d.value); });
+      .attr('cx', year)
+      .attr('cy', value);
 
     previousHighlight
       .attr('transform', translate(previousData, previousData));
@@ -374,6 +374,18 @@ var draw = function (options) {
 
     var fragments = number.toString().split('.');
     return fragments[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (fragments[1] ? ',' + fragments[1] : '');
+  }
+
+  // Get x value for year
+  function year(d) {
+
+    return x(d.year);
+  }
+
+  // Get y value for value
+  function value(d) {
+
+    return y(d.value);
   }
 
   // Get value property from last object in an array
