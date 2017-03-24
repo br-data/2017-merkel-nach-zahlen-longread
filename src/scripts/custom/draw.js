@@ -132,8 +132,7 @@ var draw = function (options) {
     currentHighlight = currentGroup.append('g')
       .attr('class', 'current highlight');
 
-    currentHighlight.append('circle')
-      .attr('class', 'pulse');
+    currentHighlight.append('circle');
 
     currentHighlight.append('text');
 
@@ -205,7 +204,8 @@ var draw = function (options) {
       .innerTickSize(-width)
       .outerTickSize(0)
       .tickPadding(10)
-      .tickFormat(function (d, i) { return (i % 2) ? '' : pretty(d); });
+      .tickFormat('');
+      //.tickFormat(function (d, i) { return (i % 2) ? '' : pretty(d); });
 
     xAxisEl
       .attr('transform', 'translate(0,' + height + ')')
@@ -231,10 +231,10 @@ var draw = function (options) {
     userLine
       .attr('d', state.completed ? line(definedData) : '');
 
-    userDot
-      .attr('r', 4)
-      .attr('cx', x(lastYear(currentData)))
-      .attr('cy', state.completed ? y(lastValue(definedData)) : y(lastValue(previousData)));
+    // userDot
+    //   .attr('r', 4)
+    //   .attr('cx', x(lastYear(currentData)))
+    //   .attr('cy', state.completed ? y(lastValue(definedData)) : y(lastValue(previousData)));
 
     userHighlight
       .attr('transform', state.completed ? translate(currentData, definedData) : translate(currentData, previousData));
@@ -243,10 +243,14 @@ var draw = function (options) {
       .attr('r', 4);
 
     userHighlight.select('text')
-      .attr('dy', '5')
-      .attr('dx', '10')
-      .attr('text-anchor', 'start')
-      .attr('filter', 'url(#solid-' + options.id + ')');
+      // .attr('dy', '5')
+      // .attr('dx', '10')
+      // .attr('text-anchor', 'start')
+      // .attr('filter', 'url(#solid-' + options.id + ')');
+      .attr('dy', '-15')
+      .attr('fill', '#888899')
+      .attr('font-weight', 'bold')
+      .attr('text-anchor', 'middle');
 
     currentLine.attr('d', line(currentData));
 
@@ -254,6 +258,18 @@ var draw = function (options) {
       .attr('r', 4)
       .attr('cx', year)
       .attr('cy', value);
+
+    currentHighlight
+      .attr('transform', translate(currentData, currentData));
+
+    currentHighlight.select('circle');
+
+    currentHighlight.select('text')
+      .text(pretty(lastValue(currentData)))
+      .attr('dy', '-15')
+      .attr('fill', 'black')
+      .attr('font-weight', 'bold')
+      .attr('text-anchor', 'middle');
 
     previousLine
       .attr('d', line(previousData));
@@ -272,7 +288,7 @@ var draw = function (options) {
     previousHighlight.select('text')
       .text(pretty(lastValue(previousData)))
       .attr('dy', '-15')
-      .attr('fill', 'black')
+      .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'middle');
   }
@@ -303,11 +319,12 @@ var draw = function (options) {
       userLine
         .attr('d', line(definedData));
 
-      userDot
-        .attr('cy', y(lastValue(definedData)));
+      // userDot
+      //   .attr('cy', y(lastValue(definedData)));
 
       userHighlight
-        .attr('transform', translate(currentData, definedData));
+        //.attr('transform', translate(currentData, definedData));
+        .attr('transform', translate(definedData, definedData));
 
       userHighlight.select('text')
         .text(pretty(lastValue(definedData)));
@@ -317,11 +334,14 @@ var draw = function (options) {
 
       clipRect
         .transition()
-        .duration(1000)
-        .attr('width', x(xMax) + margin.right);
+          .duration(1000)
+          .attr('width', x(xMax) + margin.right);
 
       userHighlight.select('circle')
         .call(noPulse);
+
+      userHighlight.select('text')
+        .text('');
 
       state.completed = true;
     }
