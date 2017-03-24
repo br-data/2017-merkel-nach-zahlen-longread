@@ -6,9 +6,10 @@ var draw = function (options) {
   var y, yMin, yMax, yAxis, yAxisEl; // Values
 
   var data, definedData;
+  var firstHighlight;
   var previousData, previousGroup, previousLine, previousDots, previousHighlight; // Schröder years
   var currentData, currentGroup, currentLine, currentDots, currentHighlight; // Merkel years
-  var userData, userGroup, userLine, userDot, userHighlight; // User guess
+  var userData, userGroup, userLine, userHighlight; // User guess
 
   var state = {
 
@@ -108,8 +109,6 @@ var draw = function (options) {
 
     userLine = userGroup.append('path');
 
-    userDot = userGroup.append('circle');
-
     userHighlight = userGroup.append('g')
       .attr('class', 'user highlight');
 
@@ -153,6 +152,11 @@ var draw = function (options) {
       .attr('class', 'pulse');
 
     previousHighlight.append('text');
+
+    firstHighlight = previousGroup.append('g')
+      .attr('class', 'first highlight');
+
+    firstHighlight.append('text');
 
     drag = d3.behavior.drag()
       .on('drag', handleDrag);
@@ -231,11 +235,6 @@ var draw = function (options) {
     userLine
       .attr('d', state.completed ? line(definedData) : '');
 
-    // userDot
-    //   .attr('r', 4)
-    //   .attr('cx', x(lastYear(currentData)))
-    //   .attr('cy', state.completed ? y(lastValue(definedData)) : y(lastValue(previousData)));
-
     userHighlight
       .attr('transform', state.completed ? translate(currentData, definedData) : translate(currentData, previousData));
 
@@ -243,10 +242,7 @@ var draw = function (options) {
       .attr('r', 4);
 
     userHighlight.select('text')
-      // .attr('dy', '5')
-      // .attr('dx', '10')
-      // .attr('text-anchor', 'start')
-      // .attr('filter', 'url(#solid-' + options.id + ')');
+      // .attr('filter', 'url(#solid-' + options.id + ')')
       .attr('dy', '-15')
       .attr('fill', '#888899')
       .attr('font-weight', 'bold')
@@ -287,6 +283,16 @@ var draw = function (options) {
 
     previousHighlight.select('text')
       .text(pretty(lastValue(previousData)))
+      .attr('dy', '-15')
+      .attr('fill', '#e2001a')
+      .attr('font-weight', 'bold')
+      .attr('text-anchor', 'middle');
+
+    firstHighlight
+      .attr('transform', 'translate(' + year(previousData[0]) + ',' +  value(previousData[0]) +')');
+
+    firstHighlight.select('text')
+      .text(pretty(previousData[0].value))
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
