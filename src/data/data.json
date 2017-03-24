@@ -1,8 +1,9 @@
 [
   {
     "name": "arbeitslosenquote",
-    "format": "%",
-    "type": "percentage",
+    "unit": "%",
+    "factor": 1,
+    "max": 15,
     "values": [
       { "year": 2002, "value": 8.6 },
       { "year": 2003, "value": 9.7 },
@@ -22,8 +23,9 @@
     ]
   }, {
     "name": "hartz4-kinder",
-    "format": "",
-    "type": "absolute",
+    "unit": "Mio.",
+    "factor": 1000000,
+    "max": 3000000,
     "values": [
       { "year": 2004, "value": 1621094 },
       { "year": 2005, "value": 2150469 },
@@ -40,8 +42,9 @@
     ]
   }, {
     "name": "superreiche",
-    "format": "$",
-    "type": "absolute",
+    "unit": "Mrd. $",
+    "factor": 1,
+    "max": 600,
     "values": [
       { "year": 2002, "value": 138.9 },
       { "year": 2003, "value": 140.5 },
@@ -62,8 +65,9 @@
     ]
   }, {
     "name": "staatsverschuldung",
-    "format": "€",
-    "type": "absolute",
+    "unit": "Bio. €",
+    "factor": 1000000,
+    "max": 3000000,
     "values": [
       { "year": 2002, "value": 1277271 },
       { "year": 2003, "value": 1357723 },
@@ -82,8 +86,9 @@
     ]
   }, {
     "name": "soldaten",
-    "format": "",
-    "type": "absolute",
+    "unit": "Tsd.",
+    "factor": 1000,
+    "max": 30000,
     "values": [
       { "year": 2002, "value": 23756 },
       { "year": 2003, "value": 22148 },
@@ -103,8 +108,9 @@
     ]
   }, {
     "name": "abschiebungen",
-    "format": "",
-    "type": "absolute",
+    "unit": "Tsd.",
+    "factor": 1000,
+    "max": 50000,
     "values": [
       { "year": 2002, "value": 29036 },
       { "year": 2003, "value": 26487 },
@@ -124,8 +130,9 @@
     ]
   }, {
     "name": "kernkraftwerke",
-    "format": "",
-    "type": "absolute",
+    "unit": "",
+    "factor": 1,
+    "max": 25,
     "values": [
       { "year": 2002, "value": 19 },
       { "year": 2003, "value": 19 },
@@ -145,8 +152,9 @@
     ]
   }, {
     "name": "betreuungsquote",
-    "format": "%",
-    "type": "percentage",
+    "unit": "%",
+    "factor": 1,
+    "max": 25,
     "values": [
       { "year": 2002, "value": 10.2 },
       { "year": 2003, "value": 10.4 },
@@ -164,8 +172,9 @@
     ]
   }, {
     "name": "einbrueche",
-    "format": "",
-    "type": "absolute",
+    "unit": "Tsd.",
+    "factor": 1000,
+    "max": 250000,
     "values": [
       { "year": 2002, "value": 130055 },
       { "year": 2003, "value": 123280 },
@@ -184,8 +193,9 @@
     ]
   }, {
     "name": "uebernachtungen",
-    "format": "",
-    "type": "absolute",
+    "unit": "Mio. €",
+    "factor": 100000,
+    "max": 100000000,
     "values": [
       { "year": 2003, "value": 41700000 },
       { "year": 2004, "value": 45400000 },

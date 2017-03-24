@@ -78,7 +78,8 @@ var draw = function (options) {
       .append('rect');
 
     yMin = 0;
-    yMax = d3.max(data.values, function (d) { return d.value; }) * 1.5;
+    yMax = data.max;
+    // yMax = d3.max(data.values, function (d) { return d.value; }) * 1.5;
 
     xMin = d3.min(data.values, function (d) { return d.year; });
     xMax = d3.max(data.values, function (d) { return d.year; });
@@ -193,7 +194,7 @@ var draw = function (options) {
       .tickPadding(10)
       .tickFormat(function (d, i) {
 
-        return (i % 2) ? '' : pretty(d) + ' ' + data.format;
+        return (i % 2) ? '' : pretty(d);
       });
 
     xAxisEl
@@ -260,7 +261,7 @@ var draw = function (options) {
       .call(pulse);
 
     previousHighlight.select('text')
-      .text(pretty(lastValue(previousData)) + ' ' + data.format)
+      .text(pretty(lastValue(previousData)))
       .attr('dy', '-15')
       .attr('fill', 'black')
       .attr('font-weight', 'bold')
@@ -300,7 +301,7 @@ var draw = function (options) {
         .attr('transform', translate(currentData, definedData));
 
       userHighlight.select('text')
-        .text(pretty(Math.round(lastValue(definedData))) + ' ' +  data.format);
+        .text(pretty(lastValue(definedData)));
     }
 
     if (lastValue(userData)) {
@@ -372,8 +373,17 @@ var draw = function (options) {
   // Add German decimal seperators to number
   function pretty(number) {
 
-    var fragments = number.toString().split('.');
-    return fragments[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (fragments[1] ? ',' + fragments[1] : '');
+    var string;
+
+    number = number / data.factor;
+    number = Math.round(number * 10) / 10;
+
+    string = number.toString().split('.');
+    string = string[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (string[1] ? ',' + string[1] : '');
+
+    string = string + ' ' + data.unit;
+
+    return string;
   }
 
   // Get x value for year
