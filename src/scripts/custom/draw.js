@@ -423,7 +423,7 @@ var draw = function (options) {
     var string;
 
     number = number / data.factor;
-    number = Math.round(number * 10) / 10;
+    number = Math.round(number * data.precision) / data.precision;
 
     string = number.toString().split('.');
     string = string[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (string[1] ? ',' + string[1] : '');
