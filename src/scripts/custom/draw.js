@@ -18,7 +18,7 @@ var draw = function (options) {
     mobile: false
   };
 
-  var width, height, margin = { bottom: 50, left: 5, right: 100, top: 20 };
+  var width, height, margin = { bottom: 20, left: 5, right: 80, top: 20 };
   var breakpoint = 561;
 
   var electionYears = [1998, 2002, 2005, 2009, 2013];
@@ -92,8 +92,7 @@ var draw = function (options) {
 
     line = d3.svg.line();
 
-    group = svg.append('g')
-      .attr('cursor', 'pointer');
+    group = svg.append('g');
 
     background = group.append('rect')
       .attr('class', 'background');
@@ -105,18 +104,22 @@ var draw = function (options) {
       .attr('class', 'y axis');
 
     userGroup = group.append('g')
-      .attr('class', 'user');
+      .attr('class', 'user group');
 
     userLine = userGroup.append('path');
 
     userDot = userGroup.append('circle');
 
-    userHighlight = userGroup.append('g');
-    userHighlight.append('circle');
+    userHighlight = userGroup.append('g')
+      .attr('class', 'user highlight');
+
+    userHighlight.append('circle')
+      .attr('class', 'pulse');
+
     userHighlight.append('text');
 
     currentGroup = group.append('g')
-      .attr('class', 'current')
+      .attr('class', 'current group')
       .attr('clip-path', 'url(#clip-' + options.id + ')');
 
     currentLine = currentGroup.append('path');
@@ -126,8 +129,16 @@ var draw = function (options) {
         .enter()
       .append('circle');
 
+    currentHighlight = currentGroup.append('g')
+      .attr('class', 'current highlight');
+
+    currentHighlight.append('circle')
+      .attr('class', 'pulse');
+
+    currentHighlight.append('text');
+
     previousGroup = group.append('g')
-      .attr('class', 'previous');
+      .attr('class', 'previous group');
 
     previousLine = previousGroup.append('path');
 
@@ -136,8 +147,12 @@ var draw = function (options) {
         .enter()
       .append('circle');
 
-    previousHighlight = previousGroup.append('g');
-    previousHighlight.append('circle');
+    previousHighlight = previousGroup.append('g')
+      .attr('class', 'previous highlight');
+
+    previousHighlight.append('circle')
+      .attr('class', 'pulse');
+
     previousHighlight.append('text');
 
     drag = d3.behavior.drag()
@@ -173,9 +188,7 @@ var draw = function (options) {
 
     background
       .attr('width', width)
-      .attr('height', height)
-      .attr('cursor', 'pointer')
-      .attr('fill', 'white');
+      .attr('height', height);
 
     xAxis = d3.svg.axis()
       .scale(x)
@@ -192,10 +205,7 @@ var draw = function (options) {
       .innerTickSize(-width)
       .outerTickSize(0)
       .tickPadding(10)
-      .tickFormat(function (d, i) {
-
-        return (i % 2) ? '' : pretty(d);
-      });
+      .tickFormat(function (d, i) { return (i % 2) ? '' : pretty(d); });
 
     xAxisEl
       .attr('transform', 'translate(0,' + height + ')')
@@ -257,7 +267,6 @@ var draw = function (options) {
       .attr('transform', translate(previousData, previousData));
 
     previousHighlight.select('circle')
-      .attr('r', 4)
       .call(pulse);
 
     previousHighlight.select('text')
@@ -348,6 +357,24 @@ var draw = function (options) {
           .ease('quad')
           .duration(800)
           .attr('r', 4)
+        .each('end', repeat);
+    })();
+  }
+
+  function radiate(element) {
+
+    (function repeat() {
+
+      element
+        .transition()
+          .duration(0)
+          .attr('stroke-width', 4)
+          .attr('r', 0)
+        .transition()
+          .duration(1500)
+          .attr('stroke-width', 0)
+          .attr('r', 12)
+          .ease('sine')
         .each('end', repeat);
     })();
   }

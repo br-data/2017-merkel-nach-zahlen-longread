@@ -1,7 +1,24 @@
 .draw {
-  fill: $dark-grey;
-  font-size: 12px;
-  font-weight: 400;
+
+  text {
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    shape-rendering: crispEdges;
+  }
+
+  circle {
+    stroke: none;
+  }
+
+  path {
+    fill: none;
+  }
+
+  .background {
+    stroke: none;
+    fill: $white;
+    cursor: pointer;
+  }
 
   .axis {
 
@@ -16,18 +33,6 @@
     }
   }
 
-  circle {
-    fill: $dark-grey;
-    stroke: none;
-    stroke-width: 0;
-  }
-
-  path {
-    fill: none;
-    stroke: $dark-grey;
-    stroke-width: 3;
-  }
-
   .previous {
 
     circle {
@@ -35,6 +40,7 @@
     }
 
     path {
+      stroke-width: 3;
       stroke: $red;
     }
   }
@@ -46,6 +52,7 @@
     }
 
     path {
+      stroke-width: 3;
       stroke: $black;
     }
   }

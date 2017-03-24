@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+    circle {
+        fill: none;
+        stroke: #e2001a;
+    }
+</style>
+
+<body>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script>
+        var margin = {
+            top: 40,
+            right: 40,
+            bottom: 40,
+            left: 40
+        }, width = 960 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
+
+        var y = d3.scale.ordinal().domain(d3.range(1)).rangePoints([0, height]);
+
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        svg.selectAll("circle")
+            .data(y.domain())
+            .enter()
+            .append("circle")
+            .attr("stroke-width", 2)
+            .attr("r", 0)
+            .attr("cx", width / 2)
+            .attr("cy", y)
+            .each(pulse);
+
+        function pulse() {
+            var circle = svg.select("circle");
+
+            (function repeat() {
+
+                circle.transition()
+                    .duration(0)
+                    .attr("stroke-width", 2)
+                    .attr("r", 0)
+                  .transition()
+                    .duration(1500)
+                    .attr('stroke-width', 0)
+                    .attr("r", 12)
+                    .ease('sine')
+                    .each("end", repeat);
+            })();
+        }
+    </script>

@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,600);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,600);
 html {
   box-sizing: border-box; }
 
@@ -611,38 +611,51 @@ footer {
     margin-left: 15px;
     width: 138px; }
 
-.draw {
-  fill: #889;
-  font-size: 12px;
-  font-weight: 400; }
-  .draw .axis line {
-    stroke: #ccd;
-    stroke-width: 1; }
-  .draw .axis path {
-    stroke: none;
-    stroke-width: 0; }
-  .draw circle {
-    fill: #889;
-    stroke: none;
-    stroke-width: 0; }
-  .draw path {
-    fill: none;
-    stroke: #889;
-    stroke-width: 3; }
-  .draw .previous circle {
-    fill: #e2001a; }
-  .draw .previous path {
-    stroke: #e2001a; }
-  .draw .current circle {
-    fill: #000; }
-  .draw .current path {
-    stroke: #000; }
-  .draw .user circle {
-    fill: #889; }
-  .draw .user path {
-    stroke: #889;
-    stroke-width: 3;
-    stroke-dasharray: 1 7;
-    stroke-linecap: round; }
+.draw text {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  shape-rendering: crispEdges; }
+
+.draw circle {
+  stroke: none; }
+
+.draw path {
+  fill: none; }
+
+.draw .background {
+  stroke: none;
+  fill: #fff;
+  cursor: pointer; }
+
+.draw .axis line {
+  stroke: #ccd;
+  stroke-width: 1; }
+
+.draw .axis path {
+  stroke: none;
+  stroke-width: 0; }
+
+.draw .previous circle {
+  fill: #e2001a; }
+
+.draw .previous path {
+  stroke-width: 3;
+  stroke: #e2001a; }
+
+.draw .current circle {
+  fill: #000; }
+
+.draw .current path {
+  stroke-width: 3;
+  stroke: #000; }
+
+.draw .user circle {
+  fill: #889; }
+
+.draw .user path {
+  stroke: #889;
+  stroke-width: 3;
+  stroke-dasharray: 1 7;
+  stroke-linecap: round; }
 
 /*# sourceMappingURL=main.css.map */
