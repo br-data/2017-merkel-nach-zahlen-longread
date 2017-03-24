@@ -202,19 +202,15 @@ button,
   -webkit-tap-highlight-color: transparent;
   box-shadow: none;
   vertical-align: top; }
-  button:hover,
-  .button:hover {
-    color: #000;
-    box-shadow: none; }
+  button.disabled,
+  .button.disabled {
+    background: #f0f0f4;
+    color: #889; }
   button.active, button.br-blue,
   .button.active,
   .button.br-blue {
-    display: inline-block;
     background: #007bc2;
     color: #fff; }
-
-.download {
-  margin-bottom: 2.5em; }
 
 .loading {
   color: #889;
@@ -611,6 +607,9 @@ footer {
     margin-left: 15px;
     width: 138px; }
 
+.draw svg {
+  overflow: visible; }
+
 .draw text {
   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
   font-size: 14px;
@@ -635,6 +634,9 @@ footer {
   stroke: none;
   stroke-width: 0; }
 
+.draw .group text {
+  text-shadow: 1px 0 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff; }
+
 .draw .previous circle {
   fill: #e2001a; }
 
@@ -657,5 +659,8 @@ footer {
   stroke-width: 3;
   stroke-dasharray: 1 7;
   stroke-linecap: round; }
+
+.hidden {
+  visibility: hidden; }
 
 /*# sourceMappingURL=main.css.map */

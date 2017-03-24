@@ -22,7 +22,7 @@ var draw = function (options) {
   var width, height, margin = { bottom: 20, left: 5, right: 80, top: 20 };
   var breakpoint = 561;
 
-  var electionYears = [1998, 2002, 2005, 2009, 2013];
+  var electionYears = [2002, 2005, 2009, 2013];
 
   function init(json) {
 

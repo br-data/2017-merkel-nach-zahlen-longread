@@ -20,19 +20,14 @@ button,
   box-shadow: none;
   vertical-align: top;
 
-  &:hover {
-    color: $black;
-    box-shadow: none;
+  &.disabled {
+    background: $light-grey;
+    color: #889;
   }
 
   &.active,
   &.br-blue {
-    display: inline-block;
     background: $br-blue;
     color: $white;
   }
-}
-
-.download {
-  margin-bottom: 2.5em;
 }

@@ -1,5 +1,9 @@
 .draw {
 
+  svg {
+    overflow: visible;
+  }
+
   text {
     font-family: 'Open Sans', Helvetica, Arial, sans-serif;
     font-size: 14px;
@@ -30,6 +34,13 @@
     path {
       stroke: none;
       stroke-width: 0;
+    }
+  }
+
+  .group {
+
+    text {
+      text-shadow: 1px 0 0 $white, 0 1px 0 $white, -1px 0 0 $white, 0 -1px 0 $white;
     }
   }
 
@@ -71,3 +82,8 @@
     }
   }
 }
+
+.hidden {
+  visibility: hidden;
+}
+
