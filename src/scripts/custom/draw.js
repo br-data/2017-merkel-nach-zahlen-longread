@@ -1,6 +1,6 @@
 var draw = function (options) {
 
-  var container, svg, defs, filter, group, line, drag, clipRect, background;
+  var container, svg, defs, filter, group, labels, line, drag, clipRect, background;
 
   var x, xMin, xMax, xAxis, xAxisEl; // Years
   var y, yMin, yMax, yAxis, yAxisEl; // Values
@@ -19,7 +19,7 @@ var draw = function (options) {
     mobile: false
   };
 
-  var width, height, margin = { bottom: 20, left: 5, right: 80, top: 20 };
+  var width, height, margin = { bottom: 30, left: 10, right: 10, top: 30 };
   var breakpoint = 561;
 
   var electionYears = [2002, 2005, 2009, 2013];
@@ -104,6 +104,9 @@ var draw = function (options) {
     yAxisEl = group.append('g')
       .attr('class', 'y axis');
 
+    labels = group.append('g')
+      .attr('class', 'labels');
+
     userGroup = group.append('g')
       .attr('class', 'user group');
 
@@ -170,7 +173,7 @@ var draw = function (options) {
 
     state.mobile = window.innerWidth < breakpoint;
 
-    margin.bottom = state.mobile ? 80 : 50;
+    margin.bottom = state.mobile ? (margin.bottom * 3) : margin.bottom;
     width = container.getBoundingClientRect().width - margin.left - margin.right;
     height = state.mobile ? 260 : 300;
     height = height - margin.top - margin.bottom;
@@ -186,6 +189,7 @@ var draw = function (options) {
       .attr('width', state.completed ? x(xMax) + margin.right : x(lastYear(previousData)))
       .attr('height', height);
 
+    // @todo Is this necessary?
     group
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -223,6 +227,22 @@ var draw = function (options) {
     yAxisEl
       .attr('transform', 'translate(' + width + ',0)')
       .call(yAxis);
+
+    labels
+      .attr('transform', 'translate(0,' + (height - 20) +')');
+
+    labels
+      .append('text')
+      .attr('x', middleYear(previousData))
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#e2001a')
+      .text('SCHRÖDER');
+
+    labels
+      .append('text')
+      .attr('x', middleYear(currentData))
+      .attr('text-anchor', 'middle')
+      .text('MERKEL');
 
     line
       .interpolate('linear')
@@ -451,16 +471,30 @@ var draw = function (options) {
     return y(d.value);
   }
 
-  // Get value property from last object in an array
+  // Get value from last object in an array
   function lastValue(objArr) {
 
     return objArr[objArr.length - 1].value;
   }
 
-  // Get year property from last object in an array
+  // Get year from last object in an array
   function lastYear(objArr) {
 
     return objArr[objArr.length - 1].year;
+  }
+
+  // Get x value for the year between the first and last year
+  function middleYear(objArr) {
+
+    var first = firstYear(objArr);
+    var last = lastYear(objArr);
+
+    return x(((last - first) / 2) + first);
+  }
+
+  function firstYear(objArr) {
+
+    return objArr[0].year;
   }
 
   // Clone a JavaScript object. Doesn't work for functions.

@@ -607,58 +607,47 @@ footer {
     margin-left: 15px;
     width: 138px; }
 
-.draw svg {
-  overflow: visible; }
-
-.draw text {
-  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  shape-rendering: crispEdges; }
-
-.draw circle {
-  stroke: none; }
-
-.draw path {
-  fill: none; }
-
-.draw .background {
-  stroke: none;
-  fill: #fff;
-  cursor: pointer; }
-
-.draw .axis line {
-  stroke: #ccd;
-  stroke-width: 1; }
-
-.draw .axis path {
-  stroke: none;
-  stroke-width: 0; }
-
-.draw .group text {
-  text-shadow: 1px 0 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff; }
-
-.draw .previous circle {
-  fill: #e2001a; }
-
-.draw .previous path {
-  stroke-width: 3;
-  stroke: #e2001a; }
-
-.draw .current circle {
-  fill: #000; }
-
-.draw .current path {
-  stroke-width: 3;
-  stroke: #000; }
-
-.draw .user circle {
-  fill: #889; }
-
-.draw .user path {
-  stroke: #889;
-  stroke-width: 3;
-  stroke-dasharray: 1 7;
-  stroke-linecap: round; }
+.draw {
+  margin-bottom: 1.5em; }
+  .draw svg {
+    overflow: visible; }
+  .draw text {
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    shape-rendering: crispEdges; }
+  .draw circle {
+    stroke: none; }
+  .draw path {
+    fill: none; }
+  .draw .background {
+    stroke: none;
+    fill: #fff;
+    cursor: pointer; }
+  .draw .axis line {
+    stroke: #ccd;
+    stroke-width: 1; }
+  .draw .axis path {
+    stroke: none;
+    stroke-width: 0; }
+  .draw .group text {
+    text-shadow: 1px 0 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff; }
+  .draw .previous circle {
+    fill: #e2001a; }
+  .draw .previous path {
+    stroke-width: 3;
+    stroke: #e2001a; }
+  .draw .current circle {
+    fill: #000; }
+  .draw .current path {
+    stroke-width: 3;
+    stroke: #000; }
+  .draw .user circle {
+    fill: #889; }
+  .draw .user path {
+    stroke: #889;
+    stroke-width: 3;
+    stroke-dasharray: 1 7;
+    stroke-linecap: round; }
 
 .hidden {
   visibility: hidden; }
