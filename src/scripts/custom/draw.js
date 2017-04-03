@@ -1,6 +1,6 @@
 var draw = function (options) {
 
-  var container, svg, defs, filter, group, labels, line, drag, clipRect, background;
+  var container, svg, defs, filter, pattern, group, labels, coalitionGroup, line, drag, clipRect, background;
 
   var x, xMin, xMax, xAxis, xAxisEl; // Years
   var y, yMin, yMax, yAxis, yAxisEl; // Values
@@ -23,6 +23,32 @@ var draw = function (options) {
   var breakpoint = 561;
 
   var electionYears = [2002, 2005, 2009, 2013];
+  var coalitionData = [
+    {
+      name: 'Schröder II',
+      start: '2002',
+      end: '2005',
+      colors: ['red', 'green']
+    },
+    {
+      name: 'Merkel I',
+      start: '2005',
+      end: '2009',
+      colors: ['black', 'red']
+    },
+    {
+      name: 'Merkel II',
+      start: '2009',
+      end: '2013',
+      colors: ['black', 'yellow']
+    },
+    {
+      name: 'Merkel III',
+      start: '2013',
+      end: '2017',
+      colors: ['black', 'red']
+    }
+  ];
 
   function init(json) {
 
@@ -73,6 +99,26 @@ var draw = function (options) {
 
     filter.append('feComposite')
       .attr('in', 'SourceGraphic');
+
+    defs.append('pattern')
+        .attr('id', 'stripes-black-' + options.id)
+        .attr('patternUnits', 'userSpaceOnUse')
+        .attr('width', 8)
+        .attr('height', 8)
+      .append('path')
+        .attr('stroke', 'black')
+        .attr('stroke-width', 3)
+        .attr('d', 'M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4');
+
+    defs.append('pattern')
+        .attr('id', 'stripes-red-' + options.id)
+        .attr('patternUnits', 'userSpaceOnUse')
+        .attr('width', 8)
+        .attr('height', 8)
+      .append('path')
+        .attr('stroke', 'red')
+        .attr('stroke-width', 3)
+        .attr('d', 'M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4');
 
     clipRect = defs.append('clipPath')
         .attr('id', 'clip-' + options.id)
@@ -228,9 +274,32 @@ var draw = function (options) {
       .attr('transform', 'translate(' + width + ',0)')
       .call(yAxis);
 
+    coalitionGroup = group.append('g')
+      .attr('class', 'coalitions')
+      .attr('transform', 'translate(0,' + height +')');
+
+    coalitionGroup = coalitionGroup.selectAll('rect')
+        .data(coalitionData)
+        .enter();
+
+    coalitionGroup.append('rect')
+      .attr('x', function (d) { return x(d.start); })
+      .attr('width', function (d) { return x(d.end) - x(d.start); })
+      .attr('height', 4)
+      .style('fill', function (d) { return d.colors[1]; });
+
+    coalitionGroup.append('rect')
+      .attr('x', function (d) { return x(d.start); })
+      .attr('width', function (d) { return x(d.end) - x(d.start); })
+      .attr('height', 4)
+      .attr('fill', function (d) {
+        return 'url(#stripes-' + d.colors[0] + '-' + options.id + ')';
+      });
+
     labels
       .attr('transform', 'translate(0,' + (height - 20) +')');
 
+    // @todo Move generic attributes to prepare()
     labels
       .append('text')
       .attr('x', middleYear(previousData))
