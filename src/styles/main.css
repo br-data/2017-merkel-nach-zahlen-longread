@@ -613,8 +613,7 @@ footer {
     overflow: visible; }
   .draw text {
     font-family: 'Open Sans', Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    shape-rendering: crispEdges; }
+    font-size: 14px; }
   .draw circle {
     stroke: none; }
   .draw path {

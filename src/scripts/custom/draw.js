@@ -1,9 +1,9 @@
 var draw = function (options) {
 
-  var container, svg, defs, filter, pattern, group, labels, coalitionGroup, line, drag, clipRect, background;
+  var container, svg, defs, filter, pattern, group, labelGroup, coalitionGroup, line, drag, clipRect, background;
 
-  var x, xMin, xMax, xAxis, xAxisEl; // Years
-  var y, yMin, yMax, yAxis, yAxisEl; // Values
+  var x, xMin, xMax, xAxis, xAxisGroup; // Years
+  var y, yMin, yMax, yAxis, yAxisGroup; // Values
 
   var data, definedData;
   var firstHighlight;
@@ -23,6 +23,7 @@ var draw = function (options) {
   var breakpoint = 561;
 
   var electionYears = [2002, 2005, 2009, 2013];
+
   var coalitionData = [
     {
       name: 'Schröder II',
@@ -34,7 +35,7 @@ var draw = function (options) {
       name: 'Merkel I',
       start: '2005',
       end: '2009',
-      colors: ['black', '#e2001a']
+      colors: ['black', 'red']
     },
     {
       name: 'Merkel II',
@@ -46,7 +47,7 @@ var draw = function (options) {
       name: 'Merkel III',
       start: '2013',
       end: '2017',
-      colors: ['black', '#e2001a']
+      colors: ['black', 'red']
     }
   ];
 
@@ -100,26 +101,6 @@ var draw = function (options) {
     filter.append('feComposite')
       .attr('in', 'SourceGraphic');
 
-    defs.append('pattern')
-        .attr('id', 'stripes-black-' + options.id)
-        .attr('patternUnits', 'userSpaceOnUse')
-        .attr('width', 16)
-        .attr('height', 16)
-      .append('path')
-        .attr('stroke', 'black')
-        .attr('stroke-width', 5)
-        .attr('d', 'M-4,4 l8,-8 M0,16 l16,-16 M12,20 l8,-8');
-
-    defs.append('pattern')
-        .attr('id', 'stripes-red-' + options.id)
-        .attr('patternUnits', 'userSpaceOnUse')
-        .attr('width', 16)
-        .attr('height', 16)
-      .append('path')
-        .attr('stroke', '#e2001a')
-        .attr('stroke-width', 5)
-        .attr('d', 'M-4,4 l8,-8 M0,16 l16,-16 M12,20 l8,-8');
-
     clipRect = defs.append('clipPath')
         .attr('id', 'clip-' + options.id)
       .append('rect');
@@ -144,14 +125,26 @@ var draw = function (options) {
     background = group.append('rect')
       .attr('class', 'background');
 
-    xAxisEl = group.append('g')
+    xAxisGroup = group.append('g')
       .attr('class', 'x axis');
 
-    yAxisEl = group.append('g')
+    yAxisGroup = group.append('g')
       .attr('class', 'y axis');
 
-    labels = group.append('g')
-      .attr('class', 'labels');
+    coalitionGroup = xAxisGroup.append('g')
+        .attr('class', 'coalitions')
+      .selectAll('g')
+        .data(coalitionData)
+        .enter()
+      .append('g');
+
+    coalitionGroup.selectAll('rect')
+        .data(function (d) { return d.colors; })
+        .enter()
+      .append('rect');
+
+    labelGroup = group.append('g')
+      .attr('class', 'label group');
 
     userGroup = group.append('g')
       .attr('class', 'user group');
@@ -261,53 +254,65 @@ var draw = function (options) {
       .tickFormat('');
       //.tickFormat(function (d, i) { return (i % 2) ? '' : pretty(d); });
 
-    xAxisEl
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(xAxis)
+    xAxisGroup
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(xAxis)
       .selectAll('text')
         .attr('dx', state.mobile ? '-10px' : 0)
         .attr('dy', state.mobile ? '0' : '12px')
         .attr('transform', state.mobile ? 'rotate(-90)' : 'rotate(0)')
         .style('text-anchor', state.mobile ? 'end' : 'start');
 
-    yAxisEl
+    xAxisGroup.selectAll('.tick')
+      .each(function () {
+
+        var tick = d3.select(this),
+          text = tick.select('text'),
+          bBox = text.node().getBBox();
+
+        tick.selectAll('rect').remove();
+
+        tick.insert('rect', ':first-child')
+          .attr('x', bBox.x - 3)
+          .attr('y', bBox.y - 3)
+          .attr('height', bBox.height + 6)
+          .attr('width', bBox.width + 6)
+          .style('fill', 'white');
+      });
+
+    yAxisGroup
       .attr('transform', 'translate(' + width + ',0)')
       .call(yAxis);
 
-    coalitionGroup = group.append('g')
-      .attr('class', 'coalitions')
-      .attr('transform', 'translate(0,' + height +')');
-
-    coalitionGroup = coalitionGroup.selectAll('rect')
-        .data(coalitionData)
-        .enter();
-
-    coalitionGroup.append('rect')
-      .attr('x', function (d) { return x(d.start); })
+    coalitionGroup
+      .attr('transform', function (d) {
+        return 'translate(' + x(d.start) + ',13)';
+      })
       .attr('width', function (d) { return x(d.end) - x(d.start); })
-      .attr('height', 4)
-      .style('fill', function (d) { return d.colors[1]; });
+      .attr('height', 3)
+      .attr('fill', function (d) { return d.colors[0]; });
 
-    coalitionGroup.append('rect')
-      .attr('x', function (d) { return x(d.start); })
-      .attr('width', function (d) { return x(d.end) - x(d.start); })
-      .attr('height', 4)
-      .attr('fill', function (d) {
-        return 'url(#stripes-' + d.colors[0] + '-' + options.id + ')';
-      });
-
-    labels
-      .attr('transform', 'translate(0,' + (height - 20) +')');
+    coalitionGroup.selectAll('rect')
+      .attr('y', function (d, i) { return i * 5; })
+      .attr('width', function () {
+        var data = d3.select(this.parentNode).datum();
+        return x(data.end) - x(data.start);
+      })
+      .attr('height', 3)
+      .attr('fill', function (d) { return d; });
 
     // @todo Move generic attributes to prepare()
-    labels
+    labelGroup
+      .attr('transform', 'translate(0,' + (height - 20) +')');
+
+    labelGroup
       .append('text')
       .attr('x', middleYear(previousData))
       .attr('text-anchor', 'middle')
       .attr('fill', '#e2001a')
       .text('SCHRÖDER');
 
-    labels
+    labelGroup
       .append('text')
       .attr('x', middleYear(currentData))
       .attr('text-anchor', 'middle')
@@ -564,6 +569,19 @@ var draw = function (options) {
   function firstYear(objArr) {
 
     return objArr[0].year;
+  }
+
+  function dashcase(string) {
+
+    string = string.replace(/\s+/g, '-')
+      .toLowerCase()
+      .replace('ä', 'ae')
+      .replace('ö', 'oe')
+      .replace('ü', 'ue')
+      .replace('ß', 'ss')
+      .replace(/[^a-z0-9-]/g, '');
+
+    return string;
   }
 
   // Clone a JavaScript object. Doesn't work for functions.
