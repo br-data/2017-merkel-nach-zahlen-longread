@@ -34,7 +34,7 @@ var draw = function (options) {
       name: 'Merkel I',
       start: '2005',
       end: '2009',
-      colors: ['black', 'red']
+      colors: ['black', '#e2001a']
     },
     {
       name: 'Merkel II',
@@ -46,7 +46,7 @@ var draw = function (options) {
       name: 'Merkel III',
       start: '2013',
       end: '2017',
-      colors: ['black', 'red']
+      colors: ['black', '#e2001a']
     }
   ];
 
@@ -103,22 +103,22 @@ var draw = function (options) {
     defs.append('pattern')
         .attr('id', 'stripes-black-' + options.id)
         .attr('patternUnits', 'userSpaceOnUse')
-        .attr('width', 8)
-        .attr('height', 8)
+        .attr('width', 16)
+        .attr('height', 16)
       .append('path')
         .attr('stroke', 'black')
-        .attr('stroke-width', 3)
-        .attr('d', 'M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4');
+        .attr('stroke-width', 5)
+        .attr('d', 'M-4,4 l8,-8 M0,16 l16,-16 M12,20 l8,-8');
 
     defs.append('pattern')
         .attr('id', 'stripes-red-' + options.id)
         .attr('patternUnits', 'userSpaceOnUse')
-        .attr('width', 8)
-        .attr('height', 8)
+        .attr('width', 16)
+        .attr('height', 16)
       .append('path')
-        .attr('stroke', 'red')
-        .attr('stroke-width', 3)
-        .attr('d', 'M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4');
+        .attr('stroke', '#e2001a')
+        .attr('stroke-width', 5)
+        .attr('d', 'M-4,4 l8,-8 M0,16 l16,-16 M12,20 l8,-8');
 
     clipRect = defs.append('clipPath')
         .attr('id', 'clip-' + options.id)
