@@ -1,6 +1,6 @@
 var draw = function (options) {
 
-  var container, svg, defs, filter, pattern, group, labelGroup, coalitionGroup, line, drag, clipRect, background;
+  var container, svg, defs, filter, group, labelGroup, coalitionGroup, line, drag, clipRect, background;
 
   var x, xMin, xMax, xAxis, xAxisGroup; // Years
   var y, yMin, yMax, yAxis, yAxisGroup; // Values
@@ -27,26 +27,26 @@ var draw = function (options) {
   var coalitionData = [
     {
       name: 'Schröder II',
-      start: '2002',
-      end: '2005',
+      start: 2002,
+      end: 2005,
       colors: ['red', 'green']
     },
     {
       name: 'Merkel I',
-      start: '2005',
-      end: '2009',
+      start: 2005,
+      end: 2009,
       colors: ['black', 'red']
     },
     {
       name: 'Merkel II',
-      start: '2009',
-      end: '2013',
+      start: 2009,
+      end: 2013,
       colors: ['black', 'yellow']
     },
     {
       name: 'Merkel III',
-      start: '2013',
-      end: '2017',
+      start: 2013,
+      end: 2017,
       colors: ['black', 'red']
     }
   ];
@@ -68,6 +68,24 @@ var draw = function (options) {
     userData = clone(currentData).map(function (d, i) {
 
       d.value = i ? undefined : d.value;
+
+      return d;
+    });
+
+    coalitionData = coalitionData.map(function (d) {
+
+      d.values = [];
+
+      d.colors.forEach(function (color) {
+
+        d.values.push({
+          name: d.name,
+          start: d.start,
+          end: d.end,
+          colors: d.colors,
+          color: color
+        });
+      });
 
       return d;
     });
@@ -118,30 +136,33 @@ var draw = function (options) {
     y = d3.scale.linear()
       .domain([yMin, yMax]);
 
-    line = d3.svg.line();
+    line = d3.svg.line()
+      .interpolate('linear')
+      .x(year)
+      .y(value);
 
     group = svg.append('g');
 
     background = group.append('rect')
       .attr('class', 'background');
 
-    xAxisGroup = group.append('g')
-      .attr('class', 'x axis');
-
-    yAxisGroup = group.append('g')
-      .attr('class', 'y axis');
-
-    coalitionGroup = xAxisGroup.append('g')
+    coalitionGroup = group.append('g')
         .attr('class', 'coalitions')
       .selectAll('g')
         .data(coalitionData)
         .enter()
       .append('g');
 
-    coalitionGroup.selectAll('rect')
-        .data(function (d) { return d.colors; })
+    coalitionGroup.selectAll('path')
+        .data(function (d) { return d.values; })
         .enter()
-      .append('rect');
+      .append('path');
+
+    xAxisGroup = group.append('g')
+      .attr('class', 'x axis');
+
+    yAxisGroup = group.append('g')
+      .attr('class', 'y axis');
 
     labelGroup = group.append('g')
       .attr('class', 'label group');
@@ -261,45 +282,24 @@ var draw = function (options) {
         .attr('dx', state.mobile ? '-10px' : 0)
         .attr('dy', state.mobile ? '0' : '12px')
         .attr('transform', state.mobile ? 'rotate(-90)' : 'rotate(0)')
-        .style('text-anchor', state.mobile ? 'end' : 'start');
+        .style('text-anchor', state.mobile ? 'end' : 'mobile');
 
     xAxisGroup.selectAll('.tick')
-      .each(function () {
-
-        var tick = d3.select(this),
-          text = tick.select('text'),
-          bBox = text.node().getBBox();
-
-        tick.selectAll('rect').remove();
-
-        tick.insert('rect', ':first-child')
-          .attr('x', bBox.x - 3)
-          .attr('y', bBox.y - 3)
-          .attr('height', bBox.height + 6)
-          .attr('width', bBox.width + 6)
-          .style('fill', 'white');
-      });
+      .each(addBackground);
 
     yAxisGroup
       .attr('transform', 'translate(' + width + ',0)')
       .call(yAxis);
 
     coalitionGroup
-      .attr('transform', function (d) {
-        return 'translate(' + x(d.start) + ',13)';
-      })
-      .attr('width', function (d) { return x(d.end) - x(d.start); })
-      .attr('height', 3)
-      .attr('fill', function (d) { return d.colors[0]; });
+      .attr('class', function (d) { return dashcase(d.name); })
+      .attr('transform', 'translate(0,17)');
 
-    coalitionGroup.selectAll('rect')
-      .attr('y', function (d, i) { return i * 5; })
-      .attr('width', function () {
-        var data = d3.select(this.parentNode).datum();
-        return x(data.end) - x(data.start);
-      })
-      .attr('height', 3)
-      .attr('fill', function (d) { return d; });
+    coalitionGroup.selectAll('path')
+      .attr('d', coalitionsLine)
+      .attr('fill', 0)
+      .attr('stroke', function (d) { return d.color; })
+      .attr('stroke-width', 3);
 
     // @todo Move generic attributes to prepare()
     labelGroup
@@ -317,11 +317,6 @@ var draw = function (options) {
       .attr('x', middleYear(currentData))
       .attr('text-anchor', 'middle')
       .text('MERKEL');
-
-    line
-      .interpolate('linear')
-      .x(year)
-      .y(value);
 
     userGroup
       .attr('opacity', state.completed ? 1 : 0);
@@ -517,6 +512,20 @@ var draw = function (options) {
     return 'translate(' + x(lastYear(xArr)) + ',' +  y(lastValue(yArr)) +')';
   }
 
+  function coalitionsLine(d, i) {
+
+    var count = d.colors.length;
+    var interval = (d.end - d.start) / count;
+
+    var start = d.start + (i * interval);
+    var end = d.start + ((i + 1) * interval);
+
+    return line([
+      { year: start, value: 0 },
+      { year: end, value: 0 }
+    ]);
+  }
+
   // Add German decimal seperators to number
   function pretty(number) {
 
@@ -531,6 +540,22 @@ var draw = function (options) {
     string = string + ' ' + data.unit;
 
     return string;
+  }
+
+  function addBackground() {
+
+    var container = d3.select(this);
+    var text = container.select('text');
+    var bBox = text.node().getBBox();
+
+    container.selectAll('rect').remove();
+
+    container.insert('rect', ':first-child')
+      .attr('x', bBox.x - 3)
+      .attr('y', bBox.y - 3)
+      .attr('height', bBox.height + 6)
+      .attr('width', bBox.width + 6)
+      .style('fill', 'white');
   }
 
   // Get x value for year

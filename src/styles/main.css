@@ -622,10 +622,10 @@ footer {
     stroke: none;
     fill: #fff;
     cursor: pointer; }
-  .draw .axis line {
+  .draw .axis.y line {
     stroke: #ccd;
     stroke-width: 1; }
-  .draw .axis path {
+  .draw .axis.y path {
     stroke: none;
     stroke-width: 0; }
   .draw .group text {
