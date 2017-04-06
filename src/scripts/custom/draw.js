@@ -27,27 +27,42 @@ var draw = function (options) {
   var coalitionData = [
     {
       name: 'Schröder II',
-      start: 2002,
-      end: 2005,
+      startYear: 2002,
+      endYear: 2005,
       colors: ['red', 'green']
     },
     {
       name: 'Merkel I',
-      start: 2005,
-      end: 2009,
+      startYear: 2005,
+      endYear: 2009,
       colors: ['black', 'red']
     },
     {
       name: 'Merkel II',
-      start: 2009,
-      end: 2013,
+      startYear: 2009,
+      endYear: 2013,
       colors: ['black', 'yellow']
     },
     {
       name: 'Merkel III',
-      start: 2013,
-      end: 2017,
+      startYear: 2013,
+      endYear: 2017,
       colors: ['black', 'red']
+    }
+  ];
+
+  var labelData = [
+    {
+      name: 'SCHRÖDER',
+      color: 'red',
+      getYear: function () { return middleYear(previousData); },
+      getValue: function () { return height - 20; }
+    },
+    {
+      name: 'MERKEL',
+      color: 'black',
+      getYear: function () { return middleYear(currentData); },
+      getValue: function () { return height - 20; }
     }
   ];
 
@@ -80,8 +95,8 @@ var draw = function (options) {
 
         d.values.push({
           name: d.name,
-          start: d.start,
-          end: d.end,
+          startYear: d.startYear,
+          endYear: d.endYear,
           colors: d.colors,
           color: color
         });
@@ -165,7 +180,14 @@ var draw = function (options) {
       .attr('class', 'y axis');
 
     labelGroup = group.append('g')
-      .attr('class', 'label group');
+        .attr('class', 'label group')
+      .selectAll('.label')
+        .data(labelData)
+        .enter()
+      .append('g');
+
+    labelGroup
+      .append('text');
 
     userGroup = group.append('g')
       .attr('class', 'user group');
@@ -282,7 +304,7 @@ var draw = function (options) {
         .attr('dx', state.mobile ? '-10px' : 0)
         .attr('dy', state.mobile ? '0' : '12px')
         .attr('transform', state.mobile ? 'rotate(-90)' : 'rotate(0)')
-        .style('text-anchor', state.mobile ? 'end' : 'mobile');
+        .style('text-anchor', state.mobile ? 'end' : 'middle');
 
     xAxisGroup.selectAll('.tick')
       .each(addBackground);
@@ -301,22 +323,12 @@ var draw = function (options) {
       .attr('stroke', function (d) { return d.color; })
       .attr('stroke-width', 3);
 
-    // @todo Move generic attributes to prepare()
     labelGroup
-      .attr('transform', 'translate(0,' + (height - 20) +')');
-
-    labelGroup
-      .append('text')
-      .attr('x', middleYear(previousData))
-      .attr('text-anchor', 'middle')
-      .attr('fill', '#e2001a')
-      .text('SCHRÖDER');
-
-    labelGroup
-      .append('text')
-      .attr('x', middleYear(currentData))
-      .attr('text-anchor', 'middle')
-      .text('MERKEL');
+        .attr('transform', function (d) { return 'translate(' + d.getYear() + ',' + d.getValue() +')'; })
+      .selectAll('text')
+        .text(function (d) { return d.name; })
+        .attr('fill', function (d) { return d.color; })
+        .attr('text-anchor', 'middle');
 
     userGroup
       .attr('opacity', state.completed ? 1 : 0);
@@ -515,14 +527,14 @@ var draw = function (options) {
   function coalitionsLine(d, i) {
 
     var count = d.colors.length;
-    var interval = (d.end - d.start) / count;
+    var interval = (d.endYear - d.startYear) / count;
 
-    var start = d.start + (i * interval);
-    var end = d.start + ((i + 1) * interval);
+    var startYear = d.startYear + (i * interval);
+    var endYear = d.startYear + ((i + 1) * interval);
 
     return line([
-      { year: start, value: 0 },
-      { year: end, value: 0 }
+      { year: startYear, value: 0 },
+      { year: endYear, value: 0 }
     ]);
   }
 
