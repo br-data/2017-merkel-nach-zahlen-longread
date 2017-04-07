@@ -256,9 +256,8 @@ var draw = function (options) {
 
     state.mobile = window.innerWidth < breakpoint;
 
-    margin.bottom = state.mobile ? (margin.bottom * 3) : margin.bottom;
     width = container.getBoundingClientRect().width - margin.left - margin.right;
-    height = state.mobile ? 260 : 300;
+    height = 300;
     height = height - margin.top - margin.bottom;
 
     x.range([0, width]);
@@ -339,7 +338,7 @@ var draw = function (options) {
 
     userHighlight
       .attr('transform', state.completed ? translate(currentData, definedData) : translate(currentData, previousData))
-      .style('opacity', '0');
+      .style('opacity', state.completed ? 1 : 0);
 
     userHighlight.select('circle')
       .attr('r', 4);
@@ -360,7 +359,7 @@ var draw = function (options) {
 
     currentHighlight
       .attr('transform', translate(currentData, currentData))
-      .style('opacity', '0');
+      .style('opacity', state.completed ? 1 : 0);
 
     currentHighlight.select('circle');
 
@@ -576,6 +575,7 @@ var draw = function (options) {
       .attr('y', bBox.y - 3)
       .attr('height', bBox.height + 6)
       .attr('width', bBox.width + 6)
+      .attr('transform', state.mobile ? 'rotate(-90)' : 'rotate(0)')
       .style('fill', 'white');
   }
 
