@@ -6,6 +6,7 @@ var draw = function (options) {
   var y, yMin, yMax, yAxis, yAxisGroup; // Values
 
   var data, definedData;
+
   var firstHighlight;
   var previousData, previousGroup, previousLine, previousDots, previousHighlight; // Schröder years
   var currentData, currentGroup, currentLine, currentDots, currentHighlight; // Merkel years
@@ -194,7 +195,7 @@ var draw = function (options) {
 
     userLine = userGroup.append('path');
 
-    userHighlight = userGroup.append('g')
+    userHighlight = group.append('g')
       .attr('class', 'user highlight');
 
     userHighlight.append('circle')
@@ -213,7 +214,7 @@ var draw = function (options) {
         .enter()
       .append('circle');
 
-    currentHighlight = currentGroup.append('g')
+    currentHighlight = group.append('g')
       .attr('class', 'current highlight');
 
     currentHighlight.append('circle');
@@ -230,7 +231,7 @@ var draw = function (options) {
         .enter()
       .append('circle');
 
-    previousHighlight = previousGroup.append('g')
+    previousHighlight = group.append('g')
       .attr('class', 'previous highlight');
 
     previousHighlight.append('circle')
@@ -337,7 +338,8 @@ var draw = function (options) {
       .attr('d', state.completed ? line(definedData) : '');
 
     userHighlight
-      .attr('transform', state.completed ? translate(currentData, definedData) : translate(currentData, previousData));
+      .attr('transform', state.completed ? translate(currentData, definedData) : translate(currentData, previousData))
+      .style('opacity', '0');
 
     userHighlight.select('circle')
       .attr('r', 4);
@@ -357,7 +359,8 @@ var draw = function (options) {
       .attr('cy', value);
 
     currentHighlight
-      .attr('transform', translate(currentData, currentData));
+      .attr('transform', translate(currentData, currentData))
+      .style('opacity', '0');
 
     currentHighlight.select('circle');
 
@@ -415,6 +418,9 @@ var draw = function (options) {
       userGroup
         .attr('opacity', 1);
 
+      userHighlight
+        .style('opacity', '1');
+
       userHighlight.select('circle')
         .call(pulse);
 
@@ -449,6 +455,9 @@ var draw = function (options) {
 
       userHighlight.select('text')
         .text('');
+
+      currentHighlight
+        .style('opacity', '1');
 
       state.completed = true;
     }
