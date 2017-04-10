@@ -20,6 +20,11 @@ var draw = function (options) {
     mobile: false
   };
 
+  var button = document.querySelector('button[data-id=' + options.id + ']');
+  button = d3.select(button);
+  var paragraph = document.querySelector('p[data-id=' + options.id + ']');
+  paragraph = d3.select(paragraph);
+
   var width, height, margin = { bottom: 30, left: 10, right: 10, top: 30 };
   var breakpoint = 561;
 
@@ -256,9 +261,8 @@ var draw = function (options) {
 
     state.mobile = window.innerWidth < breakpoint;
 
-    margin.bottom = state.mobile ? (margin.bottom * 3) : margin.bottom;
     width = container.getBoundingClientRect().width - margin.left - margin.right;
-    height = state.mobile ? 260 : 300;
+    height = 300;
     height = height - margin.top - margin.bottom;
 
     x.range([0, width]);
@@ -339,7 +343,7 @@ var draw = function (options) {
 
     userHighlight
       .attr('transform', state.completed ? translate(currentData, definedData) : translate(currentData, previousData))
-      .style('opacity', '0');
+      .style('opacity', state.completed ? 1 : 0);
 
     userHighlight.select('circle')
       .attr('r', 4);
@@ -360,7 +364,7 @@ var draw = function (options) {
 
     currentHighlight
       .attr('transform', translate(currentData, currentData))
-      .style('opacity', '0');
+      .style('opacity', state.completed ? 1 : 0);
 
     currentHighlight.select('circle');
 
@@ -457,7 +461,14 @@ var draw = function (options) {
         .text('');
 
       currentHighlight
-        .style('opacity', '1');
+        .transition()
+          .delay(1000)
+          .style('opacity', '1');
+
+      paragraph
+        .transition()
+          .delay(1000)
+          .style('opacity', '1');
 
       state.completed = true;
     }
@@ -576,6 +587,7 @@ var draw = function (options) {
       .attr('y', bBox.y - 3)
       .attr('height', bBox.height + 6)
       .attr('width', bBox.width + 6)
+      .attr('transform', state.mobile ? 'rotate(-90)' : 'rotate(0)')
       .style('fill', 'white');
   }
 
