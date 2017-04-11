@@ -35,13 +35,13 @@ var draw = function (options) {
       name: 'Schröder II',
       startYear: 2002,
       endYear: 2005,
-      colors: ['red', 'green']
+      colors: ['#e2001a', 'green']
     },
     {
       name: 'Merkel I',
       startYear: 2005,
       endYear: 2009,
-      colors: ['black', 'red']
+      colors: ['black', '#e2001a']
     },
     {
       name: 'Merkel II',
@@ -53,14 +53,14 @@ var draw = function (options) {
       name: 'Merkel III',
       startYear: 2013,
       endYear: 2017,
-      colors: ['black', 'red']
+      colors: ['black', '#e2001a']
     }
   ];
 
   var labelData = [
     {
       name: 'SCHRÖDER',
-      color: 'red',
+      color: '#e2001a',
       getYear: function () { return middleYear(previousData); },
       getValue: function () { return height - 20; }
     },
@@ -436,9 +436,6 @@ var draw = function (options) {
       userLine
         .attr('d', line(definedData));
 
-      // userDot
-      //   .attr('cy', y(lastValue(definedData)));
-
       userHighlight
         //.attr('transform', translate(currentData, definedData));
         .attr('transform', translate(definedData, definedData));
@@ -454,21 +451,24 @@ var draw = function (options) {
           .duration(1000)
           .attr('width', x(xMax) + margin.right);
 
+      previousHighlight.select('circle')
+        .call(noPulse);
+
       userHighlight.select('circle')
         .call(noPulse);
 
-      userHighlight.select('text')
-        .text('');
+      currentHighlight
+        .attr('transform', smartTranslate(currentData, currentData, userData));
 
       currentHighlight
         .transition()
           .delay(1000)
-          .style('opacity', '1');
+          .style('opacity', 1);
 
       paragraph
         .transition()
           .delay(1000)
-          .style('opacity', '1');
+          .style('opacity', 1);
 
       state.completed = true;
     }
@@ -542,6 +542,21 @@ var draw = function (options) {
   function translate(xArr, yArr) {
 
     return 'translate(' + x(lastYear(xArr)) + ',' +  y(lastValue(yArr)) +')';
+  }
+
+  function smartTranslate(xArr, yArr1, yArr2) {
+
+    var yValue;
+
+    if (lastValue(yArr2) > lastValue(yArr1)) {
+
+      yValue = y(lastValue(yArr1)) + 40;
+    } else {
+
+      yValue = y(lastValue(yArr1));
+    }
+
+    return 'translate(' + x(lastYear(xArr)) + ',' +  yValue +')';
   }
 
   function coalitionsLine(d, i) {
