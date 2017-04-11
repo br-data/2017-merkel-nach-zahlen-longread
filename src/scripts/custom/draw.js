@@ -90,6 +90,11 @@ var draw = function (options) {
 
     container = document.getElementById(options.id);
 
+    container.addEventListener('touchmove', function (e) {
+
+      e.preventDefault();
+    }, false);
+
     svg = d3.select(container).append('svg')
       .attr('version', '1.1')
       .attr('baseProfile', 'full')
@@ -292,10 +297,9 @@ var draw = function (options) {
 
     coalitionGroup
       .attr('class', function (d) { return dashcase(d.name); })
-      .attr('transform', function (d) { return 'translate(' + middleYear(d.values) + ',' + height + ')'; });
+      .attr('transform', function (d) { return 'translate(' + middleYear(d.values) + ',' + (height + 17) + ')'; });
 
     coalitionGroup.selectAll('circle')
-      .attr('cy', 15)
       .attr('cx', function (d, i) { return i * 7; })
       .attr('r', 6)
       .attr('fill', function (d) { return d; });
@@ -394,7 +398,7 @@ var draw = function (options) {
         .attr('opacity', 1);
 
       userHighlight
-        .style('opacity', '1');
+        .style('opacity', 1);
 
       userHighlight.select('circle')
         .call(pulse);
