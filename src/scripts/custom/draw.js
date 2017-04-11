@@ -20,40 +20,31 @@ var draw = function (options) {
     mobile: false
   };
 
-  var button = document.querySelector('button[data-id=' + options.id + ']');
-  button = d3.select(button);
-  var paragraph = document.querySelector('p[data-id=' + options.id + ']');
-  paragraph = d3.select(paragraph);
+  var button = d3.select('button[data-id=' + options.id + ']');
+  var paragraph = d3.select('p[data-id=' + options.id + ']');
 
   var width, height, margin = { bottom: 30, left: 10, right: 10, top: 30 };
   var breakpoint = 561;
 
-  var electionYears = [2002, 2005, 2009, 2013];
+  var electionYears = [2002, 2005, 2009, 2013, 2017];
 
   var coalitionData = [
     {
       name: 'Schröder II',
-      startYear: 2002,
-      endYear: 2005,
-      colors: ['#e2001a', 'green']
-    },
-    {
+      values: [{ year: 2002 }, { year: 2005 }],
+      colors: ['#e2001a', '#20ac00']
+    }, {
       name: 'Merkel I',
-      startYear: 2005,
-      endYear: 2009,
-      colors: ['black', '#e2001a']
-    },
-    {
+      values: [{ year: 2005 }, { year: 2009 }],
+      colors: ['#000', '#e2001a']
+    }, {
       name: 'Merkel II',
-      startYear: 2009,
-      endYear: 2013,
-      colors: ['black', 'yellow']
-    },
-    {
+      values: [{ year: 2009 }, { year: 2013 }],
+      colors: ['#000', '#f4e000']
+    }, {
       name: 'Merkel III',
-      startYear: 2013,
-      endYear: 2017,
-      colors: ['black', '#e2001a']
+      values: [{ year: 2013 }, { year: 2017 }],
+      colors: ['#000', '#e2001a']
     }
   ];
 
@@ -63,10 +54,9 @@ var draw = function (options) {
       color: '#e2001a',
       getYear: function () { return middleYear(previousData); },
       getValue: function () { return height - 20; }
-    },
-    {
+    }, {
       name: 'MERKEL',
-      color: 'black',
+      color: '#000',
       getYear: function () { return middleYear(currentData); },
       getValue: function () { return height - 20; }
     }
@@ -89,24 +79,6 @@ var draw = function (options) {
     userData = clone(currentData).map(function (d, i) {
 
       d.value = i ? undefined : d.value;
-
-      return d;
-    });
-
-    coalitionData = coalitionData.map(function (d) {
-
-      d.values = [];
-
-      d.colors.forEach(function (color) {
-
-        d.values.push({
-          name: d.name,
-          startYear: d.startYear,
-          endYear: d.endYear,
-          colors: d.colors,
-          color: color
-        });
-      });
 
       return d;
     });
@@ -174,10 +146,10 @@ var draw = function (options) {
         .enter()
       .append('g');
 
-    coalitionGroup.selectAll('path')
-        .data(function (d) { return d.values; })
+    coalitionGroup.selectAll('circle')
+        .data(function (d) { return d.colors; })
         .enter()
-      .append('path');
+      .append('circle');
 
     xAxisGroup = group.append('g')
       .attr('class', 'x axis');
@@ -314,22 +286,19 @@ var draw = function (options) {
         .attr('transform', state.mobile ? 'rotate(-90)' : 'rotate(0)')
         .style('text-anchor', state.mobile ? 'end' : 'middle');
 
-    xAxisGroup.selectAll('.tick')
-      .each(addBackground);
-
     yAxisGroup
       .attr('transform', 'translate(' + width + ',0)')
       .call(yAxis);
 
     coalitionGroup
       .attr('class', function (d) { return dashcase(d.name); })
-      .attr('transform', 'translate(0,' + (state.mobile ? 25 : 17) +')');
+      .attr('transform', function (d) { return 'translate(' + middleYear(d.values) + ',' + height + ')'; });
 
-    coalitionGroup.selectAll('path')
-      .attr('d', coalitionsLine)
-      .attr('fill', 0)
-      .attr('stroke', function (d) { return d.color; })
-      .attr('stroke-width', 3);
+    coalitionGroup.selectAll('circle')
+      .attr('cy', 15)
+      .attr('cx', function (d, i) { return i * 7; })
+      .attr('r', 6)
+      .attr('fill', function (d) { return d; });
 
     labelGroup
         .attr('transform', function (d) { return 'translate(' + d.getYear() + ',' + d.getValue() +')'; })
@@ -555,20 +524,6 @@ var draw = function (options) {
     }
 
     return 'translate(' + x(lastYear(xArr)) + ',' +  yValue +')';
-  }
-
-  function coalitionsLine(d, i) {
-
-    var count = d.colors.length;
-    var interval = (d.endYear - d.startYear) / count;
-
-    var startYear = d.startYear + (i * interval);
-    var endYear = d.startYear + ((i + 1) * interval);
-
-    return line([
-      { year: startYear, value: 0 },
-      { year: endYear, value: 0 }
-    ]);
   }
 
   // Add German decimal seperators to number
