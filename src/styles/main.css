@@ -618,6 +618,8 @@ footer {
     stroke: none; }
   .draw path {
     fill: none; }
+  .draw .axis, .draw .line, .draw .highlight, .draw .labels {
+    pointer-events: none; }
   .draw .background {
     stroke: none;
     fill: #fff;

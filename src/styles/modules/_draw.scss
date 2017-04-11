@@ -19,6 +19,10 @@
     fill: none;
   }
 
+  .axis, .line, .highlight, .labels {
+    pointer-events: none;
+  }
+
   .background {
     stroke: none;
     fill: $white;

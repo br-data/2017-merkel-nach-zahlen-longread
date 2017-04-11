@@ -186,7 +186,7 @@ var draw = function (options) {
       .attr('class', 'y axis');
 
     labelGroup = group.append('g')
-        .attr('class', 'label group')
+        .attr('class', 'labels')
       .selectAll('.label')
         .data(labelData)
         .enter()
@@ -196,7 +196,7 @@ var draw = function (options) {
       .append('text');
 
     userGroup = group.append('g')
-      .attr('class', 'user group');
+      .attr('class', 'user line');
 
     userLine = userGroup.append('path');
 
@@ -209,7 +209,7 @@ var draw = function (options) {
     userHighlight.append('text');
 
     currentGroup = group.append('g')
-      .attr('class', 'current group')
+      .attr('class', 'current line')
       .attr('clip-path', 'url(#clip-' + options.id + ')');
 
     currentLine = currentGroup.append('path');
@@ -227,7 +227,7 @@ var draw = function (options) {
     currentHighlight.append('text');
 
     previousGroup = group.append('g')
-      .attr('class', 'previous group');
+      .attr('class', 'previous line');
 
     previousLine = previousGroup.append('path');
 
@@ -245,14 +245,16 @@ var draw = function (options) {
     previousHighlight.append('text');
 
     firstHighlight = previousGroup.append('g')
-      .attr('class', 'first highlight');
+      .attr('class', 'first line');
 
     firstHighlight.append('text');
 
     drag = d3.behavior.drag()
       .on('drag', handleDrag);
 
-    svg.call(drag);
+    svg
+      .on('click', handleDrag)
+      .call(drag);
 
     render();
   }
@@ -281,8 +283,9 @@ var draw = function (options) {
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     background
-      .attr('width', width)
-      .attr('height', height);
+      .attr('width', width - x(lastYear(previousData)))
+      .attr('height', height)
+      .attr('x', x(lastYear(previousData)));
 
     xAxis = d3.svg.axis()
       .scale(x)
@@ -320,7 +323,7 @@ var draw = function (options) {
 
     coalitionGroup
       .attr('class', function (d) { return dashcase(d.name); })
-      .attr('transform', 'translate(0,17)');
+      .attr('transform', 'translate(0,' + (state.mobile ? 25 : 17) +')');
 
     coalitionGroup.selectAll('path')
       .attr('d', coalitionsLine)
@@ -349,7 +352,6 @@ var draw = function (options) {
       .attr('r', 4);
 
     userHighlight.select('text')
-      // .attr('filter', 'url(#solid-' + options.id + ')')
       .attr('dy', '-15')
       .attr('fill', '#888899')
       .attr('font-weight', 'bold')
@@ -387,7 +389,7 @@ var draw = function (options) {
       .attr('transform', translate(previousData, previousData));
 
     previousHighlight.select('circle')
-      .call(pulse);
+      .call(state.completed ? noop : pulse);
 
     previousHighlight.select('text')
       .text(pretty(lastValue(previousData)))
@@ -437,7 +439,6 @@ var draw = function (options) {
         .attr('d', line(definedData));
 
       userHighlight
-        //.attr('transform', translate(currentData, definedData));
         .attr('transform', translate(definedData, definedData));
 
       userHighlight.select('text')
@@ -450,9 +451,6 @@ var draw = function (options) {
         .transition()
           .duration(1000)
           .attr('width', x(xMax) + margin.right);
-
-      previousHighlight.select('circle')
-        .call(noPulse);
 
       userHighlight.select('circle')
         .call(noPulse);
@@ -662,6 +660,8 @@ var draw = function (options) {
 
     return JSON.parse(JSON.stringify(object));
   }
+
+  function noop() { return; }
 
   return {
 
