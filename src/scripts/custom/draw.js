@@ -1,18 +1,27 @@
 var draw = function (options) {
 
-  var container, svg, defs, filter, group, labelGroup, coalitionGroup, line, drag, clipRect, background;
+  'use strict';
 
-  var x, xMin, xMax, xAxis, xAxisGroup; // Years
-  var y, yMin, yMax, yAxis, yAxisGroup; // Values
+  var $config, $data, $app, $state;
 
-  var data, definedData;
+  $config = {
+    margin: { bottom: 30, left: 10, right: 10, top: 30 },
+    height: 300,
+    width: 658,
+    breakpoint: 561
+  };
 
-  var firstHighlight;
-  var previousData, previousGroup, previousLine, previousDots, previousHighlight; // Schröder years
-  var currentData, currentGroup, currentLine, currentDots, currentHighlight; // Merkel years
-  var userData, userGroup, userLine, userHighlight; // User guess
+  $data = {};
 
-  var state = {
+  $app = {
+
+    previous: {},
+    current: {},
+    user: {},
+    labels: {}
+  };
+
+  $state = {
 
     started: false,
     completed: false,
@@ -20,15 +29,9 @@ var draw = function (options) {
     mobile: false
   };
 
-  var button = d3.select('button[data-id=' + options.id + ']');
-  var paragraph = d3.select('p[data-id=' + options.id + ']');
+  $data.elections = [2002, 2005, 2009, 2013, 2017];
 
-  var width, height, margin = { bottom: 30, left: 10, right: 10, top: 30 };
-  var breakpoint = 561;
-
-  var electionYears = [2002, 2005, 2009, 2013, 2017];
-
-  var coalitionData = [
+  $data.coalitions = [
     {
       name: 'Schröder II',
       values: [{ year: 2002 }, { year: 2005 }],
@@ -48,35 +51,43 @@ var draw = function (options) {
     }
   ];
 
-  var labelData = [
+  $data.labels = [
     {
       name: 'SCHRÖDER',
       color: '#e2001a',
-      getYear: function () { return middleYear(previousData); },
-      getValue: function () { return height - 20; }
+      getYear: function () { return middleYear($data.previous); },
+      getValue: function () { return $app.height - 20; }
     }, {
       name: 'MERKEL',
       color: '#000',
-      getYear: function () { return middleYear(currentData); },
-      getValue: function () { return height - 20; }
+      getYear: function () { return middleYear($data.current); },
+      getValue: function () { return $app.height - 20; }
     }
   ];
 
-  function init(json) {
+  function init(data) {
 
-    data = json.filter(function (d) { return d.name == options.id; })[0];
+    $data.data = data;
+    $app.id = options.id;
 
-    previousData = data.values.filter(function (d) {
+    transform();
+  }
+
+  function transform() {
+
+    $data.data = $data.data.filter(function (d) { return d.id == $app.id; })[0];
+
+    $data.previous = $data.data.values.filter(function (d) {
 
       return d.year <= 2005;
     });
 
-    currentData = data.values.filter(function (d) {
+    $data.current = $data.data.values.filter(function (d) {
 
       return d.year >= 2005;
     });
 
-    userData = clone(currentData).map(function (d, i) {
+    $data.user = clone($data.current).map(function (d, i) {
 
       d.value = i ? undefined : d.value;
 
@@ -88,294 +99,299 @@ var draw = function (options) {
 
   function prepare() {
 
-    container = document.getElementById(options.id);
+    $app.button = d3.select('button[data-id=' + options.id + ']');
+    $app.paragraph = d3.select('p[data-id=' + options.id + ']');
 
-    container.addEventListener('touchmove', function (e) {
+    $app.container = document.getElementById(options.id);
 
-      e.preventDefault();
+    $app.container.addEventListener('touchmove', function (event) {
+
+      event.preventDefault();
     }, false);
 
-    svg = d3.select(container).append('svg')
+    $app.svg = d3.select($app.container).append('svg')
       .attr('version', '1.1')
       .attr('baseProfile', 'full')
       .attr('xmlns', 'http://www.w3.org/2000/svg')
       .attr('xmlns:xlink', 'http://www.w3.org/1999/xlink')
       .attr('xmlns:ev', 'http://www.w3.org/2001/xml-events');
 
-    defs = svg.append('defs');
+    $app.defs = $app.svg.append('defs');
 
-    filter = defs.append('filter')
+    $app.filter = $app.defs.append('filter')
       .attr('id', 'solid-' + options.id)
       .attr('x', 0)
       .attr('y', 0)
       .attr('width', 1)
       .attr('height', 1);
 
-    filter.append('feFlood')
+    $app.filter.append('feFlood')
       .attr('flood-color', 'white');
 
-    filter.append('feComposite')
+    $app.filter.append('feComposite')
       .attr('in', 'SourceGraphic');
 
-    clipRect = defs.append('clipPath')
+    $app.clipRect = $app.defs.append('clipPath')
         .attr('id', 'clip-' + options.id)
       .append('rect');
 
-    yMin = 0;
-    yMax = data.max;
-    // yMax = d3.max(data.values, function (d) { return d.value; }) * 1.5;
+    $app.yMin = 0;
+    $app.yMax = $data.data.max;
+    // yMax = d3.max($data.data.values, function (d) { return d.value; }) * 1.5;
 
-    xMin = d3.min(data.values, function (d) { return d.year; });
-    xMax = d3.max(data.values, function (d) { return d.year; });
+    $app.xMin = d3.min($data.data.values, function (d) { return d.year; });
+    $app.xMax = d3.max($data.data.values, function (d) { return d.year; });
 
-    x = d3.scale.linear()
-      .domain([xMin, xMax]);
+    $app.x = d3.scale.linear()
+      .domain([$app.xMin, $app.xMax]);
 
-    y = d3.scale.linear()
-      .domain([yMin, yMax]);
+    $app.y = d3.scale.linear()
+      .domain([$app.yMin, $app.yMax]);
 
-    line = d3.svg.line()
+    $app.line = d3.svg.line()
       .interpolate('linear')
       .x(year)
       .y(value);
 
-    group = svg.append('g');
+    $app.group = $app.svg.append('g');
 
-    background = group.append('rect')
+    $app.background = $app.group.append('rect')
       .attr('class', 'background');
 
-    coalitionGroup = group.append('g')
+    $app.coalitionGroup = $app.group.append('g')
         .attr('class', 'coalitions')
       .selectAll('g')
-        .data(coalitionData)
+        .data($data.coalitions)
         .enter()
       .append('g');
 
-    coalitionGroup.selectAll('circle')
+    $app.coalitionGroup.selectAll('circle')
         .data(function (d) { return d.colors; })
         .enter()
       .append('circle');
 
-    xAxisGroup = group.append('g')
+    $app.xAxisGroup = $app.group.append('g')
       .attr('class', 'x axis');
 
-    yAxisGroup = group.append('g')
+    $app.yAxisGroup = $app.group.append('g')
       .attr('class', 'y axis');
 
-    labelGroup = group.append('g')
+    $app.labels.group = $app.group.append('g')
         .attr('class', 'labels')
       .selectAll('.label')
-        .data(labelData)
+        .data($data.labels)
         .enter()
       .append('g');
 
-    labelGroup
+    $app.labels.group
       .append('text');
 
-    userGroup = group.append('g')
+    $app.user.group = $app.group.append('g')
       .attr('class', 'user line');
 
-    userLine = userGroup.append('path');
+    $app.user.line = $app.user.group.append('path');
 
-    userHighlight = group.append('g')
+    $app.user.highlight = $app.group.append('g')
       .attr('class', 'user highlight');
 
-    userHighlight.append('circle')
+    $app.user.highlight.append('circle')
       .attr('class', 'pulse');
 
-    userHighlight.append('text');
+    $app.user.highlight.append('text');
 
-    currentGroup = group.append('g')
+    $app.current.group = $app.group.append('g')
       .attr('class', 'current line')
       .attr('clip-path', 'url(#clip-' + options.id + ')');
 
-    currentLine = currentGroup.append('path');
+    $app.current.line = $app.current.group.append('path');
 
-    currentDots = currentGroup.selectAll('dot')
-        .data(currentData)
+    $app.current.dots = $app.current.group.selectAll('dot')
+        .data($data.current)
         .enter()
       .append('circle');
 
-    currentHighlight = group.append('g')
+    $app.current.highlight = $app.group.append('g')
       .attr('class', 'current highlight');
 
-    currentHighlight.append('circle');
+    $app.current.highlight.append('circle');
 
-    currentHighlight.append('text');
+    $app.current.highlight.append('text');
 
-    previousGroup = group.append('g')
+    $app.previous.group = $app.group.append('g')
       .attr('class', 'previous line');
 
-    previousLine = previousGroup.append('path');
+    $app.previous.line = $app.previous.group.append('path');
 
-    previousDots = previousGroup.selectAll('dot')
-        .data(previousData)
+    $app.previous.dots = $app.previous.group.selectAll('dot')
+        .data($data.previous)
         .enter()
       .append('circle');
 
-    previousHighlight = group.append('g')
+    $app.previous.highlight = $app.group.append('g')
       .attr('class', 'previous highlight');
 
-    previousHighlight.append('circle')
+    $app.previous.highlight.append('circle')
       .attr('class', 'pulse');
 
-    previousHighlight.append('text');
+    $app.previous.highlight.append('text');
 
-    firstHighlight = previousGroup.append('g')
+    $app.previous.first = $app.previous.group.append('g')
       .attr('class', 'first line');
 
-    firstHighlight.append('text');
+    $app.previous.first.append('text');
 
-    drag = d3.behavior.drag()
+    $app.drag = d3.behavior.drag()
       .on('drag', handleDrag);
 
-    svg
+    $app.svg
       .on('click', handleDrag)
-      .call(drag);
+      .call($app.drag);
 
     render();
   }
 
   function render() {
 
-    state.mobile = window.innerWidth < breakpoint;
+    $state.mobile = window.innerWidth < $config.breakpoint;
 
-    width = container.getBoundingClientRect().width - margin.left - margin.right;
-    height = 300;
-    height = height - margin.top - margin.bottom;
+    $app.width = $app.container.getBoundingClientRect().width - $config.margin.left - $config.margin.right;
+    $app.width = $app.width || $config.width;
 
-    x.range([0, width]);
-    y.range([height, 0]);
+    $app.height = $config.height;
+    $app.height = $app.height - $config.margin.top - $config.margin.bottom;
 
-    svg
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.bottom + margin.top);
+    $app.x.range([0, $app.width]);
+    $app.y.range([$app.height, 0]);
 
-    clipRect
-      .attr('width', state.completed ? x(xMax) + margin.right : x(lastYear(previousData)))
-      .attr('height', height);
+    $app.svg
+      .attr('width', $app.width + $config.margin.left + $config.margin.right)
+      .attr('height', $app.height + $config.margin.bottom + $config.margin.top);
+
+    $app.clipRect
+      .attr('width', $state.completed ? $app.x($app.xMax) + $config.margin.right : $app.x(lastYear($data.previous)))
+      .attr('height', $app.height);
 
     // @todo Is this necessary?
-    group
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    $app.group
+      .attr('transform', 'translate(' + $config.margin.left + ',' + $config.margin.top + ')');
 
-    background
-      .attr('width', width - x(lastYear(previousData)))
-      .attr('height', height)
-      .attr('x', x(lastYear(previousData)));
+    $app.background
+      .attr('width', $app.width - $app.x(lastYear($data.previous)))
+      .attr('height', $app.height)
+      .attr('x', $app.x(lastYear($data.previous)));
 
-    xAxis = d3.svg.axis()
-      .scale(x)
+    $app.xAxis = d3.svg.axis()
+      .scale($app.x)
       .orient('bottom')
       .tickSize(0)
       .tickPadding(10)
-      .tickValues(electionYears)
+      .tickValues($data.elections)
       .tickFormat(function (d) { return d; });
 
-    yAxis = d3.svg.axis()
-      .scale(y)
+    $app.yAxis = d3.svg.axis()
+      .scale($app.y)
       .orient('right')
       .ticks(6)
-      .innerTickSize(-width)
+      .innerTickSize(-$app.width)
       .outerTickSize(0)
       .tickPadding(10)
       .tickFormat('');
       //.tickFormat(function (d, i) { return (i % 2) ? '' : pretty(d); });
 
-    xAxisGroup
-        .attr('transform', 'translate(0,' + height + ')')
-        .call(xAxis)
+    $app.xAxisGroup
+        .attr('transform', 'translate(0,' + $app.height + ')')
+        .call($app.xAxis)
       .selectAll('text')
-        .attr('dx', state.mobile ? '-10px' : 0)
-        .attr('dy', state.mobile ? '0' : '12px')
-        .attr('transform', state.mobile ? 'rotate(-90)' : 'rotate(0)')
-        .style('text-anchor', state.mobile ? 'end' : 'middle');
+        .attr('dx', $state.mobile ? '-10px' : 0)
+        .attr('dy', $state.mobile ? '0' : '12px')
+        .attr('transform', $state.mobile ? 'rotate(-90)' : 'rotate(0)')
+        .style('text-anchor', $state.mobile ? 'end' : 'middle');
 
-    yAxisGroup
-      .attr('transform', 'translate(' + width + ',0)')
-      .call(yAxis);
+    $app.yAxisGroup
+      .attr('transform', 'translate(' + $app.width + ',0)')
+      .call($app.yAxis);
 
-    coalitionGroup
+    $app.coalitionGroup
       .attr('class', function (d) { return dashcase(d.name); })
-      .attr('transform', function (d) { return 'translate(' + middleYear(d.values) + ',' + (height + 17) + ')'; });
+      .attr('transform', function (d) { return 'translate(' + middleYear(d.values) + ',' + ($app.height + 17) + ')'; });
 
-    coalitionGroup.selectAll('circle')
+    $app.coalitionGroup.selectAll('circle')
       .attr('cx', function (d, i) { return i * 7; })
       .attr('r', 6)
       .attr('fill', function (d) { return d; });
 
-    labelGroup
+    $app.labels.group
         .attr('transform', function (d) { return 'translate(' + d.getYear() + ',' + d.getValue() +')'; })
       .selectAll('text')
         .text(function (d) { return d.name; })
         .attr('fill', function (d) { return d.color; })
         .attr('text-anchor', 'middle');
 
-    userGroup
-      .attr('opacity', state.completed ? 1 : 0);
+    $app.user.group
+      .attr('opacity', $state.completed ? 1 : 0);
 
-    userLine
-      .attr('d', state.completed ? line(definedData) : '');
+    $app.user.line
+      .attr('d', $state.completed ? $app.line($data.defined) : '');
 
-    userHighlight
-      .attr('transform', state.completed ? translate(currentData, definedData) : translate(currentData, previousData))
-      .style('opacity', state.completed ? 1 : 0);
+    $app.user.highlight
+      .attr('transform', $state.completed ? translate($data.current, $data.defined) : translate($data.current, $data.previous))
+      .style('opacity', $state.completed ? 1 : 0);
 
-    userHighlight.select('circle')
+    $app.user.highlight.select('circle')
       .attr('r', 4);
 
-    userHighlight.select('text')
+    $app.user.highlight.select('text')
       .attr('dy', '-15')
       .attr('fill', '#888899')
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'middle');
 
-    currentLine.attr('d', line(currentData));
+    $app.current.line.attr('d', $app.line($data.current));
 
-    currentDots
+    $app.current.dots
       .attr('r', 4)
       .attr('cx', year)
       .attr('cy', value);
 
-    currentHighlight
-      .attr('transform', translate(currentData, currentData))
-      .style('opacity', state.completed ? 1 : 0);
+    $app.current.highlight
+      .attr('transform', smartTranslate($data.current, $data.current, $data.user))
+      .style('opacity', $state.completed ? 1 : 0);
 
-    currentHighlight.select('circle');
+    $app.current.highlight.select('circle');
 
-    currentHighlight.select('text')
-      .text(pretty(lastValue(currentData)))
+    $app.current.highlight.select('text')
+      .text(pretty(lastValue($data.current)))
       .attr('dy', '-15')
       .attr('fill', 'black')
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'middle');
 
-    previousLine
-      .attr('d', line(previousData));
+    $app.previous.line
+      .attr('d', $app.line($data.previous));
 
-    previousDots
+    $app.previous.dots
       .attr('r', 4)
       .attr('cx', year)
       .attr('cy', value);
 
-    previousHighlight
-      .attr('transform', translate(previousData, previousData));
+    $app.previous.highlight
+      .attr('transform', translate($data.previous, $data.previous));
 
-    previousHighlight.select('circle')
-      .call(state.completed ? noop : pulse);
+    $app.previous.highlight.select('circle')
+      .call($state.completed ? noop : pulse);
 
-    previousHighlight.select('text')
-      .text(pretty(lastValue(previousData)))
+    $app.previous.highlight.select('text')
+      .text(pretty(lastValue($data.previous)))
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'middle');
 
-    firstHighlight
-      .attr('transform', 'translate(' + year(previousData[0]) + ',' +  value(previousData[0]) +')');
+    $app.previous.first
+      .attr('transform', 'translate(' + year($data.previous[0]) + ',' +  value($data.previous[0]) +')');
 
-    firstHighlight.select('text')
-      .text(pretty(previousData[0].value))
+    $app.previous.first.select('text')
+      .text(pretty($data.previous[0].value))
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
@@ -384,74 +400,74 @@ var draw = function (options) {
 
   function update() {
 
-    definedData = userData.filter(function (d) {
+    $data.defined = $data.user.filter(function (d) {
 
       return d.value;
     });
 
-    if (!state.started) {
+    if (!$state.started) {
 
-      previousHighlight.select('circle')
+      $app.previous.highlight.select('circle')
         .call(noPulse);
 
-      userGroup
+      $app.user.group
         .attr('opacity', 1);
 
-      userHighlight
+      $app.user.highlight
         .style('opacity', 1);
 
-      userHighlight.select('circle')
+      $app.user.highlight.select('circle')
         .call(pulse);
 
-      state.started = true;
+      $state.started = true;
     }
 
-    if (!state.completed) {
+    if (!$state.completed) {
 
-      userLine
-        .attr('d', line(definedData));
+      $app.user.line
+        .attr('d', $app.line($data.defined));
 
-      userHighlight
-        .attr('transform', translate(definedData, definedData));
+      $app.user.highlight
+        .attr('transform', translate($data.defined, $data.defined));
 
-      userHighlight.select('text')
-        .text(pretty(lastValue(definedData)));
+      $app.user.highlight.select('text')
+        .text(pretty(lastValue($data.defined)));
     }
 
-    if (lastValue(userData)) {
+    if (lastValue($data.user)) {
 
-      clipRect
+      $app.clipRect
         .transition()
           .duration(1000)
-          .attr('width', x(xMax) + margin.right);
+          .attr('width', $app.x($app.xMax) + $config.margin.right);
 
-      userHighlight.select('circle')
+      $app.user.highlight.select('circle')
         .call(noPulse);
 
-      currentHighlight
-        .attr('transform', smartTranslate(currentData, currentData, userData));
+      $app.current.highlight
+        .attr('transform', smartTranslate($data.current, $data.current, $data.user));
 
-      currentHighlight
+      $app.current.highlight
         .transition()
           .delay(1000)
           .style('opacity', 1);
 
-      paragraph
+      $app.paragraph
         .transition()
           .delay(1000)
           .style('opacity', 1);
 
-      state.completed = true;
+      $state.completed = true;
     }
   }
 
   function handleDrag() {
 
     var pos = d3.mouse(this);
-    var year = Math.max(2006, Math.min(2017, x.invert(pos[0])));
-    var value = Math.max(0, Math.min(y.domain()[1], y.invert(pos[1])));
+    var year = Math.max(2006, Math.min(2017, $app.x.invert(pos[0])));
+    var value = Math.max(0, Math.min($app.y.domain()[1], $app.y.invert(pos[1])));
 
-    userData.forEach(function (d) {
+    $data.user.forEach(function (d) {
 
       if (Math.abs(d.year - year) < 0.5) {
 
@@ -512,22 +528,20 @@ var draw = function (options) {
   // Returns translate property for SVG transforms
   function translate(xArr, yArr) {
 
-    return 'translate(' + x(lastYear(xArr)) + ',' +  y(lastValue(yArr)) +')';
+    return 'translate(' + $app.x(lastYear(xArr)) + ',' + $app.y(lastValue(yArr)) +')';
   }
 
   function smartTranslate(xArr, yArr1, yArr2) {
 
-    var yValue;
+    var offset = 0;
+    // var delta = Math.abs(y(lastValue(yArr1)) - y(lastValue(yArr2)));
 
     if (lastValue(yArr2) > lastValue(yArr1)) {
 
-      yValue = y(lastValue(yArr1)) + 40;
-    } else {
-
-      yValue = y(lastValue(yArr1));
+      offset = 40;
     }
 
-    return 'translate(' + x(lastYear(xArr)) + ',' +  yValue +')';
+    return 'translate(' + $app.x(lastYear(xArr)) + ',' +  ($app.y(lastValue(yArr1)) + offset) +')';
   }
 
   // Add German decimal seperators to number
@@ -535,44 +549,44 @@ var draw = function (options) {
 
     var string;
 
-    number = number / data.factor;
-    number = Math.round(number * data.precision) / data.precision;
+    number = number / $data.data.factor;
+    number = Math.round(number * $data.data.precision) / $data.data.precision;
 
     string = number.toString().split('.');
     string = string[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (string[1] ? ',' + string[1] : '');
 
-    string = string + ' ' + data.unit;
+    string = string + ' ' + $data.data.unit;
 
     return string;
   }
 
   function addBackground() {
 
-    var container = d3.select(this);
-    var text = container.select('text');
+    var wrapper = d3.select(this);
+    var text = wrapper.select('text');
     var bBox = text.node().getBBox();
 
-    container.selectAll('rect').remove();
+    wrapper.selectAll('rect').remove();
 
-    container.insert('rect', ':first-child')
+    wrapper.insert('rect', ':first-child')
       .attr('x', bBox.x - 3)
       .attr('y', bBox.y - 3)
       .attr('height', bBox.height + 6)
       .attr('width', bBox.width + 6)
-      .attr('transform', state.mobile ? 'rotate(-90)' : 'rotate(0)')
+      .attr('transform', $state.mobile ? 'rotate(-90)' : 'rotate(0)')
       .style('fill', 'white');
   }
 
   // Get x value for year
   function year(d) {
 
-    return x(d.year);
+    return $app.x(d.year);
   }
 
   // Get y value for value
   function value(d) {
 
-    return y(d.value);
+    return $app.y(d.value);
   }
 
   // Get value from last object in an array
@@ -593,7 +607,7 @@ var draw = function (options) {
     var first = firstYear(objArr);
     var last = lastYear(objArr);
 
-    return x(((last - first) / 2) + first);
+    return $app.x(((last - first) / 2) + first);
   }
 
   function firstYear(objArr) {

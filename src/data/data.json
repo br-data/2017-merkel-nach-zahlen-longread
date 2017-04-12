@@ -1,6 +1,6 @@
 [
   {
-    "name": "arbeitslosenquote",
+    "id": "arbeitslosenquote",
     "unit": "%",
     "factor": 1,
     "max": 20,
@@ -23,7 +23,7 @@
       { "year": 2016, "value": 4.1 }
     ]
   }, {
-    "name": "hartz4-kinder",
+    "id": "hartz4-kinder",
     "unit": "Mio.",
     "factor": 1000000,
     "max": 4000000,
@@ -43,7 +43,7 @@
       { "year": 2015, "value": 1931474 }
     ]
   }, {
-    "name": "superreiche",
+    "id": "superreiche",
     "unit": "Mrd. $",
     "factor": 1,
     "max": 200,
@@ -67,7 +67,7 @@
       {"year": 2017,"value": 170.1}
     ]
   }, {
-    "name": "staatsverschuldung",
+    "id": "staatsverschuldung",
     "unit": "Bio. €",
     "factor": 1000000,
     "max": 2500000,
@@ -89,7 +89,7 @@
       { "year": 2015, "value": 2022562 }
     ]
   }, {
-    "name": "soldaten",
+    "id": "soldaten",
     "unit": "Tsd.",
     "factor": 1000,
     "max": 40000,
@@ -112,7 +112,7 @@
       { "year": 2016, "value": 14560 }
     ]
   }, {
-    "name": "abschiebungen",
+    "id": "abschiebungen",
     "unit": "Tsd.",
     "factor": 1000,
     "max": 50000,
@@ -135,7 +135,7 @@
       { "year": 2016, "value": 25375 }
     ]
   }, {
-    "name": "kernkraftwerke",
+    "id": "kernkraftwerke",
     "unit": "",
     "factor": 1,
     "max": 30,
@@ -158,7 +158,7 @@
       { "year": 2016, "value": 8 }
     ]
   }, {
-    "name": "betreuungsquote",
+    "id": "betreuungsquote",
     "unit": "%",
     "factor": 1,
     "max": 35,
@@ -180,7 +180,7 @@
       { "year": 2016, "value": 32.7 }
     ]
   }, {
-    "name": "co2",
+    "id": "co2",
     "unit": "Mio. T",
     "factor": 1000,
     "max": 1000000,
@@ -202,7 +202,7 @@
       { "year": 2015, "value": 792054 }
     ]
   }, {
-    "name": "exporte",
+    "id": "exporte",
     "unit": "Bio. €",
     "factor": 1000000,
     "max": 1300000,
