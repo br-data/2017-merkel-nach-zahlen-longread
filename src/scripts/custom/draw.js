@@ -18,7 +18,8 @@ var draw = function (options) {
     previous: {},
     current: {},
     user: {},
-    labels: {}
+    labels: {},
+    annotations: {}
   };
 
   $state = {
@@ -33,19 +34,19 @@ var draw = function (options) {
 
   $data.coalitions = [
     {
-      name: 'Schröder II',
+      text: 'Schröder II',
       values: [{ year: 2002 }, { year: 2005 }],
       colors: ['#e2001a', '#20ac00']
     }, {
-      name: 'Merkel I',
+      text: 'Merkel I',
       values: [{ year: 2005 }, { year: 2009 }],
       colors: ['#000', '#e2001a']
     }, {
-      name: 'Merkel II',
+      text: 'Merkel II',
       values: [{ year: 2009 }, { year: 2013 }],
       colors: ['#000', '#f4e000']
     }, {
-      name: 'Merkel III',
+      text: 'Merkel III',
       values: [{ year: 2013 }, { year: 2017 }],
       colors: ['#000', '#e2001a']
     }
@@ -53,12 +54,12 @@ var draw = function (options) {
 
   $data.labels = [
     {
-      name: 'SCHRÖDER',
+      text: 'SCHRÖDER',
       color: '#e2001a',
       getYear: function () { return middleYear($data.previous); },
       getValue: function () { return $app.height - 20; }
     }, {
-      name: 'MERKEL',
+      text: 'MERKEL',
       color: '#000',
       getYear: function () { return middleYear($data.current); },
       getValue: function () { return $app.height - 20; }
@@ -110,11 +111,9 @@ var draw = function (options) {
     }, false);
 
     $app.svg = d3.select($app.container).append('svg')
-      .attr('version', '1.1')
-      .attr('baseProfile', 'full')
       .attr('xmlns', 'http://www.w3.org/2000/svg')
-      .attr('xmlns:xlink', 'http://www.w3.org/1999/xlink')
-      .attr('xmlns:ev', 'http://www.w3.org/2001/xml-events');
+      .attr('version', '1.1')
+      .attr('baseProfile', 'full');
 
     $app.defs = $app.svg.append('defs');
 
@@ -247,6 +246,20 @@ var draw = function (options) {
       .on('click', handleDrag)
       .call($app.drag);
 
+    $app.annotations.group = $app.group.append('g')
+        .attr('clip-path', 'url(#clip-' + options.id + ')')
+        .attr('class', 'annotations')
+      .selectAll('.annotations')
+        .data(function () { return $data.data.annotations; })
+        .enter()
+      .append('g');
+
+    $app.annotations.group
+      .append('text');
+
+    $app.annotations.group
+      .append('line');
+
     render();
   }
 
@@ -312,7 +325,7 @@ var draw = function (options) {
       .call($app.yAxis);
 
     $app.coalitionGroup
-      .attr('class', function (d) { return dashcase(d.name); })
+      .attr('class', function (d) { return dashcase(d.text); })
       .attr('transform', function (d) { return 'translate(' + middleYear(d.values) + ',' + ($app.height + 17) + ')'; });
 
     $app.coalitionGroup.selectAll('circle')
@@ -323,7 +336,7 @@ var draw = function (options) {
     $app.labels.group
         .attr('transform', function (d) { return 'translate(' + d.getYear() + ',' + d.getValue() +')'; })
       .selectAll('text')
-        .text(function (d) { return d.name; })
+        .text(function (d) { return d.text; })
         .attr('fill', function (d) { return d.color; })
         .attr('text-anchor', 'middle');
 
@@ -334,7 +347,7 @@ var draw = function (options) {
       .attr('d', $state.completed ? $app.line($data.defined) : '');
 
     $app.user.highlight
-      .attr('transform', $state.completed ? translate($data.current, $data.defined) : translate($data.current, $data.previous))
+      .attr('transform', $state.completed ? translate($data.defined, $data.defined) : translate($data.previous, $data.previous))
       .style('opacity', $state.completed ? 1 : 0);
 
     $app.user.highlight.select('circle')
@@ -396,6 +409,21 @@ var draw = function (options) {
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'middle');
+
+    $app.annotations.group
+        .attr('transform', function (d) { return 'translate(' + year(d) + ',' + (value(d) - 50) +')'; })
+      .selectAll('text')
+        .text(function (d) { return d.text; })
+        .attr('fill', function (d) { return d.color; })
+        .attr('text-anchor', 'middle');
+
+    $app.annotations.group
+      .selectAll('line')
+        .attr('stroke', 'black')
+        .attr('x1', 0)
+        .attr('x2', 0)
+        .attr('y1', 10)
+        .attr('y2', 35);
   }
 
   function update() {
