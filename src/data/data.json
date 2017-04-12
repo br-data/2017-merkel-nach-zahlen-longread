@@ -170,7 +170,14 @@
       { "year": 2015, "value": 9 },
       { "year": 2016, "value": 8 }
     ],
-    "annotations": []
+    "annotations": [
+    {
+        "text": "Fukushima",
+        "color": "#000",
+        "year": 2011,
+        "value": 17
+      }
+    ]
   }, {
     "id": "betreuungsquote",
     "unit": "%",
@@ -193,28 +200,35 @@
       { "year": 2015, "value": 32.9 },
       { "year": 2016, "value": 32.7 }
     ],
-    "annotations": []
+    "annotations": [
+    {
+        "text": "Rechtsanspruch auf Kitaplatz",
+        "color": "#000",
+        "year": 2013,
+        "value": 29.3
+      }
+    ]
   }, {
     "id": "co2",
     "unit": "Mio. T",
     "factor": 1000,
-    "max": 1000000,
+    "max": 1300000,
     "precision": 10,
     "values": [
-      { "year": 2002, "value": 899162 },
-      { "year": 2003, "value": 900378 },
-      { "year": 2004, "value": 886210 },
-      { "year": 2005, "value": 865865 },
-      { "year": 2006, "value": 877369 },
-      { "year": 2007, "value": 850743 },
-      { "year": 2008, "value": 853591 },
-      { "year": 2009, "value": 788509 },
-      { "year": 2010, "value": 832436 },
-      { "year": 2011, "value": 812577 },
-      { "year": 2012, "value": 817145 },
-      { "year": 2013, "value": 835459 },
-      { "year": 2014, "value": 794828 },
-      { "year": 2015, "value": 792054 }
+      { "year": 2002, "value": 1036925 },
+      { "year": 2003, "value": 1033843 },
+      { "year": 2004, "value": 1017276 },
+      { "year": 2005, "value": 991933 },
+      { "year": 2006, "value": 999220 },
+      { "year": 2007, "value": 972344 },
+      { "year": 2008, "value": 974682 },
+      { "year": 2009, "value": 906949 },
+      { "year": 2010, "value": 941750 },
+      { "year": 2011, "value": 922363 },
+      { "year": 2012, "value": 926850 },
+      { "year": 2013, "value": 945186 },
+      { "year": 2014, "value": 904262 },
+      { "year": 2015, "value": 901932 }
     ],
     "annotations": []
   }, {
@@ -239,6 +253,13 @@
       { "year": 2014, "value": 1123746 },
       { "year": 2015, "value": 1193555 }
     ],
-    "annotations": []
+    "annotations": [
+      {
+        "text": "Wirtschaftskrise",
+        "color": "#000",
+        "year": 2009,
+        "value": 803312
+      }
+    ]
   }
 ]
