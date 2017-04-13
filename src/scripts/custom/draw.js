@@ -412,6 +412,7 @@ var draw = function (options) {
 
     $app.annotations.group
         .attr('transform', function (d) { return 'translate(' + year(d) + ',' + (value(d) - 50) +')'; })
+        .style('opacity', $state.completed ? 1 : 0)
       .selectAll('text')
         .text(function (d) { return d.text; })
         .attr('fill', function (d) { return d.color; })
@@ -480,6 +481,11 @@ var draw = function (options) {
           .delay(1000)
           .style('opacity', 1);
 
+      $app.annotations.group
+        .transition()
+          .delay(1000)
+          .style('opacity', 1);
+
       $app.paragraph
         .transition()
           .delay(1000)
@@ -523,23 +529,23 @@ var draw = function (options) {
     })();
   }
 
-  function radiate(element) {
+  // function radiate(element) {
 
-    (function repeat() {
+  //   (function repeat() {
 
-      element
-        .transition()
-          .duration(0)
-          .attr('stroke-width', 4)
-          .attr('r', 0)
-        .transition()
-          .duration(1500)
-          .attr('stroke-width', 0)
-          .attr('r', 12)
-          .ease('sine')
-        .each('end', repeat);
-    })();
-  }
+  //     element
+  //       .transition()
+  //         .duration(0)
+  //         .attr('stroke-width', 4)
+  //         .attr('r', 0)
+  //       .transition()
+  //         .duration(1500)
+  //         .attr('stroke-width', 0)
+  //         .attr('r', 12)
+  //         .ease('sine')
+  //       .each('end', repeat);
+  //   })();
+  // }
 
   function noPulse(element) {
 
@@ -588,22 +594,22 @@ var draw = function (options) {
     return string;
   }
 
-  function addBackground() {
+  // function addBackground() {
 
-    var wrapper = d3.select(this);
-    var text = wrapper.select('text');
-    var bBox = text.node().getBBox();
+  //   var wrapper = d3.select(this);
+  //   var text = wrapper.select('text');
+  //   var bBox = text.node().getBBox();
 
-    wrapper.selectAll('rect').remove();
+  //   wrapper.selectAll('rect').remove();
 
-    wrapper.insert('rect', ':first-child')
-      .attr('x', bBox.x - 3)
-      .attr('y', bBox.y - 3)
-      .attr('height', bBox.height + 6)
-      .attr('width', bBox.width + 6)
-      .attr('transform', $state.mobile ? 'rotate(-90)' : 'rotate(0)')
-      .style('fill', 'white');
-  }
+  //   wrapper.insert('rect', ':first-child')
+  //     .attr('x', bBox.x - 3)
+  //     .attr('y', bBox.y - 3)
+  //     .attr('height', bBox.height + 6)
+  //     .attr('width', bBox.width + 6)
+  //     .attr('transform', $state.mobile ? 'rotate(-90)' : 'rotate(0)')
+  //     .style('fill', 'white');
+  // }
 
   // Get x value for year
   function year(d) {
