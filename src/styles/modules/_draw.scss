@@ -19,14 +19,13 @@
     fill: none;
   }
 
-  .axis, .line, .highlight, .labels {
+  .axis, .line, .highlight, .labels, .annotations {
     pointer-events: none;
   }
 
   .background {
     stroke: none;
     fill: $white;
-    cursor: pointer;
   }
 
   .axis.y {
@@ -39,6 +38,14 @@
     path {
       stroke: none;
       stroke-width: 0;
+    }
+  }
+
+  .axis.x {
+
+    line, path {
+      stroke: $medium-grey;
+      stroke-width: 1;
     }
   }
 
@@ -88,7 +95,15 @@
   }
 }
 
-.hidden {
-  visibility: hidden;
+@keyframes scale {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(3); opacity: 0; }
 }
 
+.pulse {
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  animation-name: scale;
+  transform-origin: center center;
+  transition-timing-function: ease;
+}

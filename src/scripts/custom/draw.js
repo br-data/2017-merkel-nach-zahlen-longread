@@ -138,7 +138,7 @@ var draw = function (options) {
 
     $app.yMin = 0;
     $app.yMax = $data.data.max;
-    // yMax = d3.max($data.data.values, function (d) { return d.value; }) * 1.5;
+    // $app.yMax = d3.max($data.data.values, function (d) { return d.value; }) * 1.5;
 
     $app.xMin = d3.min($data.data.values, function (d) { return d.year; });
     $app.xMax = d3.max($data.data.values, function (d) { return d.year; });
@@ -195,8 +195,8 @@ var draw = function (options) {
     $app.user.highlight = $app.group.append('g')
       .attr('class', 'user highlight');
 
-    $app.user.highlight.append('circle')
-      .attr('class', 'pulse');
+    $app.user.highlight.append('circle');
+    $app.user.highlight.append('circle');
 
     $app.user.highlight.append('text');
 
@@ -231,8 +231,7 @@ var draw = function (options) {
     $app.previous.highlight = $app.group.append('g')
       .attr('class', 'previous highlight');
 
-    $app.previous.highlight.append('circle')
-      .attr('class', 'pulse');
+    $app.previous.highlight.append('circle');
 
     $app.previous.highlight.append('text');
 
@@ -292,12 +291,13 @@ var draw = function (options) {
     $app.background
       .attr('width', $app.width - $app.x(lastYear($data.previous)))
       .attr('height', $app.height)
-      .attr('x', $app.x(lastYear($data.previous)) - 10);
+      .attr('x', $app.x(lastYear($data.previous)) - 10)
+      .style('cursor', 'pointer');
 
     $app.xAxis = d3.svg.axis()
       .scale($app.x)
       .orient('bottom')
-      .tickSize(0)
+      .tickSize(-7)
       .tickPadding(10)
       .tickValues($data.elections)
       .tickFormat(function (d) { return d; });
@@ -320,6 +320,13 @@ var draw = function (options) {
         .attr('dy', $state.mobile ? '0' : '12px')
         .attr('transform', $state.mobile ? 'rotate(-90)' : 'rotate(0)')
         .style('text-anchor', $state.mobile ? 'end' : 'middle');
+
+    $app.xAxisGroup
+      .select('path')
+        .attr('d', $app.line([
+          { year: $data.elections[0], value: $app.yMax },
+          { year: $data.elections[$data.elections.length - 1], value: $app.yMax }
+        ]));
 
     $app.yAxisGroup
       .attr('transform', 'translate(' + $app.width + ',0)')
@@ -351,7 +358,7 @@ var draw = function (options) {
       .attr('transform', $state.completed ? translate($data.defined, $data.defined) : translate($data.previous, $data.previous))
       .style('opacity', $state.completed ? 1 : 0);
 
-    $app.user.highlight.select('circle')
+    $app.user.highlight.selectAll('circle')
       .attr('r', 4);
 
     $app.user.highlight.select('text')
@@ -392,7 +399,8 @@ var draw = function (options) {
       .attr('transform', translate($data.previous, $data.previous));
 
     $app.previous.highlight.select('circle')
-      .call($state.completed ? noop : pulse);
+      .attr('r', 4)
+      .classed('pulse', !$state.completed);
 
     $app.previous.highlight.select('text')
       .text(pretty(lastValue($data.previous)))
@@ -477,7 +485,7 @@ var draw = function (options) {
   function handleStart() {
 
     $app.previous.highlight.select('circle')
-      .call(noPulse);
+      .classed('pulse', false);
 
     $app.user.group
       .attr('opacity', 1);
@@ -486,7 +494,7 @@ var draw = function (options) {
       .style('opacity', 1);
 
     $app.user.highlight.select('circle')
-      .call(pulse);
+      .classed('pulse', true);
 
     $state.started = true;
   }
@@ -505,13 +513,16 @@ var draw = function (options) {
 
   function handleComplete() {
 
+    $app.background
+      .style('cursor', 'auto');
+
     $app.clipRect
       .transition()
         .duration(1000)
         .attr('width', $app.x($app.xMax) + $config.margin.right);
 
     $app.user.highlight.select('circle')
-      .call(noPulse);
+      .classed('pulse', false);
 
     $app.current.highlight
       .attr('transform', smartTranslate($data.current, $data.current, $data.user));
@@ -553,53 +564,6 @@ var draw = function (options) {
     render();
   }
 
-  function pulse(element) {
-
-    (function repeat() {
-
-      element
-        .transition()
-          .ease('quad')
-          .duration(1000)
-          .attr('r', 7)
-        .transition()
-          .ease('quad')
-          .duration(800)
-          .attr('r', 4)
-        .each('end', repeat);
-    })();
-  }
-
-  // function radiate(element) {
-
-  //   (function repeat() {
-
-  //     element
-  //       .transition()
-  //         .duration(0)
-  //         .attr('stroke-width', 4)
-  //         .attr('r', 0)
-  //       .transition()
-  //         .duration(1500)
-  //         .attr('stroke-width', 0)
-  //         .attr('r', 12)
-  //         .ease('sine')
-  //       .each('end', repeat);
-  //   })();
-  // }
-
-  function noPulse(element) {
-
-    (function repeat() {
-
-      element
-        .transition()
-          .ease('quad')
-          .duration(800)
-          .attr('r', 4);
-    })();
-  }
-
   // Returns translate property for SVG transforms
   function translate(xArr, yArr) {
 
@@ -634,23 +598,6 @@ var draw = function (options) {
 
     return string;
   }
-
-  // function addBackground() {
-
-  //   var wrapper = d3.select(this);
-  //   var text = wrapper.select('text');
-  //   var bBox = text.node().getBBox();
-
-  //   wrapper.selectAll('rect').remove();
-
-  //   wrapper.insert('rect', ':first-child')
-  //     .attr('x', bBox.x - 3)
-  //     .attr('y', bBox.y - 3)
-  //     .attr('height', bBox.height + 6)
-  //     .attr('width', bBox.width + 6)
-  //     .attr('transform', $state.mobile ? 'rotate(-90)' : 'rotate(0)')
-  //     .style('fill', 'white');
-  // }
 
   // Get x value for year
   function year(d) {

@@ -618,18 +618,20 @@ footer {
     stroke: none; }
   .draw path {
     fill: none; }
-  .draw .axis, .draw .line, .draw .highlight, .draw .labels {
+  .draw .axis, .draw .line, .draw .highlight, .draw .labels, .draw .annotations {
     pointer-events: none; }
   .draw .background {
     stroke: none;
-    fill: #fff;
-    cursor: pointer; }
+    fill: #fff; }
   .draw .axis.y line {
     stroke: #ccd;
     stroke-width: 1; }
   .draw .axis.y path {
     stroke: none;
     stroke-width: 0; }
+  .draw .axis.x line, .draw .axis.x path {
+    stroke: #ccd;
+    stroke-width: 1; }
   .draw .group text, .draw .highlight text {
     text-shadow: 1px 0 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff; }
   .draw .previous circle {
@@ -650,7 +652,19 @@ footer {
     stroke-dasharray: 1 7;
     stroke-linecap: round; }
 
-.hidden {
-  visibility: hidden; }
+@keyframes scale {
+  from {
+    transform: scale(1);
+    opacity: 1; }
+  to {
+    transform: scale(3);
+    opacity: 0; } }
+
+.pulse {
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  animation-name: scale;
+  transform-origin: center center;
+  transition-timing-function: ease; }
 
 /*# sourceMappingURL=main.css.map */
