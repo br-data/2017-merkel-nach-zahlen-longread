@@ -22,14 +22,7 @@
       { "year": 2015, "value": 4.6 },
       { "year": 2016, "value": 4.1 }
     ],
-    "annotations": [
-      {
-        "text": "Kleine Anmerkung",
-        "color": "#000",
-        "year": 2008,
-        "value": 7.4
-      }
-    ]
+    "annotations": []
   }, {
     "id": "hartz4-kinder",
     "unit": "Mio.",
