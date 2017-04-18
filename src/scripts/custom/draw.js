@@ -247,7 +247,6 @@ var draw = function (options) {
       .call($app.drag);
 
     $app.annotations.group = $app.group.append('g')
-        .attr('clip-path', 'url(#clip-' + options.id + ')')
         .attr('class', 'annotations')
       .selectAll('.annotations')
         .data(function () { return $data.data.annotations; })
