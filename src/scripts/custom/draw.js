@@ -2,7 +2,7 @@ var draw = function (options) {
 
   'use strict';
 
-  var $config, $data, $app, $state;
+  var $config, $app, $state, $data;
 
   $config = {
     margin: { bottom: 30, left: 10, right: 10, top: 30 },
@@ -11,10 +11,7 @@ var draw = function (options) {
     breakpoint: 561
   };
 
-  $data = {};
-
   $app = {
-
     previous: {},
     current: {},
     user: {},
@@ -23,12 +20,13 @@ var draw = function (options) {
   };
 
   $state = {
-
     started: false,
     completed: false,
     evaluated: false,
     mobile: false
   };
+
+  $data = {};
 
   $data.elections = [2002, 2005, 2009, 2013, 2017];
 
@@ -80,12 +78,12 @@ var draw = function (options) {
 
     $data.previous = $data.data.values.filter(function (d) {
 
-      return d.year <= 2005;
+      return d.year <= $data.data.breakpoint;
     });
 
     $data.current = $data.data.values.filter(function (d) {
 
-      return d.year >= 2005;
+      return d.year >= $data.data.breakpoint;
     });
 
     $data.user = clone($data.current).map(function (d, i) {
@@ -100,11 +98,15 @@ var draw = function (options) {
 
   function prepare() {
 
-    $app.button = d3.select('button[data-id=' + options.id + ']');
+    $app.showButton = d3.select('button.show[data-id=' + options.id + ']');
+    $app.showButton.on('click', handleComplete);
+
+    $app.resetButton = d3.select('button.reset[data-id=' + options.id + ']');
+    $app.resetButton.on('click', handleReset);
+
     $app.paragraph = d3.select('p[data-id=' + options.id + ']');
 
     $app.container = document.getElementById(options.id);
-
     $app.container.addEventListener('touchmove', function (event) {
 
       event.preventDefault();
@@ -234,8 +236,8 @@ var draw = function (options) {
 
     $app.previous.highlight.append('text');
 
-    $app.previous.first = $app.previous.group.append('g')
-      .attr('class', 'first line');
+    $app.previous.first = $app.group.append('g')
+      .attr('class', 'first highlight');
 
     $app.previous.first.append('text');
 
@@ -290,7 +292,7 @@ var draw = function (options) {
     $app.background
       .attr('width', $app.width - $app.x(lastYear($data.previous)))
       .attr('height', $app.height)
-      .attr('x', $app.x(lastYear($data.previous)));
+      .attr('x', $app.x(lastYear($data.previous)) - 10);
 
     $app.xAxis = d3.svg.axis()
       .scale($app.x)
@@ -428,77 +430,33 @@ var draw = function (options) {
 
   function update() {
 
-    $data.defined = $data.user.filter(function (d) {
-
-      return d.value;
-    });
-
     if (!$state.started) {
 
-      $app.previous.highlight.select('circle')
-        .call(noPulse);
-
-      $app.user.group
-        .attr('opacity', 1);
-
-      $app.user.highlight
-        .style('opacity', 1);
-
-      $app.user.highlight.select('circle')
-        .call(pulse);
-
-      $state.started = true;
+      handleStart();
     }
 
     if (!$state.completed) {
 
-      $app.user.line
-        .attr('d', $app.line($data.defined));
-
-      $app.user.highlight
-        .attr('transform', translate($data.defined, $data.defined));
-
-      $app.user.highlight.select('text')
-        .text(pretty(lastValue($data.defined)));
+      handleChange();
     }
 
-    if (lastValue($data.user)) {
+    if (!$state.completed && lastValue($data.user)) {
 
-      $app.clipRect
-        .transition()
-          .duration(1000)
-          .attr('width', $app.x($app.xMax) + $config.margin.right);
-
-      $app.user.highlight.select('circle')
-        .call(noPulse);
-
-      $app.current.highlight
-        .attr('transform', smartTranslate($data.current, $data.current, $data.user));
-
-      $app.current.highlight
-        .transition()
-          .delay(1000)
-          .style('opacity', 1);
-
-      $app.annotations.group
-        .transition()
-          .delay(1000)
-          .style('opacity', 1);
-
-      $app.paragraph
-        .transition()
-          .delay(1000)
-          .style('opacity', 1);
-
-      $state.completed = true;
+      handleComplete();
     }
   }
 
   function handleDrag() {
 
     var pos = d3.mouse(this);
-    var year = Math.max(2006, Math.min(2017, $app.x.invert(pos[0])));
-    var value = Math.max(0, Math.min($app.y.domain()[1], $app.y.invert(pos[1])));
+
+    var year = Math.max($data.data.breakpoint + 1,
+      Math.min($app.xMax, $app.x.invert(pos[0]))
+    );
+
+    var value = Math.max($app.yMin,
+      Math.min($app.y.domain()[1], $app.y.invert(pos[1]))
+    );
 
     $data.user.forEach(function (d) {
 
@@ -508,7 +466,91 @@ var draw = function (options) {
       }
     });
 
+    $data.defined = $data.user.filter(function (d) {
+
+      return d.value;
+    });
+
     update();
+  }
+
+  function handleStart() {
+
+    $app.previous.highlight.select('circle')
+      .call(noPulse);
+
+    $app.user.group
+      .attr('opacity', 1);
+
+    $app.user.highlight
+      .style('opacity', 1);
+
+    $app.user.highlight.select('circle')
+      .call(pulse);
+
+    $state.started = true;
+  }
+
+  function handleChange() {
+
+    $app.user.line
+      .attr('d', $app.line($data.defined));
+
+    $app.user.highlight
+      .attr('transform', translate($data.defined, $data.defined));
+
+    $app.user.highlight.select('text')
+      .text(pretty(lastValue($data.defined)));
+  }
+
+  function handleComplete() {
+
+    $app.clipRect
+      .transition()
+        .duration(1000)
+        .attr('width', $app.x($app.xMax) + $config.margin.right);
+
+    $app.user.highlight.select('circle')
+      .call(noPulse);
+
+    $app.current.highlight
+      .attr('transform', smartTranslate($data.current, $data.current, $data.user));
+
+    $app.current.highlight
+      .transition()
+        .delay(1000)
+        .style('opacity', 1);
+
+    $app.annotations.group
+      .transition()
+        .delay(1000)
+        .style('opacity', 1);
+
+    $app.paragraph
+      .transition()
+        .delay(1000)
+        .style('opacity', 1);
+
+    $state.completed = true;
+  }
+
+  function handleReset() {
+
+    $state = {
+      started: false,
+      completed: false,
+      evaluated: false,
+      mobile: false
+    };
+
+    $data.user = clone($data.current).map(function (d, i) {
+
+      d.value = i ? undefined : d.value;
+
+      return d;
+    });
+
+    render();
   }
 
   function pulse(element) {
