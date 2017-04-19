@@ -310,14 +310,13 @@ var draw = function (options) {
       .outerTickSize(0)
       .tickPadding(10)
       .tickFormat('');
-      //.tickFormat(function (d, i) { return (i % 2) ? '' : pretty(d); });
 
     $app.xAxisGroup
         .attr('transform', 'translate(0,' + $app.height + ')')
         .call($app.xAxis)
       .selectAll('text')
         .attr('dx', $state.mobile ? '-10px' : 0)
-        .attr('dy', $state.mobile ? '0' : '12px')
+        .attr('dy', $state.mobile ? '-6px' : '12px')
         .attr('transform', $state.mobile ? 'rotate(-90)' : 'rotate(0)')
         .style('text-anchor', $state.mobile ? 'end' : 'middle');
 
@@ -457,6 +456,9 @@ var draw = function (options) {
   function handleDrag() {
 
     var pos = d3.mouse(this);
+
+    // Small hack to adjust for cursor offset
+    pos[1] = pos[1] - 30;
 
     var year = Math.max($data.data.breakpoint + 1,
       Math.min($app.xMax, $app.x.invert(pos[0]))
