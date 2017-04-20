@@ -19,7 +19,7 @@
     fill: none;
   }
 
-  .axis, .line, .highlight, .labels, .annotations {
+  .axis, .line, .highlight, .labels, .annotations, .hint {
     pointer-events: none;
   }
 
@@ -49,10 +49,17 @@
     }
   }
 
-  .group, .highlight {
+  .group, .highlight, .hint {
 
     text {
       text-shadow: 1px 0 0 $white, 0 1px 0 $white, -1px 0 0 $white, 0 -1px 0 $white;
+    }
+  }
+
+  .hint {
+
+    path {
+      fill: $black;
     }
   }
 
@@ -95,15 +102,31 @@
   }
 }
 
-@keyframes scale {
+@keyframes pulsating {
   from { transform: scale(1); opacity: 1; }
   to { transform: scale(3); opacity: 0; }
 }
 
-.pulse {
+.pulsating {
   animation-duration: 1.5s;
   animation-iteration-count: infinite;
-  animation-name: scale;
+  animation-name: pulsating;
   transform-origin: center center;
   transition-timing-function: ease;
 }
+
+@keyframes moving {
+  0% { transform: translate(0, 10px); opacity: 1; }
+  50% { transform: translate(120px, 25px); opacity: 0.9; }
+  75% { transform: translate(290px, 20px); opacity: 0; }
+  100% { transform: translate(290px, 20px); opacity: 0; }
+}
+
+.moving {
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-name: moving;
+  transform-origin: center center;
+  transition-timing-function: ease;
+}
+

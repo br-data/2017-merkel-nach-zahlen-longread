@@ -622,7 +622,7 @@ footer {
     stroke: none; }
   .draw path {
     fill: none; }
-  .draw .axis, .draw .line, .draw .highlight, .draw .labels, .draw .annotations {
+  .draw .axis, .draw .line, .draw .highlight, .draw .labels, .draw .annotations, .draw .hint {
     pointer-events: none; }
   .draw .background {
     stroke: none;
@@ -636,8 +636,10 @@ footer {
   .draw .axis.x line, .draw .axis.x path {
     stroke: #ccd;
     stroke-width: 1; }
-  .draw .group text, .draw .highlight text {
+  .draw .group text, .draw .highlight text, .draw .hint text {
     text-shadow: 1px 0 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff; }
+  .draw .hint path {
+    fill: #000; }
   .draw .previous circle {
     fill: #e2001a; }
   .draw .previous path {
@@ -656,7 +658,7 @@ footer {
     stroke-dasharray: 1 7;
     stroke-linecap: round; }
 
-@keyframes scale {
+@keyframes pulsating {
   from {
     transform: scale(1);
     opacity: 1; }
@@ -664,10 +666,31 @@ footer {
     transform: scale(3);
     opacity: 0; } }
 
-.pulse {
+.pulsating {
   animation-duration: 1.5s;
   animation-iteration-count: infinite;
-  animation-name: scale;
+  animation-name: pulsating;
+  transform-origin: center center;
+  transition-timing-function: ease; }
+
+@keyframes moving {
+  0% {
+    transform: translate(0, 10px);
+    opacity: 1; }
+  50% {
+    transform: translate(120px, 25px);
+    opacity: 0.9; }
+  75% {
+    transform: translate(290px, 20px);
+    opacity: 0; }
+  100% {
+    transform: translate(290px, 20px);
+    opacity: 0; } }
+
+.moving {
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-name: moving;
   transform-origin: center center;
   transition-timing-function: ease; }
 

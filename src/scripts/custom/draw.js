@@ -2,7 +2,7 @@ var draw = function (options) {
 
   'use strict';
 
-  var $config, $app, $state, $data;
+  var $config, $app, $state, $pointer, $data;
 
   $config = {
     margin: { bottom: 30, left: 10, right: 10, top: 30 },
@@ -16,7 +16,8 @@ var draw = function (options) {
     current: {},
     user: {},
     labels: {},
-    annotations: {}
+    annotations: {},
+    hint: {}
   };
 
   $state = {
@@ -25,6 +26,8 @@ var draw = function (options) {
     evaluated: false,
     mobile: false
   };
+
+  $pointer = 'M20.5 28.7h-11c-.5 0-.9-.4-.9-.9 0-1.4-.7-2.3-1.7-3.5-.5-.7-1.2-1.5-1.8-2.4-1.7-2.8-3.2-6-3.6-7.3-.4-1.3-.1-2 .2-2.4.4-.6 1.1-.9 1.9-.9 1.1 0 2.3.9 3.2 2.1V3.9c0-1.5 1.3-2.8 2.7-2.8 1.5 0 2.8 1.3 2.8 2.8v3.9c.3-.1.5-.2.9-.2 1 0 1.8.5 2.3 1.3.4-.2.9-.4 1.3-.4 1.3 0 2.3.9 2.6 2 .3-.1.6-.2 1-.2 1.5 0 2.8 1.3 2.8 2.8v2.8c0 2.3-.5 4.3-.9 6.1-.5 1.9-.9 3.6-.9 5.8.1.4-.4.9-.9.9zm-10.1-1.8h9.3c.1-2 .5-3.7.9-5.3.5-1.8.9-3.6.9-5.7V13c0-.5-.4-.9-.9-.9s-.9.4-.9.9v1c0 .5-.4.9-.9.9s-.9-.4-.9-.9v-2.9c0-.5-.4-.9-.9-.9s-.9.4-.9.9v2c0 .5-.4.9-.9.9s-.9-.4-.9-.9v-2.9c0-.5-.4-.9-.9-.9s-.9.4-.9.9v2c0 .5-.4.9-.9.9s-.9-.4-.9-.9V3.7c0-.5-.4-.9-.9-.9s-1.2.4-1.2.9v14c0 .5-.4.9-.9.9s-.9-.4-.9-.9V17c-.8-2.1-2.6-4-3.2-4-.2 0-.4.1-.4.2-.1.1-.1.4 0 .8.3 1 1.7 4 3.5 6.8.6.9 1.2 1.6 1.7 2.3.9 1.2 1.7 2.3 2 3.8z';
 
   $data = {};
 
@@ -187,6 +190,13 @@ var draw = function (options) {
     $app.labels.group
       .append('text');
 
+    $app.hint.group = $app.group.append('g')
+        .attr('class', 'hint');
+
+    $app.hint.group.append('text');
+
+    $app.hint.group.append('path');
+
     $app.user.group = $app.group.append('g')
       .attr('class', 'user line');
 
@@ -347,6 +357,23 @@ var draw = function (options) {
         .attr('fill', function (d) { return d.color; })
         .attr('text-anchor', 'middle');
 
+    $app.hint.group
+        .attr('transform', translate($data.previous, $data.previous))
+        .style('opacity', $state.completed ? 0 : 1)
+      .select('text')
+        .attr('font-style', 'italic')
+        .attr('fill', '#889')
+        .text('Zeichnen Sie die Linie')
+        .attr('dx', 20)
+        .attr('dy', 6)
+        .attr('text-anchor', 'start');
+
+    $app.hint.group
+      .select('path')
+        .classed('moving', true)
+        .attr('transform', 'translate(0, 10)')
+        .attr('d', $pointer);
+
     $app.user.group
       .attr('opacity', $state.completed ? 1 : 0);
 
@@ -399,7 +426,7 @@ var draw = function (options) {
 
     $app.previous.highlight.select('circle')
       .attr('r', 4)
-      .classed('pulse', !$state.completed);
+      .classed('pulsating', !$state.completed);
 
     $app.previous.highlight.select('text')
       .text(pretty(lastValue($data.previous)))
@@ -486,8 +513,11 @@ var draw = function (options) {
 
   function handleStart() {
 
+    $app.hint.group
+      .style('opacity', 0);
+
     $app.previous.highlight.select('circle')
-      .classed('pulse', false);
+      .classed('pulsating', false);
 
     $app.user.group
       .attr('opacity', 1);
@@ -496,7 +526,7 @@ var draw = function (options) {
       .style('opacity', 1);
 
     $app.user.highlight.select('circle')
-      .classed('pulse', true);
+      .classed('pulsating', true);
 
     $state.started = true;
   }
@@ -523,8 +553,11 @@ var draw = function (options) {
         .duration(1000)
         .attr('width', $app.x($app.xMax) + $config.margin.right);
 
+    $app.hint.group
+      .style('opacity', 0);
+
     $app.user.highlight.select('circle')
-      .classed('pulse', false);
+      .classed('pulsating', false);
 
     $app.current.highlight
       .attr('transform', smartTranslate($data.current, $data.current, $data.user));
@@ -658,13 +691,11 @@ var draw = function (options) {
     return JSON.parse(JSON.stringify(object));
   }
 
-  function noop() { return; }
-
   return {
 
     init: init,
-    prepare: prepare,
     render: render,
-    update: update
+    update: update,
+    reset: handleReset
   };
 };
