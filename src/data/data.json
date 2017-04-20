@@ -188,7 +188,6 @@
     "values": [
       { "year": 2002, "value": 10.2 },
       { "year": 2003, "value": 10.4 },
-      { "year": 2005, "value": 13.6 },
       { "year": 2006, "value": 13.6 },
       { "year": 2007, "value": 15.5 },
       { "year": 2008, "value": 17.6 },
@@ -202,11 +201,16 @@
       { "year": 2016, "value": 32.7 }
     ],
     "annotations": [
-    {
+      {
         "text": "Rechtsanspruch auf Kitaplatz",
         "color": "#000",
         "year": 2013,
         "value": 29.3
+      },{
+        "text": "keine Daten",
+        "color": "#000",
+        "year": 2004.5,
+        "value": 11
       }
     ]
   }, {

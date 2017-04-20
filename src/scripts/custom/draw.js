@@ -439,7 +439,9 @@ var draw = function (options) {
       .attr('transform', 'translate(' + year($data.previous[0]) + ',' +  value($data.previous[0]) +')');
 
     $app.previous.first.select('text')
-      .text(pretty($data.previous[0].value))
+      .text(function () {
+        if ($app.id !== 'betreuungsquote') { return pretty($data.previous[0].value); }
+      })
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
@@ -455,7 +457,7 @@ var draw = function (options) {
 
     $app.annotations.group
       .selectAll('line')
-        .attr('stroke', 'black')
+        .attr('stroke', function (d) { return d.color; })
         .attr('x1', 0)
         .attr('x2', 0)
         .attr('y1', 10)
