@@ -1,6 +1,7 @@
 .draw {
 
-  margin-bottom: 1.5em;
+  margin-top: 1.5em;
+  margin-bottom: 1em;
 
   svg {
     overflow: visible;
@@ -68,6 +69,11 @@
     path {
       fill: $black;
     }
+
+    text {
+      font-size: 16px;
+      font-style: italic;
+    }
   }
 
   .previous {
@@ -122,8 +128,8 @@
 }
 
 @keyframes moving {
-  0% { transform: translate(0, 10px); opacity: 1; }
-  50% { transform: translate(120px, 25px); opacity: 0.9; }
+  0% { transform: translate(5px, 10px); opacity: 1; }
+  50% { transform: translate(120px, 25px); opacity: .9; }
   75% { transform: translate(290px, 20px); opacity: 0; }
   100% { transform: translate(290px, 20px); opacity: 0; }
 }

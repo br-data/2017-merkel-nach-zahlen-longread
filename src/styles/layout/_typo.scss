@@ -1,8 +1,12 @@
 body {
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
   font-size: 1.1em;
   font-weight: 300;
   line-height: 1.6;
+
+  @include mobile {
+    font-size: 1em;
+  }
 }
 
 h1, h2, h3, h4, h5 {
@@ -12,11 +16,19 @@ h1, h2, h3, h4, h5 {
 h1 {
   font-size: 3em;
   margin: 2em 0 0;
+  letter-spacing: -2px;
+  line-height: 1.1;
+
+  @include mobile {
+    font-size: 2em;
+    margin: 3em 0 0;
+  }
 }
 
 h2 {
-  font-size: 1.5em;
-  margin: 2em 0 0;
+  font-size: 1.2em;
+  font-weight: 600;
+  margin: 2.5em 0 0;
 }
 
 p {
