@@ -621,49 +621,62 @@ footer {
     stroke: none; }
   .draw path {
     fill: none; }
-  .draw .axis, .draw .line, .draw .highlight, .draw .labels, .draw .annotations, .draw .hint {
-    pointer-events: none; }
   .draw .background {
     stroke: none;
     fill: #fff;
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: rgba(255, 255, 255, 0); }
-  .draw .grid .tick:first-child {
-    display: none; }
-  .draw .grid line {
-    stroke: #ccd;
-    stroke-width: 1; }
-  .draw .grid path {
-    stroke: none;
-    stroke-width: 0; }
-  .draw .axis line, .draw .axis path {
-    stroke: #ccd;
-    stroke-width: 1; }
-  .draw .group text, .draw .highlight text, .draw .hint text {
+  .draw .axis {
+    pointer-events: none; }
+    .draw .axis line, .draw .axis path {
+      stroke: #ccd;
+      stroke-width: 1; }
+  .draw .grid {
+    pointer-events: none; }
+    .draw .grid .tick:first-child {
+      display: none; }
+    .draw .grid line {
+      stroke: #ccd;
+      stroke-width: 1; }
+    .draw .grid path {
+      stroke: none;
+      stroke-width: 0; }
+  .draw .previous text, .draw .current text, .draw .user text, .draw .hint text {
     text-shadow: 1px 0 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff; }
-  .draw .hint path {
-    fill: #000; }
-  .draw .hint text {
-    font-size: 16px;
-    font-style: italic; }
-  .draw .previous circle {
-    fill: #e2001a; }
-  .draw .previous path {
-    stroke-width: 3;
-    stroke: #e2001a; }
-  .draw .current circle {
-    fill: #000; }
-  .draw .current path {
-    stroke-width: 3;
-    stroke: #000; }
-  .draw .user circle {
-    fill: #889; }
-  .draw .user path {
-    stroke: #889;
-    stroke-width: 3;
-    stroke-dasharray: 1 7;
-    stroke-linecap: round; }
+  .draw .hint {
+    pointer-events: none; }
+    .draw .hint path {
+      fill: #000; }
+    .draw .hint text {
+      font-size: 16px;
+      font-style: italic; }
+  .draw .previous {
+    pointer-events: none; }
+    .draw .previous circle {
+      fill: #e2001a; }
+    .draw .previous path {
+      stroke-width: 3;
+      stroke: #e2001a; }
+  .draw .current {
+    pointer-events: none; }
+    .draw .current circle {
+      fill: #000; }
+    .draw .current path {
+      stroke-width: 3;
+      stroke: #000; }
+  .draw .user {
+    pointer-events: none; }
+    .draw .user circle {
+      fill: #889; }
+    .draw .user path {
+      stroke: #889;
+      stroke-width: 3;
+      stroke-dasharray: 1 7;
+      stroke-linecap: round; }
+  .draw .labels,
+  .draw .annotations {
+    pointer-events: none; }
 
 @keyframes pulsating {
   from {

@@ -20,10 +20,6 @@
     fill: none;
   }
 
-  .axis, .line, .highlight, .labels, .annotations, .hint {
-    pointer-events: none;
-  }
-
   .background {
     stroke: none;
     fill: $white;
@@ -32,7 +28,17 @@
     -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
   }
 
+  .axis {
+    pointer-events: none;
+
+    line, path {
+      stroke: $medium-grey;
+      stroke-width: 1;
+    }
+  }
+
   .grid {
+    pointer-events: none;
 
     .tick:first-child {
       display: none;
@@ -49,15 +55,7 @@
     }
   }
 
-  .axis {
-
-    line, path {
-      stroke: $medium-grey;
-      stroke-width: 1;
-    }
-  }
-
-  .group, .highlight, .hint {
+  .previous, .current, .user, .hint {
 
     text {
       text-shadow: 1px 0 0 $white, 0 1px 0 $white, -1px 0 0 $white, 0 -1px 0 $white;
@@ -65,6 +63,7 @@
   }
 
   .hint {
+    pointer-events: none;
 
     path {
       fill: $black;
@@ -77,6 +76,7 @@
   }
 
   .previous {
+    pointer-events: none;
 
     circle {
       fill: $red;
@@ -89,6 +89,7 @@
   }
 
   .current {
+    pointer-events: none;
 
     circle {
       fill: $black;
@@ -101,6 +102,7 @@
   }
 
   .user {
+    pointer-events: none;
 
     circle {
       fill: $dark-grey;
@@ -112,6 +114,11 @@
       stroke-dasharray: 1 7;
       stroke-linecap: round;
     }
+  }
+
+  .labels,
+  .annotations {
+    pointer-events: none;
   }
 }
 

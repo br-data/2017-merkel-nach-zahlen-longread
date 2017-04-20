@@ -182,7 +182,7 @@
     "id": "betreuungsquote",
     "unit": "%",
     "factor": 1,
-    "max": 35,
+    "max": 40,
     "precision": 10,
     "breakpoint": 2005,
     "values": [
