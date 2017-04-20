@@ -39,21 +39,31 @@ img {
   color: #7db75b; }
 
 body {
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
   font-size: 1.1em;
   font-weight: 300;
   line-height: 1.6; }
+  @media (max-width: 560px) {
+    body {
+      font-size: 1em; } }
 
 h1, h2, h3, h4, h5 {
   font-weight: 400; }
 
 h1 {
   font-size: 3em;
-  margin: 2em 0 0; }
+  margin: 2em 0 0;
+  letter-spacing: -2px;
+  line-height: 1.1; }
+  @media (max-width: 560px) {
+    h1 {
+      font-size: 2em;
+      margin: 3em 0 0; } }
 
 h2 {
-  font-size: 1.5em;
-  margin: 2em 0 0; }
+  font-size: 1.2em;
+  font-weight: 600;
+  margin: 2.5em 0 0; }
 
 p {
   margin-top: 1.5em;
@@ -104,47 +114,35 @@ strong, b {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
-.icon-twitter:before {
+.icon-ccw:before {
   content: '\e800'; }
 
-.icon-facebook:before {
+.icon-mail:before {
   content: '\e801'; }
 
-.icon-whatsapp:before {
+.icon-code:before {
   content: '\e802'; }
 
-.icon-mail:before {
-  content: '\e803'; }
-
-.icon-gplus:before {
+.icon-link:before {
   content: '\e804'; }
 
 .icon-download:before {
   content: '\e805'; }
 
-.icon-share:before {
-  content: '\e806'; }
-
-.icon-help-circled:before {
-  content: '\e807'; }
-
-.icon-info-circled:before {
-  content: '\e808'; }
-
-.icon-attention-circled:before {
+.icon-search:before {
   content: '\e809'; }
 
-.icon-ccw:before {
-  content: '\e80f'; }
+.icon-facebook:before {
+  content: '\e80a'; }
 
-.icon-link:before {
-  content: '\e816'; }
+.icon-twitter:before {
+  content: '\e80c'; }
 
-.icon-code:before {
-  content: '\e81b'; }
+.icon-whatsapp:before {
+  content: '\e80d'; }
 
-.icon-plus:before {
-  content: '\e82b'; }
+.icon-table:before {
+  content: '\f0ce'; }
 
 section {
   max-width: 940px;
@@ -612,7 +610,8 @@ footer {
     width: 138px; }
 
 .draw {
-  margin-bottom: 1.5em; }
+  margin-top: 1.5em;
+  margin-bottom: 1em; }
   .draw svg {
     overflow: visible; }
   .draw text {
@@ -645,6 +644,9 @@ footer {
     text-shadow: 1px 0 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff; }
   .draw .hint path {
     fill: #000; }
+  .draw .hint text {
+    font-size: 16px;
+    font-style: italic; }
   .draw .previous circle {
     fill: #e2001a; }
   .draw .previous path {
@@ -679,11 +681,11 @@ footer {
 
 @keyframes moving {
   0% {
-    transform: translate(0, 10px);
+    transform: translate(5px, 10px);
     opacity: 1; }
   50% {
     transform: translate(120px, 25px);
-    opacity: 0.9; }
+    opacity: .9; }
   75% {
     transform: translate(290px, 20px);
     opacity: 0; }

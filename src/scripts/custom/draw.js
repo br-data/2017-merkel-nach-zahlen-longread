@@ -5,8 +5,7 @@ var draw = function (options) {
   var $config, $app, $state, $pointer, $data;
 
   $config = {
-    margin: { bottom: 30, left: 10, right: 10, top: 30 },
-    height: 300,
+    height: 270,
     width: 658,
     breakpoint: 561
   };
@@ -121,19 +120,6 @@ var draw = function (options) {
       .attr('baseProfile', 'full');
 
     $app.defs = $app.svg.append('defs');
-
-    $app.filter = $app.defs.append('filter')
-      .attr('id', 'solid-' + options.id)
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', 1)
-      .attr('height', 1);
-
-    $app.filter.append('feFlood')
-      .attr('flood-color', 'white');
-
-    $app.filter.append('feComposite')
-      .attr('in', 'SourceGraphic');
 
     $app.clipRect = $app.defs.append('clipPath')
         .attr('id', 'clip-' + options.id)
@@ -276,21 +262,21 @@ var draw = function (options) {
 
     $state.mobile = window.innerWidth < $config.breakpoint;
 
-    $app.width = $app.container.getBoundingClientRect().width - $config.margin.left - $config.margin.right;
+    $app.width = $app.container.getBoundingClientRect().width;
     $app.width = $app.width || $config.width;
 
     $app.height = $config.height;
-    $app.height = $app.height - $config.margin.top - $config.margin.bottom;
+    $app.height = $app.height;
 
     $app.x.range([0, $app.width]);
     $app.y.range([$app.height, 0]);
 
     $app.svg
-      .attr('width', $app.width + $config.margin.left + $config.margin.right)
-      .attr('height', $app.height + $config.margin.bottom + $config.margin.top);
+      .attr('width', $app.width)
+      .attr('height', $app.height + 30);
 
     $app.clipRect
-      .attr('width', $state.completed ? $app.x($app.xMax) + $config.margin.right : $app.x(lastYear($data.previous)))
+      .attr('width', $state.completed ? $app.x($app.xMax) + 10 : $app.x(lastYear($data.previous)))
       .attr('height', $app.height);
 
     $app.background
@@ -361,16 +347,15 @@ var draw = function (options) {
       .style('opacity', $state.completed ? 0 : 1);
 
     $app.hint.group.text
-      .attr('font-style', 'italic')
-      .attr('fill', '#889')
-      .text('Zeichnen Sie die Linie')
-      .attr('dx', 20)
+      .attr('dx', 25)
       .attr('dy', 6)
-      .attr('text-anchor', 'start');
+      .attr('fill', '#889')
+      .attr('text-anchor', 'start')
+      .text('Zeichnen Sie die Linie');
 
     $app.hint.group.path
       .classed('moving', true)
-      .attr('transform', 'translate(0, 10)')
+      .attr('transform', 'translate(5, 10)')
       .attr('d', $pointer);
 
     $app.user.group
@@ -486,9 +471,6 @@ var draw = function (options) {
 
     var pos = d3.mouse(this);
 
-    // Small hack to adjust for cursor offset
-    pos[1] = pos[1] - 30;
-
     var year = Math.max($data.data.breakpoint + 1,
       Math.min($app.xMax, $app.x.invert(pos[0]))
     );
@@ -553,7 +535,7 @@ var draw = function (options) {
     $app.clipRect
       .transition()
         .duration(1000)
-        .attr('width', $app.x($app.xMax) + $config.margin.right);
+        .attr('width', $app.x($app.xMax) + 10);
 
     $app.hint.group
       .style('opacity', 0);
@@ -566,7 +548,7 @@ var draw = function (options) {
 
     $app.current.highlight
       .transition()
-        .delay(1000)
+        .duration(1000)
         .style('opacity', 1);
 
     $app.previous.highlight.pulse
@@ -574,12 +556,12 @@ var draw = function (options) {
 
     $app.annotations.group
       .transition()
-        .delay(1000)
+        .duration(1000)
         .style('opacity', 1);
 
     $app.paragraph
       .transition()
-        .delay(1000)
+        .duration(1000)
         .style('opacity', 1);
 
     $state.completed = true;
