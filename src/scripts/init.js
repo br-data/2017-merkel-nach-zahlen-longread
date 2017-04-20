@@ -21,7 +21,10 @@ function init() {
 
       for (var i = 0; i < drawElements.length; i++) {
 
-        var newDraw = new draw({ id: drawElements[i].id });
+        var newDraw = new draw({
+          id: drawElements[i].dataset.id,
+          element: drawElements[i]
+        });
 
         // Initialize DrawIt
         newDraw.init(data);

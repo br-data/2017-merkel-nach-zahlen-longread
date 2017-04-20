@@ -108,13 +108,14 @@ var draw = function (options) {
 
     $app.paragraph = d3.select('p[data-id=' + options.id + ']');
 
-    $app.container = document.getElementById(options.id);
+    $app.container = options.element;
     $app.container.addEventListener('touchmove', function (event) {
 
       event.preventDefault();
     }, false);
 
     $app.svg = d3.select($app.container).append('svg')
+      .attr('id', $app.id)
       .attr('xmlns', 'http://www.w3.org/2000/svg')
       .attr('version', '1.1')
       .attr('baseProfile', 'full');
@@ -353,10 +354,12 @@ var draw = function (options) {
       .attr('text-anchor', 'start')
       .text('Zeichnen Sie die Linie');
 
-    $app.hint.group.path
-      .classed('moving', true)
-      .attr('transform', 'translate(5, 10)')
-      .attr('d', $pointer);
+    if ($app.id === 'arbeitslosenquote') {
+      $app.hint.group.path
+        .classed('moving', true)
+        .attr('transform', 'translate(5, 10)')
+        .attr('d', $pointer);
+    }
 
     $app.user.group
       .attr('opacity', $state.completed ? 1 : 0);
