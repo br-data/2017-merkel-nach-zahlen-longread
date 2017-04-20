@@ -175,64 +175,49 @@ var draw = function (options) {
     $app.labels.group
       .append('text');
 
-    $app.hint.group = $app.svg.append('g')
-        .attr('class', 'hint');
-
-    $app.hint.group.text = $app.hint.group.append('text');
-
-    $app.hint.group.path = $app.hint.group.append('path');
-
     $app.user.group = $app.svg.append('g')
-      .attr('class', 'user line');
+      .attr('class', 'user');
 
-    $app.user.line = $app.user.group.append('path');
+    $app.user.group.line = $app.user.group.append('path');
 
-    $app.user.highlight = $app.svg.append('g')
-      .attr('class', 'user highlight');
+    $app.user.group.highlight = $app.user.group.append('g');
 
-    $app.user.highlight.pulse = $app.user.highlight.append('circle');
+    $app.user.group.highlight.pulse = $app.user.group.highlight.append('circle');
 
-    $app.user.highlight.circle = $app.user.highlight.append('circle');
+    $app.user.group.highlight.circle = $app.user.group.highlight.append('circle');
 
-    $app.user.highlight.text = $app.user.highlight.append('text');
+    $app.user.group.highlight.label = $app.user.group.highlight.append('text');
 
     $app.current.group = $app.svg.append('g')
-      .attr('class', 'current line')
+      .attr('class', 'current')
       .attr('clip-path', 'url(#clip-' + options.id + ')');
 
-    $app.current.line = $app.current.group.append('path');
+    $app.current.group.line = $app.current.group.append('path');
 
-    $app.current.dots = $app.current.group.selectAll('dot')
+    $app.current.group.dots = $app.current.group.selectAll('dot')
         .data($data.current)
         .enter()
       .append('circle');
 
-    $app.current.highlight = $app.svg.append('g')
-      .attr('class', 'current highlight');
-
-    $app.current.highlight.text = $app.current.highlight.append('text');
+    $app.current.group.label = $app.current.group.append('text');
 
     $app.previous.group = $app.svg.append('g')
-      .attr('class', 'previous line');
+      .attr('class', 'previous');
 
-    $app.previous.line = $app.previous.group.append('path');
+    $app.previous.group.line = $app.previous.group.append('path');
 
-    $app.previous.dots = $app.previous.group.selectAll('dot')
+    $app.previous.group.dots = $app.previous.group.selectAll('dot')
         .data($data.previous)
         .enter()
       .append('circle');
 
-    $app.previous.highlight = $app.svg.append('g')
-      .attr('class', 'previous highlight');
+    $app.previous.group.highlight = $app.previous.group.append('g');
 
-    $app.previous.highlight.pulse = $app.previous.highlight.append('circle');
+    $app.previous.group.highlight.pulse = $app.previous.group.highlight.append('circle');
 
-    $app.previous.highlight.text = $app.previous.highlight.append('text');
+    $app.previous.group.firstLabel = $app.previous.group.append('text');
 
-    $app.previous.first = $app.svg.append('g')
-      .attr('class', 'first highlight');
-
-    $app.previous.first.text = $app.previous.first.append('text');
+    $app.previous.group.label = $app.previous.group.append('text');
 
     $app.drag = d3.behavior.drag()
       .on('drag', handleDrag);
@@ -253,6 +238,13 @@ var draw = function (options) {
 
     $app.annotations.group
       .append('line');
+
+    $app.hint.group = $app.svg.append('g')
+      .attr('class', 'hint');
+
+    $app.hint.group.text = $app.hint.group.append('text');
+
+    $app.hint.group.path = $app.hint.group.append('path');
 
     render();
   }
@@ -341,93 +333,70 @@ var draw = function (options) {
         .attr('fill', function (d) { return d.color; })
         .attr('text-anchor', 'middle');
 
-    $app.hint.group
-      .attr('transform', translate($data.previous))
-      .style('opacity', $state.completed ? 0 : 1);
-
-    $app.hint.group.text
-      .attr('dx', 25)
-      .attr('dy', 6)
-      .attr('fill', '#889')
-      .attr('text-anchor', 'start')
-      .text('Zeichnen Sie die Linie');
-
-    if ($app.id === 'arbeitslosenquote') {
-      $app.hint.group.path
-        .classed('moving', true)
-        .attr('transform', 'translate(5, 10)')
-        .attr('d', $pointer);
-    }
-
     $app.user.group
       .attr('opacity', $state.completed ? 1 : 0);
 
-    $app.user.line
+    $app.user.group.line
       .attr('d', $state.completed ? $app.line($data.defined) : '');
 
-    $app.user.highlight
+    $app.user.group.highlight
       .attr('transform', $state.completed ? translate($data.defined) : translate($data.previous))
       .style('opacity', $state.completed ? 1 : 0);
 
-    $app.user.highlight.pulse
+    $app.user.group.highlight.pulse
       .attr('r', 4);
 
-    $app.user.highlight.circle
+    $app.user.group.highlight.circle
       .attr('r', 4);
 
-    $app.user.highlight.text
+    $app.user.group.highlight.label
       .attr('dy', '-15')
       .attr('fill', '#888899')
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'end');
 
-    $app.current.line.attr('d', $app.line($data.current));
+    $app.current.group.line.attr('d', $app.line($data.current));
 
-    $app.current.dots
+    $app.current.group.dots
       .attr('r', 4)
       .attr('cx', year)
       .attr('cy', value);
 
-    $app.current.highlight
-      .attr('transform', currentTranslate($data.current, $data.current, $data.user))
-      .style('opacity', $state.completed ? 1 : 0);
-
-    $app.current.highlight.text
-      .text(pretty(lastValue($data.current)))
+    $app.current.group.label
+      .attr('transform', currentTranslate($data.current, $data.user))
       .attr('dy', '-15')
       .attr('fill', 'black')
       .attr('font-weight', 'bold')
-      .attr('text-anchor', 'end');
+      .attr('text-anchor', 'end')
+      .text(pretty(lastValue($data.current)))
+      .style('opacity', $state.completed ? 1 : 0);
 
-    $app.previous.line
+    $app.previous.group.line
       .attr('d', $app.line($data.previous));
 
-    $app.previous.dots
+    $app.previous.group.dots
       .attr('r', 4)
       .attr('cx', year)
       .attr('cy', value);
 
-    $app.previous.highlight
-      .attr('transform', previousTranslate($data.previous, $data.previous, $data.previous));
+    $app.previous.group.highlight
+      .attr('transform', translate($data.previous));
 
-    $app.previous.highlight.pulse
+    $app.previous.group.highlight.pulse
       .attr('r', 4)
       .classed('pulsating', !$state.completed);
 
-    $app.previous.highlight.text
+    $app.previous.group.label
+      .attr('transform', previousTranslate($data.previous))
       .text(pretty(lastValue($data.previous)))
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
-      .attr('text-anchor', $state.mobile ? 'start' : 'end');
+      .attr('text-anchor', 'start');
 
-    $app.previous.first
-      .attr('transform', firstTranslate($data.previous, $data.previous, $data.previous));
-
-    $app.previous.first.text
-      .text(function () {
-        if ($app.id !== 'betreuungsquote') { return pretty($data.previous[0].value); }
-      })
+    $app.previous.group.firstLabel
+      .attr('transform', firstTranslate($data.previous))
+      .text(pretty($data.previous[0].value))
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
@@ -448,6 +417,24 @@ var draw = function (options) {
         .attr('x2', 0)
         .attr('y1', 10)
         .attr('y2', 35);
+
+    $app.hint.group
+      .attr('transform', translate($data.previous))
+      .style('opacity', $state.completed ? 0 : 1);
+
+    $app.hint.group.text
+      .attr('dx', 25)
+      .attr('dy', 6)
+      .attr('fill', '#889')
+      .attr('text-anchor', 'start')
+      .text('Zeichnen Sie die Linie');
+
+    if ($app.id === 'arbeitslosenquote') {
+      $app.hint.group.path
+        .classed('moving', true)
+        .attr('transform', 'translate(5, 10)')
+        .attr('d', $pointer);
+    }
   }
 
   function update() {
@@ -498,33 +485,33 @@ var draw = function (options) {
 
   function handleStart() {
 
-    $app.hint.group
-      .style('opacity', 0);
-
     $app.user.group
       .attr('opacity', 1);
 
-    $app.user.highlight
+    $app.user.group.highlight
       .style('opacity', 1);
 
-    $app.user.highlight.pulse
+    $app.user.group.highlight.pulse
       .classed('pulsating', !$state.completed);
 
-    $app.previous.highlight.pulse
+    $app.previous.group.highlight.pulse
       .classed('pulsating', false);
+
+    $app.hint.group
+      .style('opacity', 0);
 
     $state.started = true;
   }
 
   function handleChange() {
 
-    $app.user.line
+    $app.user.group.line
       .attr('d', $app.line($data.defined));
 
-    $app.user.highlight
+    $app.user.group.highlight
       .attr('transform', translate($data.defined));
 
-    $app.user.highlight.text
+    $app.user.group.highlight.label
       .text(pretty(lastValue($data.defined)));
   }
 
@@ -541,18 +528,16 @@ var draw = function (options) {
     $app.hint.group
       .style('opacity', 0);
 
-    $app.user.highlight.pulse
+    $app.user.group.highlight.pulse
       .classed('pulsating', false);
 
-    $app.current.highlight
-      .attr('transform', currentTranslate($data.current, $data.current, $data.user));
-
-    $app.current.highlight
+    $app.current.group.label
+      .attr('transform', currentTranslate($data.current, $data.user))
       .transition()
         .duration(1000)
         .style('opacity', 1);
 
-    $app.previous.highlight.pulse
+    $app.previous.group.highlight.pulse
       .classed('pulsating', false);
 
     $app.annotations.group
@@ -595,41 +580,41 @@ var draw = function (options) {
     return 'translate(' + $app.x(lastYear(xArr)) + ',' + $app.y(lastValue(yArr)) +')';
   }
 
-  function previousTranslate(xArr, yArr1, yArr2) {
+  function previousTranslate(objArr) {
 
     var offset = 0;
 
-    if (lastValue(yArr2) < firstValue(yArr1)) {
+    if (lastValue(objArr) < firstValue(objArr)) {
 
       offset = 40;
     }
 
-    return 'translate(' + $app.x(lastYear(xArr)) + ',' +  ($app.y(lastValue(yArr1)) + offset) +')';
+    return 'translate(' + $app.x(lastYear(objArr)) + ',' +  ($app.y(lastValue(objArr)) + offset) +')';
   }
 
-  function firstTranslate(xArr, yArr1, yArr2) {
+  function firstTranslate(objArr) {
 
     var offset = 0;
 
-    if (lastValue(yArr2) > firstValue(yArr1)) {
+    if (lastValue(objArr) > firstValue(objArr)) {
 
       offset = 40;
     }
 
-    return 'translate(' + $app.x(firstYear(xArr)) + ',' +  ($app.y(firstValue(yArr1)) + offset) +')';
+    return 'translate(' + $app.x(firstYear(objArr)) + ',' +  ($app.y(firstValue(objArr)) + offset) +')';
   }
 
-  function currentTranslate(xArr, yArr1, yArr2) {
+  function currentTranslate(objArr, objArrComp) {
 
     var offset = 0;
     // var delta = Math.abs(y(lastValue(yArr1)) - y(lastValue(yArr2)));
 
-    if (lastValue(yArr2) > lastValue(yArr1)) {
+    if (lastValue(objArrComp) > lastValue(objArr)) {
 
       offset = 40;
     }
 
-    return 'translate(' + $app.x(lastYear(xArr)) + ',' +  ($app.y(lastValue(yArr1)) + offset) +')';
+    return 'translate(' + $app.x(lastYear(objArr)) + ',' +  ($app.y(lastValue(objArr)) + offset) +')';
   }
 
   // Add German decimal seperators to number
