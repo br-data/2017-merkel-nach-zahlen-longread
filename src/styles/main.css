@@ -670,7 +670,6 @@ footer {
   animation-duration: 1.5s;
   animation-iteration-count: infinite;
   animation-name: pulsating;
-  transform-origin: center center;
   transition-timing-function: ease; }
 
 @keyframes moving {
@@ -691,7 +690,6 @@ footer {
   animation-duration: 3s;
   animation-iteration-count: infinite;
   animation-name: moving;
-  transform-origin: center center;
   transition-timing-function: ease; }
 
 /*# sourceMappingURL=main.css.map */

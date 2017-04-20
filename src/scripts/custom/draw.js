@@ -516,9 +516,6 @@ var draw = function (options) {
     $app.hint.group
       .style('opacity', 0);
 
-    $app.previous.highlight.select('circle')
-      .classed('pulsating', false);
-
     $app.user.group
       .attr('opacity', 1);
 
@@ -526,7 +523,10 @@ var draw = function (options) {
       .style('opacity', 1);
 
     $app.user.highlight.select('circle')
-      .classed('pulsating', true);
+      .classed('pulsating', !$state.completed);
+
+    $app.previous.highlight.select('circle')
+      .classed('pulsating', false);
 
     $state.started = true;
   }
@@ -566,6 +566,9 @@ var draw = function (options) {
       .transition()
         .delay(1000)
         .style('opacity', 1);
+
+    $app.previous.highlight.select('circle')
+      .classed('pulsating', false);
 
     $app.annotations.group
       .transition()
