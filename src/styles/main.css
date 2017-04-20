@@ -626,14 +626,19 @@ footer {
     pointer-events: none; }
   .draw .background {
     stroke: none;
-    fill: #fff; }
-  .draw .axis.y line {
+    fill: #fff;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); }
+  .draw .grid .tick:first-child {
+    display: none; }
+  .draw .grid line {
     stroke: #ccd;
     stroke-width: 1; }
-  .draw .axis.y path {
+  .draw .grid path {
     stroke: none;
     stroke-width: 0; }
-  .draw .axis.x line, .draw .axis.x path {
+  .draw .axis line, .draw .axis path {
     stroke: #ccd;
     stroke-width: 1; }
   .draw .group text, .draw .highlight text, .draw .hint text {

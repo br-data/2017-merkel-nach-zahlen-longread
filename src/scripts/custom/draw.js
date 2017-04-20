@@ -157,12 +157,10 @@ var draw = function (options) {
       .x(year)
       .y(value);
 
-    $app.group = $app.svg.append('g');
-
-    $app.background = $app.group.append('rect')
+    $app.background = $app.svg.append('rect')
       .attr('class', 'background');
 
-    $app.coalitionGroup = $app.group.append('g')
+    $app.coalitionGroup = $app.svg.append('g')
         .attr('class', 'coalitions')
       .selectAll('g')
         .data($data.coalitions)
@@ -174,13 +172,13 @@ var draw = function (options) {
         .enter()
       .append('circle');
 
-    $app.xAxisGroup = $app.group.append('g')
-      .attr('class', 'x axis');
+    $app.xAxisGroup = $app.svg.append('g')
+      .attr('class', 'axis');
 
-    $app.yAxisGroup = $app.group.append('g')
-      .attr('class', 'y axis');
+    $app.yAxisGroup = $app.svg.append('g')
+      .attr('class', 'grid');
 
-    $app.labels.group = $app.group.append('g')
+    $app.labels.group = $app.svg.append('g')
         .attr('class', 'labels')
       .selectAll('.label')
         .data($data.labels)
@@ -190,27 +188,28 @@ var draw = function (options) {
     $app.labels.group
       .append('text');
 
-    $app.hint.group = $app.group.append('g')
+    $app.hint.group = $app.svg.append('g')
         .attr('class', 'hint');
 
-    $app.hint.group.append('text');
+    $app.hint.group.text = $app.hint.group.append('text');
 
-    $app.hint.group.append('path');
+    $app.hint.group.path = $app.hint.group.append('path');
 
-    $app.user.group = $app.group.append('g')
+    $app.user.group = $app.svg.append('g')
       .attr('class', 'user line');
 
     $app.user.line = $app.user.group.append('path');
 
-    $app.user.highlight = $app.group.append('g')
+    $app.user.highlight = $app.svg.append('g')
       .attr('class', 'user highlight');
 
-    $app.user.highlight.append('circle');
-    $app.user.highlight.append('circle');
+    $app.user.highlight.pulse = $app.user.highlight.append('circle');
 
-    $app.user.highlight.append('text');
+    $app.user.highlight.circle = $app.user.highlight.append('circle');
 
-    $app.current.group = $app.group.append('g')
+    $app.user.highlight.text = $app.user.highlight.append('text');
+
+    $app.current.group = $app.svg.append('g')
       .attr('class', 'current line')
       .attr('clip-path', 'url(#clip-' + options.id + ')');
 
@@ -221,14 +220,14 @@ var draw = function (options) {
         .enter()
       .append('circle');
 
-    $app.current.highlight = $app.group.append('g')
+    $app.current.highlight = $app.svg.append('g')
       .attr('class', 'current highlight');
 
-    $app.current.highlight.append('circle');
+    $app.current.highlight.circle = $app.current.highlight.append('circle');
 
-    $app.current.highlight.append('text');
+    $app.current.highlight.text = $app.current.highlight.append('text');
 
-    $app.previous.group = $app.group.append('g')
+    $app.previous.group = $app.svg.append('g')
       .attr('class', 'previous line');
 
     $app.previous.line = $app.previous.group.append('path');
@@ -238,17 +237,17 @@ var draw = function (options) {
         .enter()
       .append('circle');
 
-    $app.previous.highlight = $app.group.append('g')
+    $app.previous.highlight = $app.svg.append('g')
       .attr('class', 'previous highlight');
 
-    $app.previous.highlight.append('circle');
+    $app.previous.highlight.pulse = $app.previous.highlight.append('circle');
 
-    $app.previous.highlight.append('text');
+    $app.previous.highlight.text = $app.previous.highlight.append('text');
 
-    $app.previous.first = $app.group.append('g')
+    $app.previous.first = $app.svg.append('g')
       .attr('class', 'first highlight');
 
-    $app.previous.first.append('text');
+    $app.previous.first.text = $app.previous.first.append('text');
 
     $app.drag = d3.behavior.drag()
       .on('drag', handleDrag);
@@ -257,7 +256,7 @@ var draw = function (options) {
       .on('click', handleDrag)
       .call($app.drag);
 
-    $app.annotations.group = $app.group.append('g')
+    $app.annotations.group = $app.svg.append('g')
         .attr('class', 'annotations')
       .selectAll('.annotations')
         .data(function () { return $data.data.annotations; })
@@ -293,10 +292,6 @@ var draw = function (options) {
     $app.clipRect
       .attr('width', $state.completed ? $app.x($app.xMax) + $config.margin.right : $app.x(lastYear($data.previous)))
       .attr('height', $app.height);
-
-    // @todo Is this necessary?
-    $app.group
-      .attr('transform', 'translate(' + $config.margin.left + ',' + $config.margin.top + ')');
 
     $app.background
       .attr('width', $app.width - $app.x(lastYear($data.previous)))
@@ -343,7 +338,9 @@ var draw = function (options) {
 
     $app.coalitionGroup
       .attr('class', function (d) { return dashcase(d.text); })
-      .attr('transform', function (d) { return 'translate(' + middleYear(d.values) + ',' + ($app.height + 17) + ')'; });
+      .attr('transform', function (d) {
+        return 'translate(' + middleYear(d.values) + ',' + ($app.height + 17) + ')';
+      });
 
     $app.coalitionGroup.selectAll('circle')
       .attr('cx', function (d, i) { return i * 7; })
@@ -351,28 +348,30 @@ var draw = function (options) {
       .attr('fill', function (d) { return d; });
 
     $app.labels.group
-        .attr('transform', function (d) { return 'translate(' + d.getYear() + ',' + d.getValue() +')'; })
+        .attr('transform', function (d) {
+          return 'translate(' + d.getYear() + ',' + d.getValue() +')';
+        })
       .selectAll('text')
         .text(function (d) { return d.text; })
         .attr('fill', function (d) { return d.color; })
         .attr('text-anchor', 'middle');
 
     $app.hint.group
-        .attr('transform', translate($data.previous, $data.previous))
-        .style('opacity', $state.completed ? 0 : 1)
-      .select('text')
-        .attr('font-style', 'italic')
-        .attr('fill', '#889')
-        .text('Zeichnen Sie die Linie')
-        .attr('dx', 20)
-        .attr('dy', 6)
-        .attr('text-anchor', 'start');
+      .attr('transform', translate($data.previous))
+      .style('opacity', $state.completed ? 0 : 1);
 
-    $app.hint.group
-      .select('path')
-        .classed('moving', true)
-        .attr('transform', 'translate(0, 10)')
-        .attr('d', $pointer);
+    $app.hint.group.text
+      .attr('font-style', 'italic')
+      .attr('fill', '#889')
+      .text('Zeichnen Sie die Linie')
+      .attr('dx', 20)
+      .attr('dy', 6)
+      .attr('text-anchor', 'start');
+
+    $app.hint.group.path
+      .classed('moving', true)
+      .attr('transform', 'translate(0, 10)')
+      .attr('d', $pointer);
 
     $app.user.group
       .attr('opacity', $state.completed ? 1 : 0);
@@ -381,13 +380,16 @@ var draw = function (options) {
       .attr('d', $state.completed ? $app.line($data.defined) : '');
 
     $app.user.highlight
-      .attr('transform', $state.completed ? translate($data.defined, $data.defined) : translate($data.previous, $data.previous))
+      .attr('transform', $state.completed ? translate($data.defined) : translate($data.previous))
       .style('opacity', $state.completed ? 1 : 0);
 
-    $app.user.highlight.selectAll('circle')
+    $app.user.highlight.pulse
       .attr('r', 4);
 
-    $app.user.highlight.select('text')
+    $app.user.highlight.circle
+      .attr('r', 4);
+
+    $app.user.highlight.text
       .attr('dy', '-15')
       .attr('fill', '#888899')
       .attr('font-weight', 'bold')
@@ -404,9 +406,7 @@ var draw = function (options) {
       .attr('transform', smartTranslate($data.current, $data.current, $data.user))
       .style('opacity', $state.completed ? 1 : 0);
 
-    $app.current.highlight.select('circle');
-
-    $app.current.highlight.select('text')
+    $app.current.highlight.text
       .text(pretty(lastValue($data.current)))
       .attr('dy', '-15')
       .attr('fill', 'black')
@@ -422,13 +422,13 @@ var draw = function (options) {
       .attr('cy', value);
 
     $app.previous.highlight
-      .attr('transform', translate($data.previous, $data.previous));
+      .attr('transform', translate($data.previous));
 
-    $app.previous.highlight.select('circle')
+    $app.previous.highlight.pulse
       .attr('r', 4)
       .classed('pulsating', !$state.completed);
 
-    $app.previous.highlight.select('text')
+    $app.previous.highlight.text
       .text(pretty(lastValue($data.previous)))
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
@@ -438,7 +438,7 @@ var draw = function (options) {
     $app.previous.first
       .attr('transform', 'translate(' + year($data.previous[0]) + ',' +  value($data.previous[0]) +')');
 
-    $app.previous.first.select('text')
+    $app.previous.first.text
       .text(function () {
         if ($app.id !== 'betreuungsquote') { return pretty($data.previous[0].value); }
       })
@@ -524,10 +524,10 @@ var draw = function (options) {
     $app.user.highlight
       .style('opacity', 1);
 
-    $app.user.highlight.select('circle')
+    $app.user.highlight.pulse
       .classed('pulsating', !$state.completed);
 
-    $app.previous.highlight.select('circle')
+    $app.previous.highlight.pulse
       .classed('pulsating', false);
 
     $state.started = true;
@@ -539,9 +539,9 @@ var draw = function (options) {
       .attr('d', $app.line($data.defined));
 
     $app.user.highlight
-      .attr('transform', translate($data.defined, $data.defined));
+      .attr('transform', translate($data.defined));
 
-    $app.user.highlight.select('text')
+    $app.user.highlight.text
       .text(pretty(lastValue($data.defined)));
   }
 
@@ -558,7 +558,7 @@ var draw = function (options) {
     $app.hint.group
       .style('opacity', 0);
 
-    $app.user.highlight.select('circle')
+    $app.user.highlight.pulse
       .classed('pulsating', false);
 
     $app.current.highlight
@@ -569,7 +569,7 @@ var draw = function (options) {
         .delay(1000)
         .style('opacity', 1);
 
-    $app.previous.highlight.select('circle')
+    $app.previous.highlight.pulse
       .classed('pulsating', false);
 
     $app.annotations.group
@@ -606,6 +606,8 @@ var draw = function (options) {
 
   // Returns translate property for SVG transforms
   function translate(xArr, yArr) {
+
+    yArr = yArr || xArr;
 
     return 'translate(' + $app.x(lastYear(xArr)) + ',' + $app.y(lastValue(yArr)) +')';
   }

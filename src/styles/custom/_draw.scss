@@ -26,9 +26,16 @@
   .background {
     stroke: none;
     fill: $white;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
   }
 
-  .axis.y {
+  .grid {
+
+    .tick:first-child {
+      display: none;
+    }
 
     line {
       stroke: $medium-grey;
@@ -41,7 +48,7 @@
     }
   }
 
-  .axis.x {
+  .axis {
 
     line, path {
       stroke: $medium-grey;
