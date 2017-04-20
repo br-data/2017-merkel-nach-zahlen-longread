@@ -286,7 +286,7 @@ var draw = function (options) {
 
     $app.yAxis = d3.svg.axis()
       .scale($app.y)
-      .orient('right')
+      .orient('left')
       .ticks(6)
       .innerTickSize(-$app.width)
       .outerTickSize(0)
@@ -300,7 +300,7 @@ var draw = function (options) {
         .attr('dx', $state.mobile ? '-10px' : 0)
         .attr('dy', $state.mobile ? '-6px' : '12px')
         .attr('transform', $state.mobile ? 'rotate(-90)' : 'rotate(0)')
-        .style('text-anchor', $state.mobile ? 'end' : 'middle');
+        .style('text-anchor', smartAnchors);
 
     $app.xAxisGroup
       .select('path')
@@ -310,7 +310,6 @@ var draw = function (options) {
         ]));
 
     $app.yAxisGroup
-      .attr('transform', 'translate(' + $app.width + ',0)')
       .call($app.yAxis);
 
     $app.coalitionGroup
@@ -570,6 +569,19 @@ var draw = function (options) {
     });
 
     render();
+  }
+
+  function smartAnchors(d, i) {
+
+    if ($state.mobile) {
+      return 'end';
+    } else if (i === 0) {
+      return 'start';
+    } else if (i === 4) {
+      return 'end';
+    } else {
+      return 'middle';
+    }
   }
 
   // Returns translate property for SVG transforms
