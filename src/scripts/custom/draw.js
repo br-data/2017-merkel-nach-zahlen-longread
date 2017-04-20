@@ -210,8 +210,6 @@ var draw = function (options) {
     $app.current.highlight = $app.svg.append('g')
       .attr('class', 'current highlight');
 
-    $app.current.highlight.circle = $app.current.highlight.append('circle');
-
     $app.current.highlight.text = $app.current.highlight.append('text');
 
     $app.previous.group = $app.svg.append('g')
@@ -381,7 +379,7 @@ var draw = function (options) {
       .attr('dy', '-15')
       .attr('fill', '#888899')
       .attr('font-weight', 'bold')
-      .attr('text-anchor', 'middle');
+      .attr('text-anchor', 'end');
 
     $app.current.line.attr('d', $app.line($data.current));
 
@@ -391,7 +389,7 @@ var draw = function (options) {
       .attr('cy', value);
 
     $app.current.highlight
-      .attr('transform', smartTranslate($data.current, $data.current, $data.user))
+      .attr('transform', currentTranslate($data.current, $data.current, $data.user))
       .style('opacity', $state.completed ? 1 : 0);
 
     $app.current.highlight.text
@@ -399,7 +397,7 @@ var draw = function (options) {
       .attr('dy', '-15')
       .attr('fill', 'black')
       .attr('font-weight', 'bold')
-      .attr('text-anchor', 'middle');
+      .attr('text-anchor', 'end');
 
     $app.previous.line
       .attr('d', $app.line($data.previous));
@@ -410,7 +408,7 @@ var draw = function (options) {
       .attr('cy', value);
 
     $app.previous.highlight
-      .attr('transform', translate($data.previous));
+      .attr('transform', previousTranslate($data.previous, $data.previous, $data.previous));
 
     $app.previous.highlight.pulse
       .attr('r', 4)
@@ -421,10 +419,10 @@ var draw = function (options) {
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
-      .attr('text-anchor', 'middle');
+      .attr('text-anchor', $state.mobile ? 'start' : 'end');
 
     $app.previous.first
-      .attr('transform', 'translate(' + year($data.previous[0]) + ',' +  value($data.previous[0]) +')');
+      .attr('transform', firstTranslate($data.previous, $data.previous, $data.previous));
 
     $app.previous.first.text
       .text(function () {
@@ -433,7 +431,7 @@ var draw = function (options) {
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
-      .attr('text-anchor', 'middle');
+      .attr('text-anchor', 'start');
 
     $app.annotations.group
         .attr('transform', function (d) { return 'translate(' + year(d) + ',' + (value(d) - 50) +')'; })
@@ -547,7 +545,7 @@ var draw = function (options) {
       .classed('pulsating', false);
 
     $app.current.highlight
-      .attr('transform', smartTranslate($data.current, $data.current, $data.user));
+      .attr('transform', currentTranslate($data.current, $data.current, $data.user));
 
     $app.current.highlight
       .transition()
@@ -597,7 +595,31 @@ var draw = function (options) {
     return 'translate(' + $app.x(lastYear(xArr)) + ',' + $app.y(lastValue(yArr)) +')';
   }
 
-  function smartTranslate(xArr, yArr1, yArr2) {
+  function previousTranslate(xArr, yArr1, yArr2) {
+
+    var offset = 0;
+
+    if (lastValue(yArr2) < firstValue(yArr1)) {
+
+      offset = 40;
+    }
+
+    return 'translate(' + $app.x(lastYear(xArr)) + ',' +  ($app.y(lastValue(yArr1)) + offset) +')';
+  }
+
+  function firstTranslate(xArr, yArr1, yArr2) {
+
+    var offset = 0;
+
+    if (lastValue(yArr2) > firstValue(yArr1)) {
+
+      offset = 40;
+    }
+
+    return 'translate(' + $app.x(firstYear(xArr)) + ',' +  ($app.y(firstValue(yArr1)) + offset) +')';
+  }
+
+  function currentTranslate(xArr, yArr1, yArr2) {
 
     var offset = 0;
     // var delta = Math.abs(y(lastValue(yArr1)) - y(lastValue(yArr2)));
@@ -638,16 +660,21 @@ var draw = function (options) {
     return $app.y(d.value);
   }
 
+  // Get value from firts object in an array
+  function firstValue(objArr) {
+
+    return objArr[0].value;
+  }
+
   // Get value from last object in an array
   function lastValue(objArr) {
 
     return objArr[objArr.length - 1].value;
   }
 
-  // Get year from last object in an array
-  function lastYear(objArr) {
+  function firstYear(objArr) {
 
-    return objArr[objArr.length - 1].year;
+    return objArr[0].year;
   }
 
   // Get x value for the year between the first and last year
@@ -659,9 +686,10 @@ var draw = function (options) {
     return $app.x(((last - first) / 2) + first);
   }
 
-  function firstYear(objArr) {
+  // Get year from last object in an array
+  function lastYear(objArr) {
 
-    return objArr[0].year;
+    return objArr[objArr.length - 1].year;
   }
 
   function dashcase(string) {
