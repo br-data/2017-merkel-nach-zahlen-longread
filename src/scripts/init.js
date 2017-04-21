@@ -22,7 +22,7 @@ function init() {
       for (var i = 0; i < drawElements.length; i++) {
 
         var newDraw = new draw({
-          id: drawElements[i].dataset.id,
+          id: drawElements[i].getAttribute('data-id'),
           element: drawElements[i]
         });
 

@@ -109,10 +109,6 @@ var draw = function (options) {
     $app.paragraph = d3.select('p[data-id=' + options.id + ']');
 
     $app.container = options.element;
-    $app.container.addEventListener('touchmove', function (event) {
-
-      event.preventDefault();
-    }, false);
 
     $app.svg = d3.select($app.container).append('svg')
       .attr('id', $app.id)
@@ -144,8 +140,14 @@ var draw = function (options) {
       .x(year)
       .y(value);
 
+    $app.drag = d3.behavior.drag()
+      .on('drag', handleDrag);
+
     $app.background = $app.svg.append('rect')
-      .attr('class', 'background');
+      .attr('class', 'background')
+      .on('touchmove', handleTouchmove)
+      .on('click', handleDrag)
+      .call($app.drag);
 
     $app.coalitionGroup = $app.svg.append('g')
         .attr('class', 'coalitions')
@@ -221,13 +223,6 @@ var draw = function (options) {
 
     $app.previous.group.label = $app.previous.group.append('text');
 
-    $app.drag = d3.behavior.drag()
-      .on('drag', handleDrag);
-
-    $app.svg
-      .on('click', handleDrag)
-      .call($app.drag);
-
     $app.annotations.group = $app.svg.append('g')
         .attr('class', 'annotations')
       .selectAll('.annotations')
@@ -273,6 +268,7 @@ var draw = function (options) {
       .attr('height', $app.height);
 
     $app.background
+      .classed('no-scroll', !$state.completed)
       .attr('width', $app.width - $app.x(lastYear($data.previous)))
       .attr('height', $app.height)
       .attr('x', $app.x(lastYear($data.previous)) - 10)
@@ -458,30 +454,33 @@ var draw = function (options) {
 
   function handleDrag() {
 
-    var pos = d3.mouse(this);
+    if (!$state.completed) {
 
-    var year = Math.max($data.data.breakpoint + 1,
-      Math.min($app.xMax, $app.x.invert(pos[0]))
-    );
+      var pos = d3.mouse(this);
 
-    var value = Math.max($app.yMin,
-      Math.min($app.y.domain()[1], $app.y.invert(pos[1]))
-    );
+      var year = Math.max($data.data.breakpoint + 1,
+        Math.min($app.xMax, $app.x.invert(pos[0]))
+      );
 
-    $data.user.forEach(function (d) {
+      var value = Math.max($app.yMin,
+        Math.min($app.y.domain()[1], $app.y.invert(pos[1]))
+      );
 
-      if (Math.abs(d.year - year) < 0.5) {
+      $data.user.forEach(function (d) {
 
-        d.value = value;
-      }
-    });
+        if (Math.abs(d.year - year) < 0.5) {
 
-    $data.defined = $data.user.filter(function (d) {
+          d.value = value;
+        }
+      });
 
-      return d.value;
-    });
+      $data.defined = $data.user.filter(function (d) {
 
-    update();
+        return d.value;
+      });
+
+      update();
+    }
   }
 
   function handleStart() {
@@ -519,6 +518,7 @@ var draw = function (options) {
   function handleComplete() {
 
     $app.background
+      .classed('no-scroll', false)
       .style('cursor', 'auto');
 
     $app.clipRect
@@ -571,6 +571,16 @@ var draw = function (options) {
     });
 
     render();
+  }
+
+  function handleTouchmove() {
+
+    if (!$state.completed) {
+
+      d3.event.preventDefault();
+    }
+
+    return $state.completed;
   }
 
   function smartAnchors(d, i) {

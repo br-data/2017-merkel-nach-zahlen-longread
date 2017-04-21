@@ -611,7 +611,8 @@ footer {
 
 .draw {
   margin-top: 1.5em;
-  margin-bottom: 1em; }
+  margin-bottom: 1em;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0); }
   .draw svg {
     overflow: visible; }
   .draw text {
@@ -625,8 +626,9 @@ footer {
     stroke: none;
     fill: #fff;
     cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); }
+    user-select: none; }
+    .draw .background.no-scroll {
+      touch-action: none; }
   .draw .axis {
     pointer-events: none; }
     .draw .axis line, .draw .axis path {
