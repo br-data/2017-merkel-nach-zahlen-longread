@@ -324,14 +324,14 @@ var draw = function (options) {
         .text(function (d) { return d.text; });
 
     $app.user.group
-      .attr('opacity', $state.completed ? 1 : 0);
+      .attr('opacity', $state.started ? 1 : 0);
 
     $app.user.group.line
-      .attr('d', $state.completed ? $app.line($data.defined) : '');
+      .attr('d', $state.started ? $app.line($data.defined) : '');
 
     $app.user.group.highlight
-      .attr('transform', $state.completed ? translate($data.defined) : translate($data.previous))
-      .style('opacity', $state.completed ? 1 : 0);
+      .attr('transform', $state.started ? translate($data.defined) : translate($data.previous))
+      .style('opacity', $state.started ? 1 : 0);
 
     $app.user.group.highlight.pulse
       .attr('r', 4);
@@ -374,7 +374,7 @@ var draw = function (options) {
 
     $app.previous.group.highlight.pulse
       .attr('r', 4)
-      .classed('pulse', !$state.completed);
+      .classed('pulse', !$state.started);
 
     $app.previous.group.label
       .attr('transform', previousTranslate($data.previous))
@@ -410,7 +410,7 @@ var draw = function (options) {
 
     $app.hint.group
       .attr('transform', translate($data.previous))
-      .style('opacity', $state.completed ? 0 : 1);
+      .style('opacity', $state.started ? 0 : 1);
 
     $app.hint.group.text
       .attr('dx', 25)

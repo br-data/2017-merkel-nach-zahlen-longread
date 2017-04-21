@@ -83,14 +83,14 @@
         "text": "Finanzkrise",
         "color": "#000",
         "year": 2009,
-        "value": 97
+        "value": 105
       }
     ]
   }, {
     "id": "staatsverschuldung",
     "unit": "Bio. €",
     "factor": 1000000,
-    "max": 2500000,
+    "max": 2700000,
     "precision": 100,
     "breakpoint": 2005,
     "values": [
@@ -226,7 +226,7 @@
         "text": "Rechtsanspruch auf Kitaplatz",
         "color": "#000",
         "year": 2013,
-        "value": 29.3
+        "value": 30
       },{
         "text": "keine Daten",
         "color": "#000",
