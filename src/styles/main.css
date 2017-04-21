@@ -243,7 +243,9 @@ button,
   line-height: 40px;
   font-size: 1.3em;
   cursor: pointer;
-  color: #889; }
+  color: #889;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent; }
   .sharing a {
     text-decoration: none; }
   .sharing .icon-facebook:hover {
@@ -290,11 +292,7 @@ button,
       .navigation .title {
         display: none; } }
   .navigation .sharing {
-    float: right;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-tap-highlight-color: transparent; }
-    .navigation .sharing a {
-      box-shadow: none; }
+    float: right; }
   .navigation.hidden {
     background: rgba(255, 255, 255, 0);
     box-shadow: none; }

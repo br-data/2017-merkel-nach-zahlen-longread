@@ -4,6 +4,8 @@
   font-size: 1.3em;
   cursor: pointer;
   color: $dark-grey;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
 
   a {
     text-decoration: none;

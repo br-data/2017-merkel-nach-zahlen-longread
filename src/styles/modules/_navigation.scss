@@ -48,12 +48,6 @@
 
   .sharing {
     float: right;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-    -webkit-tap-highlight-color: transparent;
-
-    a {
-      box-shadow: none;
-    }
   }
 
   &.hidden {
