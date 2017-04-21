@@ -23,7 +23,14 @@
       { "year": 2015, "value": 4.6 },
       { "year": 2016, "value": 4.1 }
     ],
-    "annotations": []
+    "annotations": [
+    {
+        "text": "Finanzkrise",
+        "color": "#000",
+        "year": 2009,
+        "value": 7.6
+      }
+    ]
   }, {
     "id": "hartz4-kinder",
     "unit": "Mio.",
@@ -71,7 +78,14 @@
       {"year": 2016,"value": 161.4},
       {"year": 2017,"value": 170.1}
     ],
-    "annotations": []
+    "annotations": [
+      {
+        "text": "Finanzkrise",
+        "color": "#000",
+        "year": 2009,
+        "value": 97
+      }
+    ]
   }, {
     "id": "staatsverschuldung",
     "unit": "Bio. €",
@@ -95,7 +109,14 @@
       { "year": 2014, "value": 2043918 },
       { "year": 2015, "value": 2022562 }
     ],
-    "annotations": []
+    "annotations": [
+    {
+        "text": "Schwarze Null",
+        "color": "#000",
+        "year": 2013,
+        "value": 2043344
+      }
+    ]
   }, {
     "id": "soldaten",
     "unit": "Tsd.",
@@ -217,7 +238,7 @@
     "id": "co2",
     "unit": "Mio. T",
     "factor": 1000,
-    "max": 1300000,
+    "max": 1600000,
     "precision": 10,
     "breakpoint": 2005,
     "values": [
@@ -262,7 +283,7 @@
     ],
     "annotations": [
       {
-        "text": "Wirtschaftskrise",
+        "text": "Finanzkrise",
         "color": "#000",
         "year": 2009,
         "value": 803312
