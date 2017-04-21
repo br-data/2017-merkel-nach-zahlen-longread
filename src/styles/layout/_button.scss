@@ -20,14 +20,7 @@ button,
   box-shadow: none;
   vertical-align: top;
 
-  &.disabled {
-    background: $light-grey;
-    color: #889;
-  }
-
-  &.active,
-  &.br-blue {
-    background: $br-blue;
-    color: $white;
+  &:hover {
+    color: $black;
   }
 }

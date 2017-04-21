@@ -25,33 +25,3 @@ section {
     }
   }
 }
-
-// Floats for quotes and marginals
-.right {
-  float: right;
-
-  @include tablet {
-    float: none;
-  }
-
-  @include mobile {
-    float: none;
-  }
-}
-
-.left {
-  float: left;
-  text-align: right;
-
-  @include tablet {
-    float: none;
-  }
-
-  @include mobile {
-    float: none;
-  }
-}
-
-.center {
-  text-align: center;
-}

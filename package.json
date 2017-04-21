@@ -13,6 +13,9 @@
     "watch": "grunt watch",
     "dist": "grunt dist"
   },
+  "dependencies": {
+    "d3": "^3.5.17"
+  },
   "devDependencies": {
     "autoprefixer": "^6.5.3",
     "cssnano": "^3.8.0",
