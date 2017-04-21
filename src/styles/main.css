@@ -642,7 +642,7 @@ footer {
     .draw .grid path {
       stroke: none;
       stroke-width: 0; }
-  .draw .previous text, .draw .current text, .draw .user text, .draw .hint text {
+  .draw .previous text, .draw .current text, .draw .user text, .draw .hint text, .draw .annotations text {
     text-shadow: 1px 0 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff; }
   .draw .hint {
     pointer-events: none; }
