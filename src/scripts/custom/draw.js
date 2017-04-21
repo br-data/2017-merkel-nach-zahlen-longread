@@ -189,12 +189,14 @@ var draw = function (options) {
     $app.user.group.highlight.label = $app.user.group.highlight.append('text');
 
     $app.current.group = $app.svg.append('g')
-      .attr('class', 'current')
+      .attr('class', 'current');
+
+    $app.current.group.line = $app.current.group.append('g')
       .attr('clip-path', 'url(#clip-' + options.id + ')');
 
-    $app.current.group.line = $app.current.group.append('path');
+    $app.current.group.line.path = $app.current.group.line.append('path');
 
-    $app.current.group.dots = $app.current.group.selectAll('dot')
+    $app.current.group.line.dots = $app.current.group.line.selectAll('dot')
         .data($data.current)
         .enter()
       .append('circle');
@@ -354,9 +356,9 @@ var draw = function (options) {
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'end');
 
-    $app.current.group.line.attr('d', $app.line($data.current));
+    $app.current.group.line.path.attr('d', $app.line($data.current));
 
-    $app.current.group.dots
+    $app.current.group.line.dots
       .attr('r', 4)
       .attr('cx', year)
       .attr('cy', value);
@@ -391,7 +393,7 @@ var draw = function (options) {
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
-      .attr('text-anchor', 'start');
+      .attr('text-anchor', $state.mobile ? 'start' : 'middle');
 
     $app.previous.group.firstLabel
       .attr('transform', firstTranslate($data.previous))
