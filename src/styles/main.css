@@ -70,7 +70,8 @@ p {
   margin-bottom: 2em; }
 
 a {
-  color: inherit; }
+  color: inherit;
+  transition: background .3s ease,color .3s ease; }
   a:hover {
     color: #889; }
   a > img {
@@ -179,7 +180,7 @@ button,
   outline: 0;
   margin: 0 .2em .2em 0;
   padding: 0 .5em;
-  transition: background .3s ease,color .3s ease;
+  transition: background .3s ease, color .3s ease;
   -webkit-tap-highlight-color: transparent;
   -webkit-tap-highlight-color: transparent;
   box-shadow: none;
@@ -204,7 +205,9 @@ button,
   line-height: 1.4; }
 
 .related a {
-  box-shadow: none; }
+  text-decoration: none; }
+  .related a:hover {
+    color: #000; }
 
 .related .table {
   display: table;
@@ -241,6 +244,8 @@ button,
   font-size: 1.3em;
   cursor: pointer;
   color: #889; }
+  .sharing a {
+    text-decoration: none; }
   .sharing .icon-facebook:hover {
     color: #3b5998; }
   .sharing .icon-twitter:hover {

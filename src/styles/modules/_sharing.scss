@@ -5,6 +5,10 @@
   cursor: pointer;
   color: $dark-grey;
 
+  a {
+    text-decoration: none;
+  }
+
   .icon-facebook:hover {
     color: $facebook-blue;
   }

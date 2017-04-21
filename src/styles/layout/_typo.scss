@@ -38,6 +38,7 @@ p {
 
 a {
   color: inherit;
+  transition: background .3s ease,color .3s ease;
 
   &:hover {
     color: $dark-grey;
