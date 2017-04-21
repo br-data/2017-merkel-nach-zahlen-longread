@@ -15,25 +15,21 @@
 
   circle {
     stroke: none;
+    transform: scale(1);
   }
 
   path {
     fill: none;
   }
 
-  .background {
+  .canvas {
     stroke: none;
     fill: $white;
-    cursor: pointer;
     user-select: none;
-
-    &.no-scroll {
-      touch-action: none;
-    }
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   }
 
   .axis {
-    pointer-events: none;
 
     line, path {
       stroke: $medium-grey;
@@ -42,7 +38,6 @@
   }
 
   .grid {
-    pointer-events: none;
 
     .tick:first-child {
       display: none;
@@ -67,7 +62,6 @@
   }
 
   .hint {
-    pointer-events: none;
 
     path {
       fill: $black;
@@ -80,7 +74,6 @@
   }
 
   .previous {
-    pointer-events: none;
 
     circle {
       fill: $red;
@@ -93,7 +86,6 @@
   }
 
   .current {
-    pointer-events: none;
 
     circle {
       fill: $black;
@@ -106,7 +98,6 @@
   }
 
   .user {
-    pointer-events: none;
 
     circle {
       fill: $dark-grey;
@@ -120,35 +111,29 @@
     }
   }
 
-  .labels,
-  .annotations {
-    pointer-events: none;
+  .pulse {
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+    animation-name: pulse;
+    transition-timing-function: ease;
+  }
+
+  .move {
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-name: move;
+    transition-timing-function: ease;
+  }
+
+  @keyframes pulse {
+    from { transform: scale(1); opacity: 1; }
+    to { transform: scale(3); opacity: 0; }
+  }
+
+  @keyframes move {
+    0% { transform: translate(5px, 10px); opacity: 1; }
+    50% { transform: translate(120px, 25px); opacity: .9; }
+    75% { transform: translate(290px, 20px); opacity: 0; }
+    100% { transform: translate(290px, 20px); opacity: 0; }
   }
 }
-
-@keyframes pulsating {
-  from { transform: scale(1); opacity: 1; }
-  to { transform: scale(3); opacity: 0; }
-}
-
-.pulsating {
-  animation-duration: 1.5s;
-  animation-iteration-count: infinite;
-  animation-name: pulsating;
-  transition-timing-function: ease;
-}
-
-@keyframes moving {
-  0% { transform: translate(5px, 10px); opacity: 1; }
-  50% { transform: translate(120px, 25px); opacity: .9; }
-  75% { transform: translate(290px, 20px); opacity: 0; }
-  100% { transform: translate(290px, 20px); opacity: 0; }
-}
-
-.moving {
-  animation-duration: 3s;
-  animation-iteration-count: infinite;
-  animation-name: moving;
-  transition-timing-function: ease;
-}
-

@@ -143,12 +143,6 @@ var draw = function (options) {
     $app.drag = d3.behavior.drag()
       .on('drag', handleDrag);
 
-    $app.background = $app.svg.append('rect')
-      .attr('class', 'background')
-      .on('touchmove', handleTouchmove)
-      .on('click', handleDrag)
-      .call($app.drag);
-
     $app.coalitionGroup = $app.svg.append('g')
         .attr('class', 'coalitions')
       .selectAll('g')
@@ -243,6 +237,12 @@ var draw = function (options) {
 
     $app.hint.group.path = $app.hint.group.append('path');
 
+    $app.canvas = $app.svg.append('rect')
+      .attr('class', 'canvas')
+      .on('touchmove', handleTouchmove)
+      .on('click', handleDrag)
+      .call($app.drag);
+
     render();
   }
 
@@ -266,13 +266,6 @@ var draw = function (options) {
     $app.clipRect
       .attr('width', $state.completed ? $app.x($app.xMax) + 10 : $app.x(lastYear($data.previous)))
       .attr('height', $app.height);
-
-    $app.background
-      .classed('no-scroll', !$state.completed)
-      .attr('width', $app.width - $app.x(lastYear($data.previous)))
-      .attr('height', $app.height)
-      .attr('x', $app.x(lastYear($data.previous)) - 10)
-      .style('cursor', 'pointer');
 
     $app.xAxis = d3.svg.axis()
       .scale($app.x)
@@ -326,9 +319,9 @@ var draw = function (options) {
           return 'translate(' + d.getYear() + ',' + d.getValue() +')';
         })
       .selectAll('text')
-        .text(function (d) { return d.text; })
         .attr('fill', function (d) { return d.color; })
-        .attr('text-anchor', 'middle');
+        .attr('text-anchor', 'middle')
+        .text(function (d) { return d.text; });
 
     $app.user.group
       .attr('opacity', $state.completed ? 1 : 0);
@@ -365,8 +358,8 @@ var draw = function (options) {
       .attr('fill', 'black')
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'end')
-      .text(pretty(lastValue($data.current)))
-      .style('opacity', $state.completed ? 1 : 0);
+      .style('opacity', $state.completed ? 1 : 0)
+      .text(pretty(lastValue($data.current)));
 
     $app.previous.group.line
       .attr('d', $app.line($data.previous));
@@ -381,31 +374,31 @@ var draw = function (options) {
 
     $app.previous.group.highlight.pulse
       .attr('r', 4)
-      .classed('pulsating', !$state.completed);
+      .classed('pulse', !$state.completed);
 
     $app.previous.group.label
       .attr('transform', previousTranslate($data.previous))
-      .text(pretty(lastValue($data.previous)))
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
-      .attr('text-anchor', $state.mobile ? 'start' : 'middle');
+      .attr('text-anchor', $state.mobile ? 'start' : 'middle')
+      .text(pretty(lastValue($data.previous)));
 
     $app.previous.group.firstLabel
       .attr('transform', firstTranslate($data.previous))
-      .text(pretty($data.previous[0].value))
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
-      .attr('text-anchor', 'start');
+      .attr('text-anchor', 'start')
+      .text(pretty($data.previous[0].value));
 
     $app.annotations.group
         .attr('transform', function (d) { return 'translate(' + year(d) + ',' + (value(d) - 50) +')'; })
         .style('opacity', $state.completed ? 1 : 0)
       .selectAll('text')
-        .text(function (d) { return d.text; })
         .attr('fill', function (d) { return d.color; })
-        .attr('text-anchor', 'middle');
+        .attr('text-anchor', 'middle')
+        .text(function (d) { return d.text; });
 
     $app.annotations.group
       .selectAll('line')
@@ -428,10 +421,17 @@ var draw = function (options) {
 
     if ($app.id === 'arbeitslosenquote') {
       $app.hint.group.path
-        .classed('moving', true)
+        .classed('move', true)
         .attr('transform', 'translate(5, 10)')
         .attr('d', $pointer);
     }
+
+    $app.canvas
+      .attr('width', $app.width - $app.x(lastYear($data.previous)))
+      .attr('height', $app.height)
+      .attr('x', $app.x(lastYear($data.previous)) - 10)
+      .style('opacity', '0')
+      .style('cursor', 'pointer');
   }
 
   function update() {
@@ -481,6 +481,10 @@ var draw = function (options) {
 
       update();
     }
+
+    // Fix mobile scrolling
+    if (d3.event.defaultPrevented) { return; }
+    if (d3.event.sourceEvent) { d3.event.sourceEvent.stopPropagation(); }
   }
 
   function handleStart() {
@@ -492,10 +496,10 @@ var draw = function (options) {
       .style('opacity', 1);
 
     $app.user.group.highlight.pulse
-      .classed('pulsating', !$state.completed);
+      .classed('pulse', !$state.completed);
 
     $app.previous.group.highlight.pulse
-      .classed('pulsating', false);
+      .classed('pulse', false);
 
     $app.hint.group
       .style('opacity', 0);
@@ -517,10 +521,6 @@ var draw = function (options) {
 
   function handleComplete() {
 
-    $app.background
-      .classed('no-scroll', false)
-      .style('cursor', 'auto');
-
     $app.clipRect
       .transition()
         .duration(1000)
@@ -530,7 +530,7 @@ var draw = function (options) {
       .style('opacity', 0);
 
     $app.user.group.highlight.pulse
-      .classed('pulsating', false);
+      .classed('pulse', false);
 
     $app.current.group.label
       .attr('transform', currentTranslate($data.current, $data.user))
@@ -539,7 +539,7 @@ var draw = function (options) {
         .style('opacity', 1);
 
     $app.previous.group.highlight.pulse
-      .classed('pulsating', false);
+      .classed('pulse', false);
 
     $app.annotations.group
       .transition()
@@ -550,6 +550,9 @@ var draw = function (options) {
       .transition()
         .duration(1000)
         .style('opacity', 1);
+
+    $app.canvas
+      .style('cursor', 'auto');
 
     $state.completed = true;
   }

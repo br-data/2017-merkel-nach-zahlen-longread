@@ -619,68 +619,62 @@ footer {
     font-family: 'Open Sans', Helvetica, Arial, sans-serif;
     font-size: 14px; }
   .draw circle {
-    stroke: none; }
+    stroke: none;
+    transform: scale(1); }
   .draw path {
     fill: none; }
-  .draw .background {
+  .draw .canvas {
     stroke: none;
     fill: #fff;
-    cursor: pointer;
-    user-select: none; }
-    .draw .background.no-scroll {
-      touch-action: none; }
-  .draw .axis {
-    pointer-events: none; }
-    .draw .axis line, .draw .axis path {
-      stroke: #ccd;
-      stroke-width: 1; }
-  .draw .grid {
-    pointer-events: none; }
-    .draw .grid .tick:first-child {
-      display: none; }
-    .draw .grid line {
-      stroke: #ccd;
-      stroke-width: 1; }
-    .draw .grid path {
-      stroke: none;
-      stroke-width: 0; }
+    user-select: none;
+    -webkit-tap-highlight-color: transparent; }
+  .draw .axis line, .draw .axis path {
+    stroke: #ccd;
+    stroke-width: 1; }
+  .draw .grid .tick:first-child {
+    display: none; }
+  .draw .grid line {
+    stroke: #ccd;
+    stroke-width: 1; }
+  .draw .grid path {
+    stroke: none;
+    stroke-width: 0; }
   .draw .previous text, .draw .current text, .draw .user text, .draw .hint text, .draw .annotations text {
     text-shadow: 1px 0 0 #fff, 0 1px 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff; }
-  .draw .hint {
-    pointer-events: none; }
-    .draw .hint path {
-      fill: #000; }
-    .draw .hint text {
-      font-size: 16px;
-      font-style: italic; }
-  .draw .previous {
-    pointer-events: none; }
-    .draw .previous circle {
-      fill: #e2001a; }
-    .draw .previous path {
-      stroke-width: 3;
-      stroke: #e2001a; }
-  .draw .current {
-    pointer-events: none; }
-    .draw .current circle {
-      fill: #000; }
-    .draw .current path {
-      stroke-width: 3;
-      stroke: #000; }
-  .draw .user {
-    pointer-events: none; }
-    .draw .user circle {
-      fill: #889; }
-    .draw .user path {
-      stroke: #889;
-      stroke-width: 3;
-      stroke-dasharray: 1 7;
-      stroke-linecap: round; }
-  .draw .labels,
-  .draw .annotations {
-    pointer-events: none; }
+  .draw .hint path {
+    fill: #000; }
+  .draw .hint text {
+    font-size: 16px;
+    font-style: italic; }
+  .draw .previous circle {
+    fill: #e2001a; }
+  .draw .previous path {
+    stroke-width: 3;
+    stroke: #e2001a; }
+  .draw .current circle {
+    fill: #000; }
+  .draw .current path {
+    stroke-width: 3;
+    stroke: #000; }
+  .draw .user circle {
+    fill: #889; }
+  .draw .user path {
+    stroke: #889;
+    stroke-width: 3;
+    stroke-dasharray: 1 7;
+    stroke-linecap: round; }
+  .draw .pulse {
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+    animation-name: pulse;
+    transition-timing-function: ease; }
+  .draw .move {
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-name: move;
+    transition-timing-function: ease; }
 
-@keyframes pulsating {
+@keyframes pulse {
   from {
     transform: scale(1);
     opacity: 1; }
@@ -688,13 +682,7 @@ footer {
     transform: scale(3);
     opacity: 0; } }
 
-.pulsating {
-  animation-duration: 1.5s;
-  animation-iteration-count: infinite;
-  animation-name: pulsating;
-  transition-timing-function: ease; }
-
-@keyframes moving {
+@keyframes move {
   0% {
     transform: translate(5px, 10px);
     opacity: 1; }
@@ -707,11 +695,5 @@ footer {
   100% {
     transform: translate(290px, 20px);
     opacity: 0; } }
-
-.moving {
-  animation-duration: 3s;
-  animation-iteration-count: infinite;
-  animation-name: moving;
-  transition-timing-function: ease; }
 
 /*# sourceMappingURL=main.css.map */
