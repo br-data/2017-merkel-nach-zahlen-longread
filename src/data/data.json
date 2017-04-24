@@ -7,28 +7,28 @@
     "precision": 10,
     "breakpoint": 2005,
     "values": [
-      { "year": 2002, "value": 8.6 },
-      { "year": 2003, "value": 9.7 },
-      { "year": 2004, "value": 10.4 },
-      { "year": 2005, "value": 11.2 },
-      { "year": 2006, "value": 10.1 },
-      { "year": 2007, "value": 8.5 },
-      { "year": 2008, "value": 7.4 },
-      { "year": 2009, "value": 7.6 },
-      { "year": 2010, "value": 7.0 },
-      { "year": 2011, "value": 5.8 },
-      { "year": 2012, "value": 5.4 },
-      { "year": 2013, "value": 5.2 },
-      { "year": 2014, "value": 5.0 },
-      { "year": 2015, "value": 4.6 },
-      { "year": 2016, "value": 4.1 }
+      { "year": 2002, "value": 9.8},
+      { "year": 2003, "value": 10.5},
+      { "year": 2004, "value": 10.5 },
+      { "year": 2005, "value": 11.7 },
+      { "year": 2006, "value": 10.8 },
+      { "year": 2007, "value": 9.0},
+      { "year": 2008, "value": 7.8},
+      { "year": 2009, "value": 8.1},
+      { "year": 2010, "value": 7.7},
+      { "year": 2011, "value": 7.1},
+      { "year": 2012, "value": 6.8},
+      { "year": 2013, "value": 6.9},
+      { "year": 2014, "value": 6.7},
+      { "year": 2015, "value": 6.4},
+      { "year": 2016, "value": 6.1}
     ],
     "annotations": [
     {
         "text": "Finanzkrise",
         "color": "#000",
         "year": 2009,
-        "value": 7.6
+        "value": 8.1
       }
     ]
   }, {
