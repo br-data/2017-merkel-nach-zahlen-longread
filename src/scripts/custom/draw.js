@@ -1,4 +1,4 @@
-var draw = function (options) {
+var drawIt = function (options) {
 
   'use strict';
 
@@ -66,9 +66,14 @@ var draw = function (options) {
     }
   ];
 
-  function init(data) {
+  function init() {
 
-    $data.data = data;
+    if (!options.element) {
+
+      options.element = document.getElementById('#' + options.id);
+    }
+
+    $data.data = options.data;
     $app.id = options.id;
 
     transform();

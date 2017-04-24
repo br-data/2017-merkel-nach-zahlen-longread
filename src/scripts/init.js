@@ -23,11 +23,12 @@ function init() {
 
         var newDraw = new draw({
           id: drawElements[i].getAttribute('data-id'),
-          element: drawElements[i]
+          element: drawElements[i],
+          data: data
         });
 
-        // Initialize DrawIt
-        newDraw.init(data);
+        newDraw.init();
+
         drawInstances.push(newDraw);
       }
     }
