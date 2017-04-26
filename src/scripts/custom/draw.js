@@ -1,4 +1,4 @@
-var drawIt = function (options) {
+var draw = function (options) {
 
   'use strict';
 
@@ -10,13 +10,17 @@ var drawIt = function (options) {
     breakpoint: 561
   };
 
+  // Store for SVG elements and calculations
   $app = {
     previous: {},
     current: {},
     user: {},
     labels: {},
     annotations: {},
-    hint: {}
+    coalitions: {},
+    hint: {},
+    xAxis: {},
+    yAxis: {}
   };
 
   $state = {
@@ -30,8 +34,10 @@ var drawIt = function (options) {
 
   $data = {};
 
+  // Election years
   $data.elections = [2002, 2005, 2009, 2013, 2017];
 
+  // Last German government coalitions
   $data.coalitions = [
     {
       text: 'Schröder II',
@@ -52,6 +58,7 @@ var drawIt = function (options) {
     }
   ];
 
+  // Chancellorship of Gehard Schröder and Angela Merkel
   $data.labels = [
     {
       text: 'SCHRÖDER',
@@ -68,64 +75,51 @@ var drawIt = function (options) {
 
   function init() {
 
+    // If no element is specified, try to select it by it's id
     if (!options.element) {
 
       options.element = document.getElementById('#' + options.id);
     }
 
-    $data.data = options.data;
     $app.id = options.id;
+    $app.container = options.element;
+    $data.data = options.data;
 
     transform();
   }
 
+  // Transform and filter the data for the current dataset
   function transform() {
 
+    // All data for the current topic
     $data.data = $data.data.filter(function (d) { return d.id == $app.id; })[0];
 
+    // All data from the previous incumbet (Schröder)
     $data.previous = $data.data.values.filter(function (d) {
 
       return d.year <= $data.data.breakpoint;
     });
 
+    // All data from the curren incumbet (Merkel)
     $data.current = $data.data.values.filter(function (d) {
 
       return d.year >= $data.data.breakpoint;
     });
 
+    // Placeholder for the user data
     $data.user = clone($data.current).map(function (d, i) {
 
+      // Only set the value for the first data point
       d.value = i ? undefined : d.value;
 
       return d;
     });
 
-    prepare();
+    calculate();
   }
 
-  function prepare() {
-
-    $app.showButton = d3.select('button.show[data-id=' + options.id + ']');
-    $app.showButton.on('click', handleComplete);
-
-    $app.resetButton = d3.select('button.reset[data-id=' + options.id + ']');
-    $app.resetButton.on('click', handleReset);
-
-    $app.paragraph = d3.select('p[data-id=' + options.id + ']');
-
-    $app.container = options.element;
-
-    $app.svg = d3.select($app.container).append('svg')
-      .attr('id', $app.id)
-      .attr('xmlns', 'http://www.w3.org/2000/svg')
-      .attr('version', '1.1')
-      .attr('baseProfile', 'full');
-
-    $app.defs = $app.svg.append('defs');
-
-    $app.clipRect = $app.defs.append('clipPath')
-        .attr('id', 'clip-' + options.id)
-      .append('rect');
+  // Calculate extrema and set element constructors
+  function calculate() {
 
     $app.yMin = 0;
     $app.yMax = $data.data.max;
@@ -140,32 +134,61 @@ var drawIt = function (options) {
     $app.y = d3.scale.linear()
       .domain([$app.yMin, $app.yMax]);
 
-    $app.line = d3.svg.line()
+    $app.lineConstructor = d3.svg.line()
       .interpolate('linear')
       .x(year)
       .y(value);
 
-    $app.drag = d3.behavior.drag()
-      .on('drag', handleDrag);
+    prepare();
+  }
 
-    $app.coalitionGroup = $app.svg.append('g')
+  // Add elements to SVG DOM once, link the datasets
+  function prepare() {
+
+    // UI elements
+    $app.showButton = d3.select('button.show[data-id=' + options.id + ']');
+    $app.showButton.on('click', handleComplete);
+
+    $app.resetButton = d3.select('button.reset[data-id=' + options.id + ']');
+    $app.resetButton.on('click', handleReset);
+
+    $app.paragraph = d3.select('p[data-id=' + options.id + ']');
+
+    // Container SVG
+    $app.svg = d3.select($app.container).append('svg')
+      .attr('id', $app.id)
+      .attr('xmlns', 'http://www.w3.org/2000/svg')
+      .attr('version', '1.1')
+      .attr('baseProfile', 'full');
+
+    $app.defs = $app.svg.append('defs');
+
+    // Clipping mask to hide the current (correct) line
+    $app.clipRect = $app.defs.append('clipPath')
+        .attr('id', 'clip-' + options.id)
+      .append('rect');
+
+    // Small circles to indicate the respective coaltion
+    $app.coalitions.group = $app.svg.append('g')
         .attr('class', 'coalitions')
       .selectAll('g')
         .data($data.coalitions)
         .enter()
       .append('g');
 
-    $app.coalitionGroup.selectAll('circle')
+    $app.coalitions.group.selectAll('circle')
         .data(function (d) { return d.colors; })
         .enter()
       .append('circle');
 
-    $app.xAxisGroup = $app.svg.append('g')
+    // Axis
+    $app.xAxis.group = $app.svg.append('g')
       .attr('class', 'axis');
 
-    $app.yAxisGroup = $app.svg.append('g')
+    $app.yAxis.group = $app.svg.append('g')
       .attr('class', 'grid');
 
+    // Labels for the respective incumbents
     $app.labels.group = $app.svg.append('g')
         .attr('class', 'labels')
       .selectAll('.label')
@@ -176,6 +199,7 @@ var drawIt = function (options) {
     $app.labels.group
       .append('text');
 
+    // User line and label
     $app.user.group = $app.svg.append('g')
       .attr('class', 'user');
 
@@ -189,6 +213,7 @@ var drawIt = function (options) {
 
     $app.user.group.highlight.label = $app.user.group.highlight.append('text');
 
+    // Current (Merkel) line and labels
     $app.current.group = $app.svg.append('g')
       .attr('class', 'current');
 
@@ -204,6 +229,7 @@ var drawIt = function (options) {
 
     $app.current.group.label = $app.current.group.append('text');
 
+    // Previous (Schröder) line and labels
     $app.previous.group = $app.svg.append('g')
       .attr('class', 'previous');
 
@@ -222,6 +248,7 @@ var drawIt = function (options) {
 
     $app.previous.group.label = $app.previous.group.append('text');
 
+    // Custom annotations for the lines
     $app.annotations.group = $app.svg.append('g')
         .attr('class', 'annotations')
       .selectAll('.annotations')
@@ -235,6 +262,7 @@ var drawIt = function (options) {
     $app.annotations.group
       .append('line');
 
+    // Custom hint to tell the user what to do
     $app.hint.group = $app.svg.append('g')
       .attr('class', 'hint');
 
@@ -242,6 +270,11 @@ var drawIt = function (options) {
 
     $app.hint.group.path = $app.hint.group.append('path');
 
+    // Interaction
+    $app.drag = d3.behavior.drag()
+      .on('drag', handleDrag);
+
+    // Interactable area
     $app.canvas = $app.svg.append('rect')
       .attr('class', 'canvas')
       .on('touchmove', handleTouchmove)
@@ -251,8 +284,10 @@ var drawIt = function (options) {
     render();
   }
 
+  // Assign values (width, height, color) to the SVG elements
   function render() {
 
+    // Set mobile view depending on screen width
     $state.mobile = window.innerWidth < $config.breakpoint;
 
     $app.width = $app.container.getBoundingClientRect().width;
@@ -261,18 +296,22 @@ var drawIt = function (options) {
     $app.height = $config.height;
     $app.height = $app.height;
 
+    // Recalculate
     $app.x.range([0, $app.width]);
     $app.y.range([$app.height, 0]);
 
+    // Container
     $app.svg
       .attr('width', $app.width)
       .attr('height', $app.height + 30);
 
+    // Hide the correct line initially, using the clipping mask
     $app.clipRect
       .attr('width', $state.completed ? $app.x($app.xMax) + 10 : $app.x(lastYear($data.previous)))
       .attr('height', $app.height);
 
-    $app.xAxis = d3.svg.axis()
+    // Axis
+    $app.xAxisConstructor = d3.svg.axis()
       .scale($app.x)
       .orient('bottom')
       .tickSize(-7)
@@ -280,7 +319,7 @@ var drawIt = function (options) {
       .tickValues($data.elections)
       .tickFormat(function (d) { return d; });
 
-    $app.yAxis = d3.svg.axis()
+    $app.yAxisConstructor = d3.svg.axis()
       .scale($app.y)
       .orient('left')
       .ticks(6)
@@ -289,36 +328,39 @@ var drawIt = function (options) {
       .tickPadding(10)
       .tickFormat('');
 
-    $app.xAxisGroup
+    $app.xAxis.group
         .attr('transform', 'translate(0,' + $app.height + ')')
-        .call($app.xAxis)
+        .call($app.xAxisConstructor)
       .selectAll('text')
         .attr('dx', $state.mobile ? '-10px' : 0)
         .attr('dy', $state.mobile ? '-6px' : '12px')
         .attr('transform', $state.mobile ? 'rotate(-90)' : 'rotate(0)')
         .style('text-anchor', smartAnchors);
 
-    $app.xAxisGroup
+    // Add a custom, extra long, line to the x-axis
+    $app.xAxis.group
       .select('path')
-        .attr('d', $app.line([
+        .attr('d', $app.lineConstructor([
           { year: $data.elections[0], value: $app.yMax },
           { year: $data.elections[$data.elections.length - 1], value: $app.yMax }
         ]));
 
-    $app.yAxisGroup
-      .call($app.yAxis);
+    $app.yAxis.group
+      .call($app.yAxisConstructor);
 
-    $app.coalitionGroup
+    // Coalition circles
+    $app.coalitions.group
       .attr('class', function (d) { return dashcase(d.text); })
       .attr('transform', function (d) {
         return 'translate(' + middleYear(d.values) + ',' + ($app.height + 17) + ')';
       });
 
-    $app.coalitionGroup.selectAll('circle')
-      .attr('cx', function (d, i) { return i * 7; })
+    $app.coalitions.group.selectAll('circle')
+      .attr('cx', function (d, i) { return i * 7; }) // Offset all circles by 7px
       .attr('r', 6)
       .attr('fill', function (d) { return d; });
 
+    // Fixed labels
     $app.labels.group
         .attr('transform', function (d) {
           return 'translate(' + d.getYear() + ',' + d.getValue() +')';
@@ -328,15 +370,16 @@ var drawIt = function (options) {
         .attr('text-anchor', 'middle')
         .text(function (d) { return d.text; });
 
+    // User line and marker
     $app.user.group
-      .attr('opacity', $state.started ? 1 : 0);
+      .attr('opacity', $state.started ? 1 : 0); // Hide initially
 
     $app.user.group.line
-      .attr('d', $state.started ? $app.line($data.defined) : '');
+      .attr('d', $state.started ? $app.lineConstructor($data.defined) : '');
 
     $app.user.group.highlight
       .attr('transform', $state.started ? translate($data.defined) : translate($data.previous))
-      .style('opacity', $state.started ? 1 : 0);
+      .style('opacity', $state.started ? 1 : 0); // Hide initially
 
     $app.user.group.highlight.pulse
       .attr('r', 4);
@@ -350,7 +393,8 @@ var drawIt = function (options) {
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'end');
 
-    $app.current.group.line.path.attr('d', $app.line($data.current));
+    // Current (Merkel) line and marker
+    $app.current.group.line.path.attr('d', $app.lineConstructor($data.current));
 
     $app.current.group.line.dots
       .attr('r', 4)
@@ -358,16 +402,17 @@ var drawIt = function (options) {
       .attr('cy', value);
 
     $app.current.group.label
-      .attr('transform', currentTranslate($data.current, $data.user))
+      .attr('transform', currentTranslate($data.current, $data.user)) // Smart labels
       .attr('dy', '-15')
       .attr('fill', 'black')
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'end')
-      .style('opacity', $state.completed ? 1 : 0)
+      .style('opacity', $state.completed ? 1 : 0) // Hide initially
       .text(pretty(lastValue($data.current)));
 
+    // Previous (Schröder) line and maker
     $app.previous.group.line
-      .attr('d', $app.line($data.previous));
+      .attr('d', $app.lineConstructor($data.previous));
 
     $app.previous.group.dots
       .attr('r', 4)
@@ -379,10 +424,10 @@ var drawIt = function (options) {
 
     $app.previous.group.highlight.pulse
       .attr('r', 4)
-      .classed('pulse', !$state.started);
+      .classed('pulse', !$state.started); // Hide initially
 
     $app.previous.group.label
-      .attr('transform', previousTranslate($data.previous))
+      .attr('transform', previousTranslate($data.previous)) // Smart labels
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
@@ -390,16 +435,17 @@ var drawIt = function (options) {
       .text(pretty(lastValue($data.previous)));
 
     $app.previous.group.firstLabel
-      .attr('transform', firstTranslate($data.previous))
+      .attr('transform', firstTranslate($data.previous)) // Smart label
       .attr('dy', '-15')
       .attr('fill', '#e2001a')
       .attr('font-weight', 'bold')
       .attr('text-anchor', 'start')
       .text(pretty($data.previous[0].value));
 
+    // Custom annotation(s)
     $app.annotations.group
         .attr('transform', function (d) { return 'translate(' + year(d) + ',' + (value(d) - 50) +')'; })
-        .style('opacity', $state.completed ? 1 : 0)
+        .style('opacity', $state.completed ? 1 : 0) // Hide initially
       .selectAll('text')
         .attr('fill', function (d) { return d.color; })
         .attr('text-anchor', 'middle')
@@ -413,17 +459,19 @@ var drawIt = function (options) {
         .attr('y1', 10)
         .attr('y2', 35);
 
+    // Hint
     $app.hint.group
       .attr('transform', translate($data.previous))
-      .style('opacity', $state.started ? 0 : 1);
+      .style('opacity', $state.started ? 0 : 1); // Show initially
 
     $app.hint.group.text
       .attr('dx', 25)
       .attr('dy', 6)
       .attr('fill', '#889')
       .attr('text-anchor', 'start')
-      .text('Zeichnen Sie die Linie');
+      .text('Zeichnen Sie die Linie'); // Draw the Line!
 
+    // Show pointer animation only in the first chart
     if ($app.id === 'arbeitslosenquote') {
       $app.hint.group.path
         .classed('move', true)
@@ -431,6 +479,7 @@ var drawIt = function (options) {
         .attr('d', $pointer);
     }
 
+    // Users can interact in this area, nowhere else
     $app.canvas
       .attr('width', $app.width - $app.x(lastYear($data.previous)))
       .attr('height', $app.height)
@@ -439,6 +488,7 @@ var drawIt = function (options) {
       .style('cursor', 'pointer');
   }
 
+  // Handle updates depending on the application state
   function update() {
 
     if (!$state.started) {
@@ -463,14 +513,17 @@ var drawIt = function (options) {
 
       var pos = d3.mouse(this);
 
+      // Get year (x value) closest to the current cursor position
       var year = Math.max($data.data.breakpoint + 1,
         Math.min($app.xMax, $app.x.invert(pos[0]))
       );
 
+      // Get year (y value) closest to the current cursor position
       var value = Math.max($app.yMin,
         Math.min($app.y.domain()[1], $app.y.invert(pos[1]))
       );
 
+      // Update the user data with new values
       $data.user.forEach(function (d) {
 
         if (Math.abs(d.year - year) < 0.5) {
@@ -479,6 +532,7 @@ var drawIt = function (options) {
         }
       });
 
+      // Store defined values in an extra object array (for faster lookups)
       $data.defined = $data.user.filter(function (d) {
 
         return d.value;
@@ -492,6 +546,7 @@ var drawIt = function (options) {
     if (d3.event.sourceEvent) { d3.event.sourceEvent.stopPropagation(); }
   }
 
+  // User starts drawing
   function handleStart() {
 
     $app.user.group
@@ -512,10 +567,11 @@ var drawIt = function (options) {
     $state.started = true;
   }
 
+  // User keeps on drawing
   function handleChange() {
 
     $app.user.group.line
-      .attr('d', $app.line($data.defined));
+      .attr('d', $app.lineConstructor($data.defined));
 
     $app.user.group.highlight
       .attr('transform', translate($data.defined));
@@ -524,6 +580,7 @@ var drawIt = function (options) {
       .text(pretty(lastValue($data.defined)));
   }
 
+  // User completes drawing
   function handleComplete() {
 
     $app.clipRect
@@ -562,6 +619,7 @@ var drawIt = function (options) {
     $state.completed = true;
   }
 
+  // User resets the application
   function handleReset() {
 
     $state = {
@@ -581,6 +639,7 @@ var drawIt = function (options) {
     render();
   }
 
+  // Handle mobile touch gesture (allow, disallow scrolling)
   function handleTouchmove() {
 
     if (!$state.completed) {
@@ -591,6 +650,7 @@ var drawIt = function (options) {
     return $state.completed;
   }
 
+  // Set text anchors depending on the text position
   function smartAnchors(d, i) {
 
     if ($state.mobile) {
@@ -612,6 +672,7 @@ var drawIt = function (options) {
     return 'translate(' + $app.x(lastYear(xArr)) + ',' + $app.y(lastValue(yArr)) +')';
   }
 
+  // Place lables above or under the line depending on the other labels.
   function previousTranslate(objArr) {
 
     var offset = 0;
@@ -624,6 +685,7 @@ var drawIt = function (options) {
     return 'translate(' + $app.x(lastYear(objArr)) + ',' +  ($app.y(lastValue(objArr)) + offset) +')';
   }
 
+  // Place lables above or under the line depending on the other labels.
   function firstTranslate(objArr) {
 
     var offset = 0;
@@ -636,6 +698,7 @@ var drawIt = function (options) {
     return 'translate(' + $app.x(firstYear(objArr)) + ',' +  ($app.y(firstValue(objArr)) + offset) +')';
   }
 
+  // Place lables above or under the line depending on the other labels.
   function currentTranslate(objArr, objArrComp) {
 
     var offset = 0;
@@ -709,6 +772,7 @@ var drawIt = function (options) {
     return objArr[objArr.length - 1].year;
   }
 
+  // convert-to-dashcase
   function dashcase(string) {
 
     string = string.replace(/\s+/g, '-')
@@ -722,12 +786,13 @@ var drawIt = function (options) {
     return string;
   }
 
-  // Clone a JavaScript object. Doesn't work for functions.
+  // Clone a JavaScript object (doesn't work for functions)
   function clone(object) {
 
     return JSON.parse(JSON.stringify(object));
   }
 
+  // Public functions
   return {
 
     init: init,
