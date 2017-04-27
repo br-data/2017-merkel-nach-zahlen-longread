@@ -424,7 +424,7 @@ var draw = function (options) {
 
     $app.previous.group.highlight.pulse
       .attr('r', 4)
-      .classed('pulse', !$state.started); // Hide initially
+      .classed('pulse', !$state.started && !$state.completed); // Hide initially
 
     $app.previous.group.label
       .attr('transform', previousTranslate($data.previous)) // Smart labels
@@ -462,7 +462,7 @@ var draw = function (options) {
     // Hint
     $app.hint.group
       .attr('transform', translate($data.previous))
-      .style('opacity', $state.started ? 0 : 1); // Show initially
+      .style('opacity', ($state.completed || $state.started) ? 0 : 1); // Show initially
 
     $app.hint.group.text
       .attr('dx', 25)
