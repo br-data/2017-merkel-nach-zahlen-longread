@@ -1,12 +1,12 @@
 {
-  "name": "merkel-jahre-longread",
-  "description": "How did ",
+  "name": "merkel-nach-zahlen-longread",
+  "description": "Draw it! Wie hat sich Deutschland unter Angela Merkels Kanzlerschaft verändert?",
   "author": "Steffen Kühne",
   "version": "0.0.1",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git@github.com:digitalegarage/merkel-jahre-longread.git"
+    "url": "git@github.com:br-data/merkel-nach-zahlen-longread.git"
   },
   "scripts": {
     "start": "node node_modules/http-server/bin/http-server ./src -s -o --cors",
