@@ -146,10 +146,10 @@ In der `init.js` würde man das Modul folgendermaßen aufrufen:
 module.init()
 ```
 
-Alle Module sind in Vanilla-Javascript (ohne andere Bibliotheken) geschrieben. Sollte man eine externe Bibliothek benötigen, kann man diese mit Bower installieren:
+Alle Module sind in Vanilla-Javascript (ohne andere Bibliotheken) geschrieben. Sollte man eine externe Bibliothek benötigen, kann man diese mit NPM installieren:
 
 ```
-bower install d3 --save
+npm install d3 --save
 ```
 
 ### Grunt (Build Task)
