@@ -321,12 +321,12 @@ var draw = function (options) {
 
     $app.yAxisConstructor = d3.svg.axis()
       .scale($app.y)
-      .orient('left')
-      .ticks(6)
+      .orient('right')
+      .ticks(5)
       .innerTickSize(-$app.width)
       .outerTickSize(0)
       .tickPadding(10)
-      .tickFormat('');
+      .tickFormat(function (d) { return $state.mobile ? '' : pretty(d); });
 
     $app.xAxis.group
         .attr('transform', 'translate(0,' + $app.height + ')')
@@ -346,6 +346,7 @@ var draw = function (options) {
         ]));
 
     $app.yAxis.group
+      .attr('transform', 'translate(' + $app.width + ',0)')
       .call($app.yAxisConstructor);
 
     // Coalition circles
