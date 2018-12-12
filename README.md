@@ -1,8 +1,8 @@
 # Draw it! Merkel nach Zahlen
-Arbeitslose, Kernkraftwerke, Bundeswehr: Wie hat sich Deutschland unter Angela Merkels Kanzlerschaft verändert? Zeichnen Sie das Diagramm und schätzen Sie die Werte. Eine interaktive Anwendung von [BR Data](http://br.de/data).
+Arbeitslose, Kernkraftwerke, Bundeswehr: Wie hat sich Deutschland unter Angela Merkels Kanzlerschaft verändert? Zeichnen Sie das Diagramm und schätzen Sie die Werte. Eine interaktive Anwendung von [BR Data](https://br.de/data).
 
-- **Live**: http://web.br.de/interaktiv/merkel-nach-zahlen/
-- **Redirect**: http://br.de/merkelnachzahlen/
+- **Live**: https://web.br.de/interaktiv/merkel-nach-zahlen/
+- **Redirect**: https://br.de/merkelnachzahlen/
 
 ## Verwendung
 1. Repository klonen `git clone https://...`
@@ -191,7 +191,7 @@ uglify: {
 Externe Stylesheet importiert man jedoch besser in einem Sass-Modul:
 
 ```Sass
-@import url(http://web.br.de/interaktiv/assets/libraries/leaflet/leaflet.v0.min.css)
+@import url(https://web.br.de/interaktiv/assets/libraries/leaflet/leaflet.v0.min.css)
 ```
 
 ## Verbesserungen
